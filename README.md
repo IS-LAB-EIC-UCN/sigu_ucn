@@ -210,7 +210,7 @@ Corresponde a la interacción con el usuario y al manejo de las solicitudes HTTP
 
 - rutas (`routes/`);
 - controladores (`controller/`);
-- vistas JTE (`templates/`).
+- vistas Java Template Engine (`resources/jte/`).
 
 Sus responsabilidades principales son:
 
