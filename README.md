@@ -119,10 +119,10 @@ mvn clean compile
 
 ### Ejecutar la aplicación
 
-Si la clase principal es `cl.ucn.app.Main`, ejecutar:
+Si la clase principal es `cl.ucn.app.main.Main`, ejecutar:
 
 ```bash
-mvn exec:java -Dexec.mainClass="cl.ucn.app.Main"
+mvn exec:java -Dexec.mainClass="cl.ucn.app.main.Main"
 ```
 
 También puede ejecutarse directamente desde IntelliJ IDEA usando la clase `Main`.

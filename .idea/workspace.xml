@@ -5,18 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3a1625d1-5da0-4033-82c9-ed8703289353" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/init/01_scheme.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init/01_scheme.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/init/02_seed.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init/02_seed.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Espacio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Espacio.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Reserva.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Reserva.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Rol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Rol.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Usuario.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +68,7 @@
       <updated>1775748589726</updated>
       <workItem from="1775748590717" duration="317000" />
       <workItem from="1775748914071" duration="689000" />
-      <workItem from="1775749610188" duration="7585000" />
+      <workItem from="1775749610188" duration="8038000" />
     </task>
     <servers />
   </component>
