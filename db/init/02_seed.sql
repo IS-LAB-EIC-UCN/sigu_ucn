@@ -4,7 +4,7 @@ INSERT INTO roles (nombre) VALUES
                                ('ESTUDIANTE');
 
 INSERT INTO usuarios (nombre, correo, password, activo, rol_id) VALUES
-                                                                    ('Administrador General', 'admin@sigu.cl', 'admin123', TRUE, 1),
+                                                                        ('Administrador General', 'admin@sigu.cl', 'admin123', TRUE, 1),
                                                                     ('Docente Demo', 'docente@sigu.cl', 'docente123', TRUE, 2),
                                                                     ('Estudiante Demo', 'estudiante@sigu.cl', 'estudiante123', TRUE, 3);
 
