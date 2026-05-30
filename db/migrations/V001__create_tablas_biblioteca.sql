@@ -1,5 +1,5 @@
 -- Tabla de usuarios de la biblioteca
-CREATE TABLE usuario (
+CREATE TABLE lector (
                         id SERIAL PRIMARY KEY,
                         nombre VARCHAR(100) NOT NULL,
                         correo VARCHAR(100) NOT NULL UNIQUE,
@@ -30,7 +30,7 @@ CREATE TABLE prestamo (
                           fecha_vencimiento DATE NOT NULL,
                           fecha_devolucion DATE,
                           estado VARCHAR(20) NOT NULL DEFAULT 'ACTIVO',
-                          usuario_id INTEGER NOT NULL REFERENCES usuario(id),
+                          lector_id INTEGER NOT NULL REFERENCES lector(id),
                           ejemplar_id INTEGER NOT NULL REFERENCES ejemplar(id)
 );
 
