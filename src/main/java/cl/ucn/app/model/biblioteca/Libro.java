@@ -24,6 +24,7 @@ public class Libro {
 
     public Libro() {}
 
+    // Getters y Setters
     public Long getId() { return id; }
 
     public String getTitulo() { return titulo; }

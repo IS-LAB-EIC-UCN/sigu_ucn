@@ -21,7 +21,6 @@ public class Lector {
     @Column(name = "bloqueado", nullable = false)
     private boolean bloqueado = false;
 
-    // Constructor vacío obligatorio para JPA
     public Lector() {}
 
     // Getters y Setters
