@@ -18,4 +18,18 @@ public class Prestamo extends MovimientoInventario {
         this.usuario = usuario;
     }
 
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    @Override
+    public String toString() {
+        return "Prestamo [id=" + id + ", usuario=" + usuario + ", recurso=" + recurso + ", cantidad=" + cantidad
+                + ", fecha=" + fecha + ", hora=" + hora + "]";
+    }
+    
 }
