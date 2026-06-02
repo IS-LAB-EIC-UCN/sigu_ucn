@@ -1,5 +1,12 @@
 package cl.ucn.app.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 @Entity
 @Table(name = "recursos")
 public class Recurso {
@@ -8,16 +15,17 @@ public class Recurso {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @column(nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @column(name = "stock", nullable = false)
+    @Column(name = "stock", nullable = false)
     private int stock;
 
-    @column(nullable = false, length = 120)
+    @Column(name = "tipo", nullable = false, length = 120)
     private String tipo;
 
     public Recurso() {}
+    
     public Recurso(String nombre, int stock, String tipo) {
         this.nombre = nombre;
         this.stock = stock;

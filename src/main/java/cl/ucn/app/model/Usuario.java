@@ -1,5 +1,14 @@
 package cl.ucn.app.model;
 
+import cl.ucn.app.service.Interfaces.IEstrategiaFiltrado;
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
 public class Usuario {
 
     @Id
@@ -22,7 +31,7 @@ public class Usuario {
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
 
-    private EstrategiaFiltrado estrategia_filtrado;
+    private IEstrategiaFiltrado estrategia_filtrado;
 
     public Usuario() {}
 
@@ -58,7 +67,7 @@ public class Usuario {
         return rol;
     }
 
-    public EstrategiaFiltrado getEstrategia_filtrado() {
+    public IEstrategiaFiltrado getEstrategia_filtrado() {
         return estrategia_filtrado;
     }
 
@@ -82,7 +91,7 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public void setEstrategia_filtrado(EstrategiaFiltrado estrategia_filtrado) {
+    public void setEstrategia_filtrado(IEstrategiaFiltrado estrategia_filtrado) {
         this.estrategia_filtrado = estrategia_filtrado;
     }
 }
