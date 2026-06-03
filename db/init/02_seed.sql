@@ -18,3 +18,11 @@ INSERT INTO reservas (fecha_reserva, hora_inicio, hora_fin, estado, usuario_id, 
                                                                                                 ('2026-04-15', '09:00:00', '11:00:00', 'APROBADA', 2, 1),
                                                                                                 ('2026-04-16', '14:00:00', '15:30:00', 'PENDIENTE', 3, 2),
                                                                                                 ('2026-04-17', '10:00:00', '12:00:00', 'CANCELADA', 3, 3);
+
+
+INSERT INTO talleres (nombre, descripcion, cupos_totales, fecha_inicio, fecha_fin, estado, bloque_horario, profesor_id, espacio_id) VALUES
+('Taller de Robótica Básica', 'Introducción a la electrónica y programación con Arduino.', 25, '2026-05-01', '2026-07-01', 'ABIERTO', 'C', 2, 3),
+('Taller de Liderazgo Estudiantil', 'Desarrollo de habilidades blandas, oratoria y trabajo en equipo.', 40, '2026-05-15', '2026-06-15', 'ABIERTO', 'E', 2, 4);
+
+INSERT INTO inscripciones (taller_id, usuario_id, estado) VALUES
+(1, 3, 'INSCRITO');
