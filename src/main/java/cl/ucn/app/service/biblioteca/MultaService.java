@@ -17,7 +17,6 @@ public class MultaService {
         this.lectorService = new LectorService();
     }
 
-
     public Multa generarMulta(PrestamoLibro prestamo, int diasAtraso) {
         if (prestamo == null || diasAtraso <= 0){return null;}
 
@@ -27,6 +26,7 @@ public class MultaService {
         multa.setDiasAtraso(diasAtraso);
         multa.setMonto(montoAtrasado);
         multa.setPrestamo(prestamo);
+
         multaRepository.save(multa);
 
         Lector lector = prestamo.getLector();
@@ -34,6 +34,7 @@ public class MultaService {
             lector.setBloqueado(true);
             lectorRepository.save(lector);
         }
+
         return multa;
     }
 
