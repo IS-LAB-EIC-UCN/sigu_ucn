@@ -27,7 +27,7 @@ public class DevolucionService {
         LocalDate hoy = LocalDate.now();
         LocalDate vencimiento = prestamo.getFechaVencimiento();
 
-        if (vencimiento != null && vencimiento.isAfter(hoy)){
+        if (vencimiento != null && vencimiento.isBefore(hoy)){
             long atraso = ChronoUnit.DAYS.between(vencimiento, hoy);
             int diasAtraso = (int) atraso;
 

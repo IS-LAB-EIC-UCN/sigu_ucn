@@ -5,6 +5,7 @@ import cl.ucn.app.model.biblioteca.Multa;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.MultaRepository;
+import java.time.LocalDate;
 
 public class MultaService {
     private final MultaRepository multaRepository;
@@ -25,6 +26,7 @@ public class MultaService {
         Multa multa = new Multa();
         multa.setDiasAtraso(diasAtraso);
         multa.setMonto(montoAtrasado);
+        multa.setFechaGeneracion(LocalDate.now());
         multa.setPrestamo(prestamo);
 
         multaRepository.save(multa);

@@ -1,6 +1,7 @@
 package cl.ucn.app.model.biblioteca;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "multa")
@@ -19,6 +20,9 @@ public class Multa {
     @Column(name = "pagada", nullable = false)
     private Boolean pagada = false;
 
+    @Column(name = "fecha_generacion", nullable = false)
+    private LocalDate fechaGeneracion;
+
     @ManyToOne
     @JoinColumn(name = "prestamo_id", nullable = false)
     private PrestamoLibro prestamo;
@@ -36,6 +40,9 @@ public class Multa {
 
     public Boolean getPagada() { return pagada; }
     public void setPagada(Boolean pagada) { this.pagada = pagada; }
+
+    public LocalDate getFechaGeneracion() { return fechaGeneracion; }
+    public void setFechaGeneracion(LocalDate fechaGeneracion) { this.fechaGeneracion = fechaGeneracion; }
 
     public PrestamoLibro getPrestamo() { return prestamo; }
     public void setPrestamo(PrestamoLibro prestamo) { this.prestamo = prestamo; }

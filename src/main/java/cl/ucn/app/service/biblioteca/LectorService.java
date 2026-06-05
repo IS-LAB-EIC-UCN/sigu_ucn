@@ -56,6 +56,6 @@ public class LectorService {
         Lector lector = lectorRepository.findById(lectorId);
         if (lector == null){return false;}
         List<Multa> multasPendientes = multaRepository.findPendientesByLector(lector);
-        return multasPendientes.isEmpty();
+        return !multasPendientes.isEmpty();
     }
 }
