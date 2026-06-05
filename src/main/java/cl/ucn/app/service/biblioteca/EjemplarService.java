@@ -4,6 +4,8 @@ import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Libro;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class EjemplarService {
@@ -16,7 +18,7 @@ public class EjemplarService {
         this.libroRepository = new LibroRepository();
     }
 
-    public Ejemplar agregarEjemplar(Long libroId){
+    public Ejemplar agregarEjemplar(Long libroId) {
         Libro libro = libroRepository.findById(libroId);
 
         if (libro == null) {
@@ -31,7 +33,23 @@ public class EjemplarService {
 
         return nuevoEjemplar;
     }
-    public List<Ejemplar> listarPorLibro(){
-        return ejemplarRepository.findAll();
+
+    public List<Ejemplar> listarPorLibro(Long libroId) {
+        List<Ejemplar> todosLosEjemplares = ejemplarRepository.findAll();
+        Libro libro = libroRepository.findById(libroId);
+        List<Ejemplar> ejemplaresDelLibro = new ArrayList<>();
+
+        if (todosLosEjemplares == null || libroId == null) {
+            return ejemplaresDelLibro;
+        }
+
+        for (Ejemplar ejemplar : todosLosEjemplares) {
+
+            if (ejemplar.getLibro() != null && libro.getId().equals(ejemplar.getLibro().getId())) {
+                ejemplaresDelLibro.add(ejemplar);
+            }
+        }
+        return ejemplaresDelLibro;
+
     }
 }
