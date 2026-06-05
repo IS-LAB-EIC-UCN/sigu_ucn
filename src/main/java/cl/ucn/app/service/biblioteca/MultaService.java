@@ -27,7 +27,6 @@ public class MultaService {
         multa.setDiasAtraso(diasAtraso);
         multa.setMonto(montoAtrasado);
         multa.setPrestamo(prestamo);
-
         multaRepository.save(multa);
 
         Lector lector = prestamo.getLector();
