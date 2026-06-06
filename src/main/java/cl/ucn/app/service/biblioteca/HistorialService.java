@@ -18,21 +18,11 @@ public class HistorialService {
     }
 
     public List<PrestamoLibro> obtenerHistorial(Long lectorId){
-        List<PrestamoLibro> historial = new ArrayList<>();
-        if (lectorId == null){return historial;}
+        if (lectorId == null){return new ArrayList<>();}
 
         Lector lector = lectorRepository.findById(lectorId);
         if (lector == null){throw new IllegalArgumentException("ID de lector no existe");}
 
-        List<PrestamoLibro> totalHistorial = prestamoLibroRepository.findAll();
-        if (totalHistorial == null) {return historial;}
-
-        for (PrestamoLibro libro : totalHistorial){
-            if (lector.equals(libro.getLector())){
-                historial.add(libro);
-            }
-        }
-
-        return historial;
+        return prestamoLibroRepository.findByLector(lector);
     }
 }
