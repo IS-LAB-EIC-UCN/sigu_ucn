@@ -35,21 +35,13 @@ public class EjemplarService {
     }
 
     public List<Ejemplar> listarPorLibro(Long libroId) {
-        List<Ejemplar> todosLosEjemplares = ejemplarRepository.findAll();
+        if (libroId == null) {
+            return new ArrayList<>();
+        }
         Libro libro = libroRepository.findById(libroId);
-        List<Ejemplar> ejemplaresDelLibro = new ArrayList<>();
-
-        if (todosLosEjemplares == null || libroId == null) {
-            return ejemplaresDelLibro;
+        if (libro == null) {
+            return new ArrayList<>();
         }
-
-        for (Ejemplar ejemplar : todosLosEjemplares) {
-
-            if (ejemplar.getLibro() != null && libro.getId().equals(ejemplar.getLibro().getId())) {
-                ejemplaresDelLibro.add(ejemplar);
-            }
-        }
-        return ejemplaresDelLibro;
-
+        return ejemplarRepository.findByLibro(libro);
     }
 }
