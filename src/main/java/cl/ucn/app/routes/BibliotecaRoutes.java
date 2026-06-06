@@ -2,29 +2,29 @@ package cl.ucn.app.routes;
 
 import cl.ucn.app.controller.biblioteca.LibroController;
 import cl.ucn.app.controller.biblioteca.LectorController;
-import io.javalin.Javalin;
+import io.javalin.config.JavalinConfig;
 
 public class BibliotecaRoutes {
 
-    public static void register(Javalin app) {
+    public static void register(JavalinConfig config) {
         // Libros
-        app.get("/biblioteca/libros", LibroController::listar);
-        app.get("/biblioteca/buscar", LibroController::buscar);
+        config.routes.get("/biblioteca/libros", LibroController::listar);
+        config.routes.get("/biblioteca/buscar", LibroController::buscar);
 
         // Préstamos
-        app.get("/biblioteca/prestamo/nuevo", LibroController::formularioPrestamo);
-        app.post("/biblioteca/prestamo/nuevo", LibroController::solicitarPrestamo);
+        config.routes.get("/biblioteca/prestamo/nuevo", LibroController::formularioPrestamo);
+        config.routes.post("/biblioteca/prestamo/nuevo", LibroController::solicitarPrestamo);
 
         // Devoluciones
-        app.get("/biblioteca/devolucion", LibroController::formularioDevolucion);
-        app.post("/biblioteca/devolucion", LibroController::registrarDevolucion);
+        config.routes.get("/biblioteca/devolucion", LibroController::formularioDevolucion);
+        config.routes.post("/biblioteca/devolucion", LibroController::registrarDevolucion);
 
         // Historial
-        app.get("/biblioteca/historial", LibroController::historial);
+        config.routes.get("/biblioteca/historial", LibroController::historial);
 
         // Lectores
-        app.get("/biblioteca/lectores", LectorController::listar);
-        app.get("/biblioteca/lectores/nuevo", LectorController::formulario);
-        app.post("/biblioteca/lectores/nuevo", LectorController::registrar);
+        config.routes.get("/biblioteca/lectores", LectorController::listar);
+        config.routes.get("/biblioteca/lectores/nuevo", LectorController::formulario);
+        config.routes.post("/biblioteca/lectores/nuevo", LectorController::registrar);
     }
 }
