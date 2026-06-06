@@ -23,8 +23,8 @@ public class Multa {
     @Column(name = "fecha_generacion", nullable = false)
     private LocalDate fechaGeneracion;
 
-    @ManyToOne
-    @JoinColumn(name = "prestamo_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "prestamo_id", nullable = false, unique = true)
     private PrestamoLibro prestamo;
 
     public Multa() {}
