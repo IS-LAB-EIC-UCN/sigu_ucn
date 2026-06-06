@@ -1,17 +1,15 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.Lector
 @import cl.ucn.app.model.biblioteca.Ejemplar
+@param String usuarioNombre
 @param List<Lector> lectores
 @param List<Ejemplar> ejemplares
 @param String error
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Solicitar Préstamo</title>
-</head>
-<body>
+@template.layout.main(
+title = "Solicitar Préstamo - SIGU-UCN",
+usuarioNombre = usuarioNombre,
+content = @`
     <h1>Solicitar Préstamo</h1>
 
     @if(error != null)
@@ -40,5 +38,5 @@
         <br/>
         <button type="submit">Confirmar préstamo</button>
     </form>
-</body>
-</html>
+`
+)

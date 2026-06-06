@@ -32,7 +32,7 @@
             <ul class="menu-list">
                 <li><a href="/home">Inicio</a></li>
                 <li><a href="#">Grupo 1 - Reservas de salas</a></li>
-                <li><a href="#">Grupo 2 - Biblioteca</a></li>
+                <li><a href="/biblioteca/libros">Grupo 2 - Biblioteca</a></li>
                 <li><a href="#">Grupo 3 - Talleres</a></li>
                 <li><a href="#">Grupo 4 - Soporte</a></li>
                 <li><a href="#">Grupo 5 - Inventario</a></li>

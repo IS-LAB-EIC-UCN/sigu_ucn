@@ -1,14 +1,12 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.Libro
+@param String usuarioNombre
 @param List<Libro> libros
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Catálogo de Libros</title>
-</head>
-<body>
+@template.layout.main(
+title = "Catálogo de Libros - SIGU-UCN",
+usuarioNombre = usuarioNombre,
+content = @`
     <h1>Catálogo de Libros</h1>
     <a href="/biblioteca/buscar">Buscar libro</a> |
     <a href="/biblioteca/prestamo/nuevo">Solicitar préstamo</a>
@@ -33,5 +31,5 @@
             @endfor
         </tbody>
     </table>
-</body>
-</html>
+`
+)

@@ -1,15 +1,13 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.Libro
+@param String usuarioNombre
 @param List<Libro> resultados
 @param String termino
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Buscar Libros</title>
-</head>
-<body>
+@template.layout.main(
+title = "Buscar Libros - SIGU-UCN",
+usuarioNombre = usuarioNombre,
+content = @`
     <h1>Buscar Libros</h1>
     <form method="get" action="/biblioteca/buscar">
         <input type="text" name="termino" value="${termino}" placeholder="Título, autor o categoría"/>
@@ -26,5 +24,5 @@
     @elseif(termino != null && !termino.isEmpty())
         <p>No se encontraron libros para "${termino}"</p>
     @endif
-</body>
-</html>
+`
+)

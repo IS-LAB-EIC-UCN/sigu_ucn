@@ -1,17 +1,15 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.Lector
 @import cl.ucn.app.model.biblioteca.PrestamoLibro
+@param String usuarioNombre
 @param List<Lector> lectores
 @param List<PrestamoLibro> historial
 @param String lectorNombre
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Historial de Préstamos</title>
-</head>
-<body>
+@template.layout.main(
+title = "Historial de Préstamos - SIGU-UCN",
+usuarioNombre = usuarioNombre,
+content = @`
     <h1>Historial de Préstamos</h1>
 
     <form method="get" action="/biblioteca/historial">
@@ -48,5 +46,5 @@
             </tbody>
         </table>
     @endif
-</body>
-</html>
+`
+)

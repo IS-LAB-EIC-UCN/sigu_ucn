@@ -1,16 +1,14 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.PrestamoLibro
+@param String usuarioNombre
 @param List<PrestamoLibro> prestamos
 @param String error
 @param String mensaje
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrar Devolución</title>
-</head>
-<body>
+@template.layout.main(
+title = "Registrar Devolución - SIGU-UCN",
+usuarioNombre = usuarioNombre,
+content = @`
     <h1>Registrar Devolución</h1>
 
     @if(error != null)
@@ -34,5 +32,5 @@
         <br/>
         <button type="submit">Registrar devolución</button>
     </form>
-</body>
-</html>
+`
+)

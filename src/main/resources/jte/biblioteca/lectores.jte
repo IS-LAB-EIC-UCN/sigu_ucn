@@ -1,15 +1,13 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.Lector
+@param String usuarioNombre
 @param List<Lector> lectores
 @param String error
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestión de Lectores</title>
-</head>
-<body>
+@template.layout.main(
+title = "Gestión de Lectores - SIGU-UCN",
+usuarioNombre = usuarioNombre,
+content = @`
     <h1>Gestión de Lectores</h1>
 
     @if(error != null)
@@ -45,5 +43,5 @@
             @endfor
         </tbody>
     </table>
-</body>
-</html>
+`
+)
