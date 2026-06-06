@@ -14,6 +14,10 @@ public class LibroService {
 
     public Libro registrarLibro(String titulo, String autor, String categoria, String isbn) {
 
+        if (libroRepository.findByIsbn(isbn) != null) {
+            throw new IllegalArgumentException("Ya existe un libro registrado con el ISBN: " + isbn);
+        }
+
         Libro nuevoLibro = new Libro();
         nuevoLibro.setTitulo(titulo);
         nuevoLibro.setAutor(autor);

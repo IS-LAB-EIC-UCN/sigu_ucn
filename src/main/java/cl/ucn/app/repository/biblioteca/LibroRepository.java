@@ -73,6 +73,20 @@ public class LibroRepository {
         }
     }
 
+    public Libro findByIsbn(String isbn) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Libro> query = em.createQuery(
+                    "SELECT l FROM Libro l WHERE l.isbn = :isbn", Libro.class);
+            query.setParameter("isbn", isbn);
+            return query.getSingleResult();
+        } catch (jakarta.persistence.NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Libro> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
