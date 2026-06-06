@@ -6,15 +6,15 @@ import java.util.Set;
 
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Libro;
+import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
-import cl.ucn.app.service.biblioteca.EjemplarService;
 public class BusquedaService {
 
     private final LibroRepository libroRepository;
-    private final EjemplarService ejemplarService;
+    private final EjemplarRepository ejemplarRepository;
     public BusquedaService(){
         this.libroRepository = new LibroRepository();
-        this.ejemplarService = new EjemplarService();
+        this.ejemplarRepository = new EjemplarRepository();
     }
 
     public List<Libro> buscar(String termino){
@@ -23,52 +23,26 @@ public class BusquedaService {
         Set<Libro> listaLibros = new HashSet<Libro>();
 
         List<Libro> titulo = libroRepository.findByTitulo(termino);
-        if (titulo.isEmpty()){ listaLibros.addAll(titulo);}
+        if (!titulo.isEmpty()){ listaLibros.addAll(titulo);}
 
         List<Libro> autor = libroRepository.findByAutor(termino);
-        if (autor.isEmpty()){ listaLibros.addAll(autor);}
+        if (!autor.isEmpty()){ listaLibros.addAll(autor);}
 
         List<Libro> categoria = libroRepository.findByCategoria(termino);
-        if (categoria.isEmpty()){ listaLibros.addAll(categoria);}
+        if (!categoria.isEmpty()){ listaLibros.addAll(categoria);}
 
         return new ArrayList<>(listaLibros);
     }
 
-    //busqueda de disponibles
     public List<Ejemplar> buscarEjemplaresDisponibles(String termino) {
         if (termino == null) {
             return new ArrayList<>();
         }
 
-        Set<Libro> listaLibros = new HashSet<Libro>();
-
-        List<Libro> titulo = libroRepository.findByTitulo(termino);
-        if (titulo.isEmpty()) {
-            listaLibros.addAll(titulo);
-        }
-
-        List<Libro> autor = libroRepository.findByAutor(termino);
-        if (autor.isEmpty()) {
-            listaLibros.addAll(autor);
-        }
-
-        List<Libro> categoria = libroRepository.findByCategoria(termino);
-        if (categoria.isEmpty()) {
-            listaLibros.addAll(categoria);
-        }
-
         List<Ejemplar> ejemplaresDisponibles = new ArrayList<>();
 
-        for (Libro libro : listaLibros) {
-            List<Ejemplar> totales = ejemplarService.listarPorLibro(libro.getId());
-
-            if (totales != null) {
-                for (Ejemplar ejemplar : totales) {
-                    if ("DISPONIBLE".equalsIgnoreCase(ejemplar.getEstado())) {
-                        ejemplaresDisponibles.add(ejemplar);
-                    }
-                }
-            }
+        for (Libro libro : buscar(termino)) {
+            ejemplaresDisponibles.addAll(ejemplarRepository.findDisponiblesByLibro(libro));
         }
 
         return ejemplaresDisponibles;
