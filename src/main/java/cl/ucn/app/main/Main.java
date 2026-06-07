@@ -39,9 +39,9 @@ public class Main {
             // 3. Registro de rutas
             AuthRoutes.register(config);
             HomeRoutes.register(config);
-
+            BibliotecaRoutes.register(config);
         });
-        BibliotecaRoutes.register(app);
+
         app.start(7000);
     }
 }
