@@ -16,7 +16,8 @@ public class LectorService {
     }
 
     public Lector registrarLector(String nombre, String correo, String rut) {
-        if (buscarPorRut(rut) != null || lectorRepository.findByCorreo(correo) != null){
+        validarDatosLector(nombre, correo, rut);
+        if (buscarPorRut(rut) != null || lectorRepository.findByCorreo(correo) != null) {
             return null;
         }
         Lector nuevoLector = new Lector();
@@ -32,11 +33,16 @@ public class LectorService {
         return lectorRepository.findByRut(rut);
     }
 
+    public Lector buscarPorId(Long id) {
+        return lectorRepository.findById(id);
+    }
+
     public List<Lector> listarTodos() {
         return lectorRepository.findAll();
     }
 
     public Lector actualizarLector(Long id, String nombre, String correo, String rut) {
+        validarDatosLector(nombre, correo, rut);
         Lector lector = lectorRepository.findById(id);
         if (lector == null) {
             throw new IllegalArgumentException("No existe un lector con ID " + id);
@@ -80,5 +86,38 @@ public class LectorService {
         if (lector == null){return false;}
         List<Multa> multasPendientes = multaRepository.findPendientesByLector(lector);
         return !multasPendientes.isEmpty();
+    }
+
+    private void validarDatosLector(String nombre, String correo, String rut) {
+        if (nombre == null || nombre.trim().length() < 3) {
+            throw new IllegalArgumentException("El nombre debe tener al menos 3 caracteres");
+        }
+        if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            throw new IllegalArgumentException("El nombre solo puede contener letras y espacios");
+        }
+        if (correo == null || !correo.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$")) {
+            throw new IllegalArgumentException("El correo electrónico no tiene un formato válido");
+        }
+        if (rut == null || !rut.matches("^\\d{7,8}-[0-9kK]$")) {
+            throw new IllegalArgumentException("El RUT debe tener formato 12345678-9");
+        }
+        if (!validarDigitoVerificador(rut)) {
+            throw new IllegalArgumentException("El dígito verificador del RUT no es válido");
+        }
+    }
+
+    private boolean validarDigitoVerificador(String rut) {
+        String[] partes = rut.split("-");
+        String numero = partes[0];
+        String dv = partes[1].toUpperCase();
+        int suma = 0;
+        int multiplicador = 2;
+        for (int i = numero.length() - 1; i >= 0; i--) {
+            suma += Character.getNumericValue(numero.charAt(i)) * multiplicador;
+            multiplicador = multiplicador == 7 ? 2 : multiplicador + 1;
+        }
+        int resto = suma % 11;
+        String dvCalculado = resto == 0 ? "0" : resto == 1 ? "K" : String.valueOf(11 - resto);
+        return dv.equals(dvCalculado);
     }
 }
