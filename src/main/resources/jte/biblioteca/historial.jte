@@ -10,20 +10,31 @@
 title = "Historial de Préstamos - SIGU-UCN",
 usuarioNombre = usuarioNombre,
 content = @`
+    <link rel="stylesheet" href="/css/biblioteca.css">
+
+    <p><a href="/biblioteca/libros">Volver al catálogo</a></p>
+
     <h1>Historial de Préstamos</h1>
 
-    <form method="get" action="/biblioteca/historial">
-        <select name="lectorId">
-            @for(Lector l : lectores)
-            <option value="${l.getId()}">${l.getNombre()}</option>
-            @endfor
-        </select>
-        <button type="submit">Ver historial</button>
-    </form>
+    <div class="info-card">
+        <form method="get" action="/biblioteca/historial">
+            <div class="form-group">
+                <label>Lector</label>
+                <div style="display:flex;gap:8px;">
+                    <select name="lectorId" style="flex:1;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                        @for(Lector l : lectores)
+                        <option value="${l.getId()}">${l.getNombre()} (${l.getRut()})</option>
+                        @endfor
+                    </select>
+                    <button type="submit" class="primary-btn" style="width:auto;">Ver historial</button>
+                </div>
+            </div>
+        </form>
+    </div>
 
     @if(historial != null && !historial.isEmpty())
         <h2>Historial de ${lectorNombre}</h2>
-        <table border="1">
+        <table class="data-table">
             <thead>
                 <tr>
                     <th>Libro</th>
@@ -45,6 +56,8 @@ content = @`
                 @endfor
             </tbody>
         </table>
+    @elseif(lectorNombre != null && !lectorNombre.isEmpty())
+        <p>Este lector no tiene préstamos registrados.</p>
     @endif
 `
 )

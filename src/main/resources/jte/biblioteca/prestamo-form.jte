@@ -10,33 +10,42 @@
 title = "Solicitar Préstamo - SIGU-UCN",
 usuarioNombre = usuarioNombre,
 content = @`
+    <link rel="stylesheet" href="/css/biblioteca.css">
+
+    <p><a href="/biblioteca/libros">Volver al catálogo</a></p>
+
     <h1>Solicitar Préstamo</h1>
 
     @if(error != null)
-        <p style="color:red">${error}</p>
+        <div class="alert-error">${error}</div>
     @endif
 
-    <form method="post" action="/biblioteca/prestamo/nuevo">
-        <label>Lector:</label>
-        <select name="lectorId">
-            @for(Lector l : lectores)
-            <option value="${l.getId()}">${l.getNombre()} — ${l.getRut()}</option>
-            @endfor
-        </select>
-        <br/>
-        <label>Ejemplar:</label>
-        <select name="ejemplarId">
-            @for(Ejemplar e : ejemplares)
-            <option value="${e.getId()}">
-                ${e.getLibro().getTitulo()} (ID: ${e.getId()})
-            </option>
-            @endfor
-        </select>
-        <br/>
-        <label>Fecha vencimiento:</label>
-        <input type="date" name="fechaVencimiento" required/>
-        <br/>
-        <button type="submit">Confirmar préstamo</button>
-    </form>
+    <div class="info-card">
+        <form method="post" action="/biblioteca/prestamo/nuevo">
+            <div class="form-group">
+                <label>Lector</label>
+                <select name="lectorId" style="width:100%;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                    @for(Lector l : lectores)
+                    <option value="${l.getId()}">${l.getNombre()} — ${l.getRut()}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ejemplar disponible</label>
+                <select name="ejemplarId" style="width:100%;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                    @if(ejemplares != null)
+                        @for(Ejemplar e : ejemplares)
+                        <option value="${e.getId()}">${e.getLibro().getTitulo()} (ID: ${e.getId()})</option>
+                        @endfor
+                    @endif
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Fecha de vencimiento</label>
+                <input type="date" name="fechaVencimiento" required/>
+            </div>
+            <button type="submit" class="primary-btn">Confirmar préstamo</button>
+        </form>
+    </div>
 `
 )

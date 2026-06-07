@@ -1,0 +1,42 @@
+/* Tablas no incluidas en el CSS base */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-top: 16px;
+}
+
+.data-table thead {
+    background: #1f3b73;
+    color: white;
+}
+
+.data-table th,
+.data-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e2e7ef;
+}
+
+.data-table tbody tr:hover {
+    background: #f0f4ff;
+}
+
+/* Utilidades */
+.alert-success {
+    background: #e6ffe6;
+    color: #1d6f1d;
+    border: 1px solid #b7efb7;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.spacer {
+    margin-bottom: 16px;
+}
+
+

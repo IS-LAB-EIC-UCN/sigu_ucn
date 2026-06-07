@@ -9,28 +9,33 @@
 title = "Registrar Devolución - SIGU-UCN",
 usuarioNombre = usuarioNombre,
 content = @`
+    <link rel="stylesheet" href="/css/biblioteca.css">
+
+    <p><a href="/biblioteca/libros">Volver al catálogo</a></p>
+
     <h1>Registrar Devolución</h1>
 
     @if(error != null)
-        <p style="color:red">${error}</p>
+        <div class="alert-error">${error}</div>
     @endif
     @if(mensaje != null)
-        <p style="color:green">${mensaje}</p>
+        <div class="alert-success">${mensaje}</div>
     @endif
 
-    <form method="post" action="/biblioteca/devolucion">
-        <label>Préstamo activo:</label>
-        <select name="prestamoId">
-            @for(PrestamoLibro p : prestamos)
-            <option value="${p.getId()}">
-                ${p.getLector().getNombre()} —
-                ${p.getEjemplar().getLibro().getTitulo()} —
-                Vence: ${p.getFechaVencimiento().toString()}
-            </option>
-            @endfor
-        </select>
-        <br/>
-        <button type="submit">Registrar devolución</button>
-    </form>
+    <div class="info-card">
+        <form method="post" action="/biblioteca/devolucion">
+            <div class="form-group">
+                <label>Préstamo activo</label>
+                <select name="prestamoId" style="width:100%;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                    @for(PrestamoLibro p : prestamos)
+                    <option value="${p.getId()}">
+                        ${p.getLector().getNombre()} — ${p.getEjemplar().getLibro().getTitulo()} — Vence: ${p.getFechaVencimiento().toString()}
+                    </option>
+                    @endfor
+                </select>
+            </div>
+            <button type="submit" class="primary-btn">Registrar devolución</button>
+        </form>
+    </div>
 `
 )
