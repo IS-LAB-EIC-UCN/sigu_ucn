@@ -171,3 +171,264 @@ body {
     color: #1f3b73;
     font-weight: bold;
 }
+
+.page-section {
+    max-width: 1100px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+}
+
+.btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+}
+
+.btn-primary {
+    background: #1f3b73;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #152a52;
+}
+
+.btn-secondary {
+    background: #e2e7ef;
+    color: #1f3b73;
+}
+
+.btn-secondary:hover {
+    background: #c9d2df;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.alert-error {
+    background: #ffe6e6;
+    color: #8f1d1d;
+    border: 1px solid #efb7b7;
+}
+
+.alert-success {
+    background: #e6ffe6;
+    color: #1d6f1d;
+    border: 1px solid #b7efb7;
+}
+
+.table-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: #f5f7fb;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 2px solid #e2e7ef;
+}
+
+.data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.data-table tr:hover {
+    background: #fafbfc;
+}
+
+.empty-table {
+    text-align: center;
+    color: #999;
+    padding: 32px;
+    font-style: italic;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-planificado {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-confirmado {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-en_curso {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-finalizado {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.status-cancelado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.form-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    padding: 28px;
+    max-width: 800px;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-card .form-group {
+    margin-bottom: 16px;
+}
+
+.form-card label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #c9d2df;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.form-card textarea {
+    resize: vertical;
+}
+
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+    outline: none;
+    border-color: #1f3b73;
+    box-shadow: 0 0 0 3px rgba(31, 59, 115, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f2f5;
+}
+
+.tab-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e7ef;
+}
+
+.tab {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #555;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.tab:hover {
+    color: #1f3b73;
+}
+
+.tab-active {
+    color: #1f3b73;
+    border-bottom-color: #1f3b73;
+}
+
+.checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding: 8px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.checkbox-label small {
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.text-muted {
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.text-muted a {
+    color: #1f3b73;
+    text-decoration: underline;
+}
