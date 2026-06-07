@@ -36,6 +36,29 @@ public class LectorService {
         return lectorRepository.findAll();
     }
 
+    public Lector actualizarLector(Long id, String nombre, String correo, String rut) {
+        Lector lector = lectorRepository.findById(id);
+        if (lector == null) {
+            throw new IllegalArgumentException("No existe un lector con ID " + id);
+        }
+
+        Lector existenteCorreo = lectorRepository.findByCorreo(correo);
+        if (existenteCorreo != null && !existenteCorreo.getId().equals(id)) {
+            throw new IllegalArgumentException("El correo " + correo + " ya está registrado por otro lector");
+        }
+
+        Lector existenteRut = lectorRepository.findByRut(rut);
+        if (existenteRut != null && !existenteRut.getId().equals(id)) {
+            throw new IllegalArgumentException("El RUT " + rut + " ya está registrado por otro lector");
+        }
+
+        lector.setNombre(nombre);
+        lector.setCorreo(correo);
+        lector.setRut(rut);
+        lectorRepository.save(lector);
+        return lector;
+    }
+
     public void bloquearLector(Long id) {
         Lector lector = lectorRepository.findById(id);
         if (lector != null) {
