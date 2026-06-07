@@ -25,7 +25,7 @@ content = @`
             <option value="${p.getId()}">
                 ${p.getLector().getNombre()} —
                 ${p.getEjemplar().getLibro().getTitulo()} —
-                Vence: ${p.getFechaVencimiento()}
+                Vence: ${p.getFechaVencimiento().toString()}
             </option>
             @endfor
         </select>

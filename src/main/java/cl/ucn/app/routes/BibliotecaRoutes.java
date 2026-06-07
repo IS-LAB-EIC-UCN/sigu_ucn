@@ -7,24 +7,27 @@ import io.javalin.config.JavalinConfig;
 public class BibliotecaRoutes {
 
     public static void register(JavalinConfig config) {
+        LibroController libroController = new LibroController();
+        LectorController lectorController = new LectorController();
+
         // Libros
-        config.routes.get("/biblioteca/libros", LibroController::listar);
-        config.routes.get("/biblioteca/buscar", LibroController::buscar);
+        config.routes.get("/biblioteca/libros", libroController::listar);
+        config.routes.get("/biblioteca/buscar", libroController::buscar);
 
         // Préstamos
-        config.routes.get("/biblioteca/prestamo/nuevo", LibroController::formularioPrestamo);
-        config.routes.post("/biblioteca/prestamo/nuevo", LibroController::solicitarPrestamo);
+        config.routes.get("/biblioteca/prestamo/nuevo", libroController::formularioPrestamo);
+        config.routes.post("/biblioteca/prestamo/nuevo", libroController::solicitarPrestamo);
 
         // Devoluciones
-        config.routes.get("/biblioteca/devolucion", LibroController::formularioDevolucion);
-        config.routes.post("/biblioteca/devolucion", LibroController::registrarDevolucion);
+        config.routes.get("/biblioteca/devolucion", libroController::formularioDevolucion);
+        config.routes.post("/biblioteca/devolucion", libroController::registrarDevolucion);
 
         // Historial
-        config.routes.get("/biblioteca/historial", LibroController::historial);
+        config.routes.get("/biblioteca/historial", libroController::historial);
 
         // Lectores
-        config.routes.get("/biblioteca/lectores", LectorController::listar);
-        config.routes.get("/biblioteca/lectores/nuevo", LectorController::formulario);
-        config.routes.post("/biblioteca/lectores/nuevo", LectorController::registrar);
+        config.routes.get("/biblioteca/lectores", lectorController::listar);
+        config.routes.get("/biblioteca/lectores/nuevo", lectorController::formulario);
+        config.routes.post("/biblioteca/lectores/nuevo", lectorController::registrar);
     }
 }

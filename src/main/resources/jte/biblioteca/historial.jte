@@ -37,9 +37,9 @@ content = @`
                 @for(PrestamoLibro p : historial)
                 <tr>
                     <td>${p.getEjemplar().getLibro().getTitulo()}</td>
-                    <td>${p.getFechaInicio()}</td>
-                    <td>${p.getFechaVencimiento()}</td>
-                    <td>${p.getFechaDevolucion() != null ? p.getFechaDevolucion() : "No devuelto"}</td>
+                    <td>${p.getFechaInicio().toString()}</td>
+                    <td>${p.getFechaVencimiento().toString()}</td>
+                    <td>${p.getFechaDevolucion() != null ? p.getFechaDevolucion().toString() : "No devuelto"}</td>
                     <td>${p.getEstado()}</td>
                 </tr>
                 @endfor
