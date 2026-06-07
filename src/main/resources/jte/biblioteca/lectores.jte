@@ -46,6 +46,7 @@ content = @`
                     <th>Correo</th>
                     <th>RUT</th>
                     <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,6 +56,7 @@ content = @`
                     <td>${l.getCorreo()}</td>
                     <td>${l.getRut()}</td>
                     <td>${l.isBloqueado() ? "BLOQUEADO" : "ACTIVO"}</td>
+                    <td><a href="/biblioteca/lectores/editar?id=${l.getId()}">Editar</a></td>
                 </tr>
                 @endfor
             </tbody>

@@ -26,7 +26,7 @@ content = @`
         <form method="post" action="/biblioteca/devolucion">
             <div class="form-group">
                 <label>Préstamo activo</label>
-                <select name="prestamoId" style="width:100%;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                <select name="prestamoId">
                     @for(PrestamoLibro p : prestamos)
                     <option value="${p.getId()}">
                         ${p.getLector().getNombre()} — ${p.getEjemplar().getLibro().getTitulo()} — Vence: ${p.getFechaVencimiento().toString()}

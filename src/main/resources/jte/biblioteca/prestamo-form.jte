@@ -24,7 +24,7 @@ content = @`
         <form method="post" action="/biblioteca/prestamo/nuevo">
             <div class="form-group">
                 <label>Lector</label>
-                <select name="lectorId" style="width:100%;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                <select name="lectorId">
                     @for(Lector l : lectores)
                     <option value="${l.getId()}">${l.getNombre()} — ${l.getRut()}</option>
                     @endfor
@@ -32,7 +32,7 @@ content = @`
             </div>
             <div class="form-group">
                 <label>Ejemplar disponible</label>
-                <select name="ejemplarId" style="width:100%;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                <select name="ejemplarId">
                     @if(ejemplares != null)
                         @for(Ejemplar e : ejemplares)
                         <option value="${e.getId()}">${e.getLibro().getTitulo()} (ID: ${e.getId()})</option>

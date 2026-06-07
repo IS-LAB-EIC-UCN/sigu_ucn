@@ -21,7 +21,7 @@ content = @`
             <div class="form-group">
                 <label>Lector</label>
                 <div style="display:flex;gap:8px;">
-                    <select name="lectorId" style="flex:1;padding:10px 12px;border:1px solid #c9d2df;border-radius:8px;">
+                    <select name="lectorId" style="flex:1;">
                         @for(Lector l : lectores)
                         <option value="${l.getId()}">${l.getNombre()} (${l.getRut()})</option>
                         @endfor

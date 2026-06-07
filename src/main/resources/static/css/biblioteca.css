@@ -26,6 +26,14 @@
 }
 
 /* Utilidades */
+.form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #c9d2df;
+    border-radius: 8px;
+    background: white;
+}
+
 .alert-success {
     background: #e6ffe6;
     color: #1d6f1d;
