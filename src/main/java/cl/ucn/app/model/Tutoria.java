@@ -1,89 +1,88 @@
 package cl.ucn.app.model;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "disponibilidades_tutores")
+@Table(name = "tutorias")
 public class Tutoria {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "tutor_id", nullable = false)
-    private Usuario usuario; //
+    @JoinColumn(name = "estudiante_id", nullable = false)
+    private Usuario estudiante;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "tutor_id", nullable = false)
+    private Usuario tutor;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "asignatura_id", nullable = false)
     private Asignatura asignatura;
 
-    @Column(nullable = false)
-    private LocalDate fecha;
-
-    @Column(name = "hora_inicio", nullable = false)
-    private LocalTime horaInicio;
-
-    @Column(name = "hora_fin", nullable = false)
-    private LocalTime horaFin;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "disponibilidad_id", nullable = false, unique = true)
+    private DisponibilidadTutor disponibilidad;
 
     @Column(nullable = false)
-    private String estado = "DISPONIBLE";
+    private String estado = "PENDIENTE";
 
-    public Tutoria (Asignatura asignatura,LocalDate fechaReserva, LocalTime horaInicio, LocalTime horaFin,
-                   String estado, Usuario usuario) {
-        this.asignatura = asignatura;
-        this.fecha = fechaReserva;
-        this.horaInicio = horaInicio;
-        this.horaFin = horaFin;
-        this.estado = estado;
-        this.usuario = usuario;
+    @Column(nullable = false)
+    private Boolean asistencia = false;
 
+    @Column(name = "creado_en", nullable = false, updatable = false)
+    private LocalDateTime creadoEn = LocalDateTime.now();
+
+    // ── Constructores ─────────────────────────────────────────
+
+    public Tutoria() {}
+
+    public Tutoria(Usuario estudiante, Usuario tutor,
+                   Asignatura asignatura, DisponibilidadTutor disponibilidad) {
+        this.estudiante    = estudiante;
+        this.tutor         = tutor;
+        this.asignatura    = asignatura;
+        this.disponibilidad = disponibilidad;
     }
 
-    public Tutoria() {
+
+    public boolean esCancelable() {
+        return this.estado.equals("PENDIENTE") || this.estado.equals("CONFIRMADA");
     }
 
-    public Asignatura getAsignatura() {
-        return asignatura;
+    public boolean estaFinalizada() {
+        return this.estado.equals("COMPLETADA") || this.estado.equals("CANCELADA");
     }
-    public LocalTime getHoraInicio() {
-        return horaInicio;
+
+    public void cancelar() {
+        if (estaFinalizada()) throw new IllegalStateException("La tutoría ya está finalizada.");
+        this.estado = "CANCELADA";
     }
-    public LocalTime getHoraFin() {
-        return horaFin;
+
+    public void cambiarEstado(String nuevoEstado) {
+        if (estaFinalizada()) throw new IllegalStateException("La tutoría ya está finalizada.");
+        this.estado = nuevoEstado;
     }
-    public String getEstado() {
-        return estado;
-    }
-    public Usuario getUsuario() {
-        return usuario;
-    }
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-    public LocalDate getFecha() {
-        return fecha;
-    }
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-    public void setHoraInicio(LocalTime horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-    public void setHoraFin(LocalTime horaFin) {
-        this.horaFin = horaFin;
-    }
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+
+
+    public Long getId()                            { return id; }
+    public Usuario getEstudiante()                 { return estudiante; }
+    public Usuario getTutor()                      { return tutor; }
+    public Asignatura getAsignatura()              { return asignatura; }
+    public DisponibilidadTutor getDisponibilidad() { return disponibilidad; }
+    public String getEstado()                      { return estado; }
+    public Boolean getAsistencia()                 { return asistencia; }
+    public LocalDateTime getCreadoEn()             { return creadoEn; }
+
+
+    public void setId(Long id)                             { this.id = id; }
+    public void setEstudiante(Usuario estudiante)          { this.estudiante = estudiante; }
+    public void setTutor(Usuario tutor)                    { this.tutor = tutor; }
+    public void setAsignatura(Asignatura asignatura)       { this.asignatura = asignatura; }
+    public void setDisponibilidad(DisponibilidadTutor d)   { this.disponibilidad = d; }
+    public void setEstado(String estado)                   { this.estado = estado; }
+    public void setAsistencia(Boolean asistencia)          { this.asistencia = asistencia; }
 }
