@@ -47,8 +47,7 @@ CREATE TABLE detalle_pedidos_cafeteria (
                                            CONSTRAINT chk_detalle_pedidos_cafeteria_cantidad
                                                CHECK (cantidad > 0),
                                            CONSTRAINT chk_detalle_pedidos_cafeteria_subtotal
-                                               CHECK (subtotal >= 0)
-);
+                                               CHECK (subtotal >= 0));
 
 CREATE TABLE ventas_cafeteria (
                                   id BIGSERIAL PRIMARY KEY,
