@@ -21,7 +21,7 @@ public class Recurso {
     @Column(name = "stock", nullable = false)
     private int stock;
 
-    @Column(name = "tipo", nullable = false, length = 120)
+    @Column(name = "tipo", nullable = false, length = 30)
     private String tipo;
 
     public Recurso() {}

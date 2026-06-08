@@ -18,10 +18,10 @@ public class Proveedor {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "correo", nullable = false, length = 120)
+    @Column(name = "correo", nullable = false, unique = true, length = 120)
     private String correo;
 
-    @Column(name = "telefono", nullable = true, length = 120)
+    @Column(name = "telefono", nullable = true, length = 30)
     private String telefono;
 
     public Proveedor() {}
