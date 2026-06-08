@@ -13,6 +13,12 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        <class>cl.ucn.app.model.Recurso</class>
+        <class>cl.ucn.app.model.MovimientoInventario</class>
+        <class>cl.ucn.app.model.Entrada</class>
+        <class>cl.ucn.app.model.Salida</class>
+        <class>cl.ucn.app.model.Prestamo</class>
+        <class>cl.ucn.app.model.Proveedor</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
