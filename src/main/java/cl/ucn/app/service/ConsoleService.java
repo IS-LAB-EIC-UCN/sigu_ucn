@@ -2,6 +2,7 @@ package cl.ucn.app.service;
 
 import java.util.List;
 
+import cl.ucn.app.model.Notificacion;
 import cl.ucn.app.model.Salida;
 import cl.ucn.app.repository.RecursoRepository;
 import cl.ucn.app.service.Interfaces.IConsole;
@@ -12,10 +13,12 @@ import cl.ucn.app.service.Interfaces.IConsole;
 public class ConsoleService implements IConsole {
 
     private final RecursoRepository recursoRepository;
+    private final NotificacionService notificador;
     private final CheckerService checker;
 
     public ConsoleService() {
         this.recursoRepository = new RecursoRepository();
+        this.notificador = new NotificacionService();
         this.checker = new CheckerService();
     }
 
@@ -49,11 +52,14 @@ public class ConsoleService implements IConsole {
 
     @Override
     public void log_alerta(Salida salida) {
-        System.out.printf(
+        String mensajep1 = String.format(
             "[Aviso]: el insumo %s tiene un stock menor al minimo (%d)", 
             salida.getRecurso().getNombre(), salida.getRecurso().getStock()
         );
-        System.out.printf("\n %s", salida.toString());
+        String mensajep2 = String.format("\n %s", salida.toString());
+        
+        notificador.setNotificacion(new Notificacion(mensajep1+mensajep2));
+        notificador.mostrar();
     }
     
 }
