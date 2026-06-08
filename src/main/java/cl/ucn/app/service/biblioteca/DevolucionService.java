@@ -22,7 +22,7 @@ public class DevolucionService {
     public void registrarDevolucion(long prestamoId){
         PrestamoLibro prestamo = prestamoLibroRepository.findById(prestamoId);
         if (prestamo == null){throw new IllegalArgumentException("Prestamo no existe");}
-        if (prestamo.getEstado().equalsIgnoreCase("FINALIZADO")){return;}
+        if (prestamo.getEstado().equalsIgnoreCase("FINALIZADO")){throw new IllegalArgumentException("Este prestamo ya fue finalizado");}
 
         LocalDate hoy = LocalDate.now();
         LocalDate vencimiento = prestamo.getFechaVencimiento();
