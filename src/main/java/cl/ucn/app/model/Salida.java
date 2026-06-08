@@ -32,7 +32,7 @@ public class Salida extends MovimientoInventario implements ISubject {
 
     public void notifyObservers() {
         for (IObserver o: observers) {
-            o.actualizarStock();
+            o.actualizarStock(this);
         }
     }
 
