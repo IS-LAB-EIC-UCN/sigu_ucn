@@ -38,12 +38,13 @@ content = @`
                         <th>Expositores</th>
                         <th>Cupo</th>
                         <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if(eventos.isEmpty())
                         <tr>
-                            <td colspan="8" class="empty-table">No hay eventos registrados.</td>
+                            <td colspan="9" class="empty-table">No hay eventos registrados.</td>
                         </tr>
                     @else
                         @for(var evento : eventos)
@@ -63,6 +64,19 @@ content = @`
                                 <td>${evento.getCapacidad()}</td>
                                 <td>
                                     <span class="status-badge status-${evento.getEstado().toLowerCase()}">${evento.getEstado()}</span>
+                                </td>
+                                <td>
+                                    @if(evento.getEstado().equals("CANCELADO"))
+                                        <form method="POST" action="/eventos/eliminar" style="display:inline;">
+                                            <input type="hidden" name="id" value="${evento.getId()}">
+                                            <button type="submit" class="btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar permanentemente este evento?')">Eliminar</button>
+                                        </form>
+                                    @else
+                                        <form method="POST" action="/eventos/cancelar" style="display:inline;">
+                                            <input type="hidden" name="id" value="${evento.getId()}">
+                                            <button type="submit" class="btn-warning btn-sm" onclick="return confirm('¿Estás seguro de cancelar este evento?')">Cancelar</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endfor

@@ -13,5 +13,7 @@ public final class EventoRoutes {
         config.routes.get("/eventos", eventoController::listar);
         config.routes.get("/eventos/registrar", eventoController::mostrarFormulario);
         config.routes.post("/eventos/registrar", eventoController::registrar);
+        config.routes.post("/eventos/cancelar", eventoController::cancelar);
+        config.routes.post("/eventos/eliminar", eventoController::eliminar);
     }
 }

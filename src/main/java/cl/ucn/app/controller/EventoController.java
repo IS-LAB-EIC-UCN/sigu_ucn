@@ -149,4 +149,52 @@ public class EventoController {
             ctx.render("eventos/formulario.jte", model);
         }
     }
+
+    public void cancelar(Context ctx) {
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        if (usuarioNombre == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        try {
+            String idStr = ctx.formParam("id");
+            if (idStr == null || idStr.isBlank()) {
+                throw new IllegalArgumentException("ID del evento es obligatorio.");
+            }
+
+            Long id = Long.parseLong(idStr);
+            eventoService.cancelar(id);
+            ctx.redirect("/eventos?success=Evento cancelado exitosamente.");
+
+        } catch (IllegalArgumentException e) {
+            ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));
+        } catch (Exception e) {
+            ctx.redirect("/eventos?error=Error inesperado: " + java.net.URLEncoder.encode(e.getMessage()));
+        }
+    }
+
+    public void eliminar(Context ctx) {
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        if (usuarioNombre == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        try {
+            String idStr = ctx.formParam("id");
+            if (idStr == null || idStr.isBlank()) {
+                throw new IllegalArgumentException("ID del evento es obligatorio.");
+            }
+
+            Long id = Long.parseLong(idStr);
+            eventoService.eliminar(id);
+            ctx.redirect("/eventos?success=Evento eliminado permanentemente.");
+
+        } catch (IllegalArgumentException e) {
+            ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));
+        } catch (Exception e) {
+            ctx.redirect("/eventos?error=Error inesperado: " + java.net.URLEncoder.encode(e.getMessage()));
+        }
+    }
 }

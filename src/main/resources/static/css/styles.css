@@ -216,6 +216,30 @@ body {
     background: #c9d2df;
 }
 
+.btn-warning {
+    background: #e8912e;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #cc7a1a;
+}
+
+.btn-danger {
+    background: #d9534f;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c9302c;
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    font-size: 0.82rem;
+    border-radius: 5px;
+}
+
 .alert {
     padding: 12px 16px;
     border-radius: 8px;

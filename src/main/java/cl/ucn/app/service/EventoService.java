@@ -118,4 +118,21 @@ public class EventoService {
         }
         return eventoRepository.findByTematica(tematica);
     }
+
+    public Evento cancelar(Long id) {
+        Evento evento = buscarPorId(id);
+        if ("CANCELADO".equals(evento.getEstado())) {
+            throw new IllegalArgumentException("El evento ya se encuentra cancelado.");
+        }
+        evento.setEstado("CANCELADO");
+        return eventoRepository.save(evento);
+    }
+
+    public void eliminar(Long id) {
+        Evento evento = buscarPorId(id);
+        if (!"CANCELADO".equals(evento.getEstado())) {
+            throw new IllegalArgumentException("Solo se pueden eliminar eventos cancelados.");
+        }
+        eventoRepository.delete(evento);
+    }
 }

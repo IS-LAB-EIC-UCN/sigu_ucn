@@ -118,6 +118,23 @@ public class EventoRepository {
         }
     }
 
+    public void delete(Evento evento) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Evento managed = em.merge(evento);
+            em.remove(managed);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Evento> findByTematica(String tematica) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
