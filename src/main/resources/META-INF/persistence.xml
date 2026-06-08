@@ -4,6 +4,9 @@
     <persistence-unit name="sigu_ucn">
         <class>cl.ucn.app.model.CategoriaCafeteria</class>
         <class>cl.ucn.app.model.ProductoCafeteria</class>
+        <class>cl.ucn.app.model.PedidoCafeteria</class>
+        <class>cl.ucn.app.model.DetallePedidoCafeteria</class>
+        <class>cl.ucn.app.model.VentaCafeteria</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>

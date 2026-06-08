@@ -1,7 +1,15 @@
 package cl.ucn.app.model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "productos_cafeteria")
@@ -31,46 +39,35 @@ public class ProductoCafeteria {
         this.nombre = nombre;
         this.precio = precio;
         this.stock = stock;
-        this.categoria = categoria;
-    }
+        this.categoria = categoria;}
 
     public Long getId() {
-        return id;
-    }
+        return id;}
 
     public String getNombre() {
-        return nombre;
-    }
+        return nombre;}
 
     public BigDecimal getPrecio() {
-        return precio;
-    }
+        return precio;}
 
     public Integer getStock() {
-        return stock;
-    }
+        return stock;}
 
     public CategoriaCafeteria getCategoria() {
-        return categoria;
-    }
+        return categoria;}
 
     public void setId(Long id) {
-        this.id = id;
-    }
+        this.id = id;}
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+        this.nombre = nombre;}
 
     public void setPrecio(BigDecimal precio) {
-        this.precio = precio;
-    }
+        this.precio = precio;}
 
     public void setStock(Integer stock) {
-        this.stock = stock;
-    }
+        this.stock = stock;}
 
     public void setCategoria(CategoriaCafeteria categoria) {
-        this.categoria = categoria;
-    }
+        this.categoria = categoria;}
 }
