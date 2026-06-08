@@ -3,18 +3,17 @@ package cl.ucn.app.repository;
 import java.util.List;
 
 import cl.ucn.app.config.JPAUtil;
-import cl.ucn.app.model.Recurso;
+import cl.ucn.app.model.Prestamo;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
-public class RecursoRepository {
-
-    public void save(Recurso recurso) {
+public class PrestamoRepository {
+    
+    public void save(Prestamo prestamo) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.persist(recurso);
+            em.persist(prestamo);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
@@ -26,36 +25,30 @@ public class RecursoRepository {
         }
     }
 
-    public List<Recurso> findAll() {
+    public List<Prestamo> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Recurso> query = em.createQuery("SELECT r FROM Recurso r", Recurso.class);
+            TypedQuery<Prestamo> query = em.createQuery("SELECT p FROM Prestamo p", Prestamo.class);
             return query.getResultList();
         } finally {
             em.close();
         }
     }
 
-    public Recurso findById(Long id) {
+    public Prestamo findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(Recurso.class, id);
+            return em.find(Prestamo.class, id);
         } finally {
             em.close();
         }
     }
 
-    public List<Recurso> findByCategoria(String categoria) {
+    public void alter(Long equipo_id, String estado) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Recurso> query = em.createQuery(
-                    "SELECT r FROM Recurso r WHERE r.tipo = :categoria",
-                    Recurso.class
-            );
-            query.setParameter("categoria", categoria);
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
+            em.createQuery("UPDATE Prestamo p SET p.estado = :estado WHERE p.id = :equipo_id").executeUpdate();
+            return;
         } finally {
             em.close();
         }
