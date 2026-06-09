@@ -38,13 +38,18 @@ public class TallerController {
             docentes = tallerService.obtenerDocentes();
         }
 
+        String successMsg = ctx.queryParam("success");
+        String errorMsg = ctx.queryParam("error");
+
         ctx.render("talleres.jte", Map.of(
                 "title", "Talleres - SIGU-UCN",
                 "usuarioNombre", nombreUsuario != null ? nombreUsuario : "Demo",
                 "rol", rolUsuario,
                 "talleres", talleres,
                 "misInscripciones", misInscripciones != null ? misInscripciones : List.of(),
-                "docentes", docentes != null ? docentes : List.of()
+                "docentes", docentes != null ? docentes : List.of(),
+                "successMsg", successMsg != null ? successMsg : "",
+                "errorMsg", errorMsg != null ? errorMsg : ""
         ));
     }
 
@@ -66,9 +71,10 @@ public class TallerController {
             Long profesorId = Long.parseLong(ctx.formParam("profesorId"));
 
             tallerService.crearTaller(nombre, descripcion, cupos, inicio, fin, bloque, profesorId);
-            ctx.redirect("/talleres?success=Taller+creado");
+            ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Taller creado con exito", java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception e) {
-            ctx.redirect("/talleres?error=" + e.getMessage());
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
         }
     }
 
@@ -84,9 +90,10 @@ public class TallerController {
         try {
             Long tallerId = Long.parseLong(ctx.pathParam("id"));
             String mensaje = tallerService.inscribirAlumno(tallerId, usuarioId);
-            ctx.redirect("/talleres?success=" + mensaje);
+            ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode(mensaje, java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception e) {
-            ctx.redirect("/talleres?error=" + e.getMessage());
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
         }
     }
 
@@ -102,9 +109,10 @@ public class TallerController {
         try {
             Long tallerId = Long.parseLong(ctx.pathParam("id"));
             tallerService.cancelarInscripcion(tallerId, usuarioId);
-            ctx.redirect("/talleres?success=Inscripcion+cancelada+correctamente");
+            ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Inscripcion cancelada correctamente", java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception e) {
-            ctx.redirect("/talleres?error=" + e.getMessage());
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
         }
     }
 

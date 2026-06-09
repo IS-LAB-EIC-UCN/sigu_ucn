@@ -1,94 +1,357 @@
 @import java.util.List
 @import cl.ucn.app.model.Taller
 @import cl.ucn.app.model.Inscripcion
+@import cl.ucn.app.model.Usuario
 
 @param String title
 @param String usuarioNombre
 @param String rol
 @param List<Taller> talleres
 @param List<Inscripcion> misInscripciones
-@param List<cl.ucn.app.model.Usuario> docentes
+@param List<Usuario> docentes
+@param String successMsg = ""
+@param String errorMsg = ""
 
 @template.layout.main(
     title = title,
     usuarioNombre = usuarioNombre,
     content = @`
-        <section style="padding: 20px; font-family: sans-serif;">
-            <h1>Módulo de Talleres (Grupo 3)</h1>
-            <p>Usuario: <strong>${usuarioNombre}</strong></p>
-            <p>Rol detectado: <strong style="color: blue;">${rol}</strong></p>
+    <style>
+        .taller-container {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background: #f8fafc;
+            min-height: 100%;
+        }
+        
+        .taller-header {
+            margin-bottom: 2rem;
+        }
+        
+        .taller-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .taller-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
 
-            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
 
-            @if(rol != null && "ADMIN".equalsIgnoreCase(rol.trim()))
-                <div style="background-color: #ffebe9; padding: 20px; border-left: 5px solid red; margin-bottom: 20px; border-radius: 4px;">
-                    <h2>[VISTA ADMIN] Registrar Nuevo Taller</h2>
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
 
-                    <form action="/talleres" method="POST" style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
-                        <input type="text" name="nombre" placeholder="Nombre del Taller (ej: Electrotecnia Avanzada)" required style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        <textarea name="descripcion" placeholder="Descripción del taller" required style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
-                        <input type="number" name="cupos" placeholder="Cantidad de Cupos (ej: 25)" required min="1" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        
-                        <label style="font-weight: bold;">Fecha Inicio:</label>
-                        <input type="date" name="fechaInicio" required min="${java.time.LocalDate.now().toString()}" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        
-                        <label style="font-weight: bold;">Fecha Fin:</label>
-                        <input type="date" name="fechaFin" required min="${java.time.LocalDate.now().toString()}" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                        
-                        <label style="font-weight: bold;">Bloque:</label>
-                        <select name="bloque" required style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                            <option value="A">Bloque A</option>
-                            <option value="B">Bloque B</option>
-                            <option value="C">Bloque C</option>
-                            <option value="D">Bloque D</option>
-                            <option value="E">Bloque E</option>
-                            <option value="F">Bloque F</option>
-                        </select>
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
 
-                        <label style="font-weight: bold;">Docente:</label>
-                        <select name="profesorId" required style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-                            <option value="" disabled selected>Seleccione un docente</option>
-                            @for(cl.ucn.app.model.Usuario docente : docentes)
-                                <option value="${docente.getId()}">${docente.getNombre()}</option>
-                            @endfor
-                        </select>
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
 
-                        <button type="submit" style="background-color: red; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                            Guardar Taller
-                        </button>
-                    </form>
-                </div>
-            @elseif(rol != null && "ESTUDIANTE".equalsIgnoreCase(rol.trim()))
-                <div style="background-color: #e6f6ff; padding: 15px; border-left: 5px solid blue; border-radius: 4px;">
-                    <h2>[VISTA ESTUDIANTE]</h2>
-                    <p>Aquí va el catálogo de talleres disponibles para inscribirse.</p>
-                </div>
-            @elseif(rol != null && "DOCENTE".equalsIgnoreCase(rol.trim()))
-                <div style="background-color: #f0fdf4; padding: 15px; border-left: 5px solid green; border-radius: 4px;">
-                    <h2>[VISTA DOCENTE] Mis Talleres</h2>
-                    @if(talleres == null || talleres.isEmpty())
-                        <p>No tienes talleres asignados.</p>
-                    @else
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
-                            @for(Taller taller : talleres)
-                                <div style="border: 1px solid #ccc; border-radius: 4px; padding: 15px; background: white;">
-                                    <h3 style="margin-top: 0;">${taller.getNombre()}</h3>
-                                    <p>${taller.getDescripcion()}</p>
-                                    <p><strong>Cupos:</strong> ${taller.getCuposTotales()}</p>
-                                    <p><strong>Estado:</strong> ${taller.getEstado()}</p>
-                                    <a href="/talleres/${taller.getId()}/alumnos" style="display: inline-block; padding: 8px 12px; background-color: #10b981; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 10px;">
-                                        Ver Alumnos
-                                    </a>
-                                </div>
-                            @endfor
-                        </div>
-                    @endif
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+
+        .card.card-inscrito::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        
+        .card.card-espera::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .badge-inscrito { background: #d1fae5; color: #065f46; }
+        .badge-espera { background: #fef3c7; color: #92400e; }
+        .badge-abierto { background: #dbeafe; color: #1e40af; }
+
+        .card-info {
+            color: #475569;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .empty-state {
+            background: white;
+            padding: 3rem;
+            text-align: center;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            color: #64748b;
+        }
+
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        
+        /* Admin Form Styles */
+        .admin-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #334155;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+    </style>
+
+    <div class="taller-container">
+        <div class="taller-header">
+            <h1>Portal de Talleres Extracurriculares</h1>
+            <p>Bienvenido al sistema de actividades extracurriculares de la UCN.</p>
+        </div>
+
+        @if(errorMsg != null && !errorMsg.isEmpty())
+            <div class="alert alert-error">
+                [Error] ${errorMsg}
+            </div>
+        @endif
+
+        @if(successMsg != null && !successMsg.isEmpty())
+            <div class="alert alert-success">
+                [Exito] ${successMsg}
+            </div>
+        @endif
+
+        @if(rol != null && "ESTUDIANTE".equalsIgnoreCase(rol.trim()))
+            <!-- SECCIÓN ESTUDIANTE: MIS TALLERES -->
+            <h2 class="section-title">Mis Inscripciones</h2>
+            
+            @if(misInscripciones == null || misInscripciones.isEmpty())
+                <div class="empty-state">
+                    <h3>Aún no estás inscrito en ningún taller</h3>
+                    <p>Explora el catálogo abajo y únete a tu primera actividad.</p>
                 </div>
             @else
-                <div style="background-color: #f3f4f6; padding: 15px; border-left: 5px solid gray; border-radius: 4px;">
-                    <h2>[Vista General]</h2>
+                <div class="grid-cards">
+                    @for(Inscripcion i : misInscripciones)
+                        @if(!"CANCELADO".equals(i.getEstado()))
+                            <div class="card @if("INSCRITO".equals(i.getEstado())) card-inscrito @else card-espera @endif">
+                                <div class="card-title">${i.getTaller().getNombre()}</div>
+                                
+                                @if("INSCRITO".equals(i.getEstado()))
+                                    <span class="badge badge-inscrito">Cupo Confirmado</span>
+                                @else
+                                    <span class="badge badge-espera">En Lista de Espera</span>
+                                @endif
+                                
+                                <div class="card-info"><strong>Profesor:</strong> ${i.getTaller().getProfesor().getNombre()}</div>
+                                <div class="card-info"><strong>Inicio:</strong> ${i.getTaller().getFechaInicio().toString()}</div>
+                                <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${i.getTaller().getBloqueHorario()}</div>
+                                
+                                <form action="/talleres/${i.getTaller().getId()}/cancelar" method="POST">
+                                    <button type="submit" class="btn btn-danger">Cancelar Inscripción</button>
+                                </form>
+                            </div>
+                        @endif
+                    @endfor
                 </div>
             @endif
-        </section>
+
+            <!-- SECCIÓN ESTUDIANTE: CATÁLOGO -->
+            <h2 class="section-title">Catálogo de Talleres</h2>
+            @if(talleres == null || talleres.isEmpty())
+                <div class="empty-state">No hay talleres disponibles en este momento.</div>
+            @else
+                <div class="grid-cards">
+                    @for(Taller t : talleres)
+                        <div class="card">
+                            <div class="card-title">${t.getNombre()}</div>
+                            <span class="badge badge-abierto">Disponible</span>
+                            
+                            <div class="card-info"><strong>Cupos Totales:</strong> ${t.getCuposTotales()}</div>
+                            <div class="card-info"><strong>Profesor:</strong> ${t.getProfesor().getNombre()}</div>
+                            <div class="card-info"><strong>Fechas:</strong> ${t.getFechaInicio().toString()} a ${t.getFechaFin().toString()}</div>
+                            <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${t.getBloqueHorario()}</div>
+                            <div class="card-info" style="margin-top: 10px; font-style: italic;">
+                                ${t.getDescripcion() != null ? t.getDescripcion() : "Sin descripción"}
+                            </div>
+                            
+                            <form action="/talleres/${t.getId()}/inscribir" method="POST">
+                                <button type="submit" class="btn btn-primary">Inscribirme</button>
+                            </form>
+                        </div>
+                    @endfor
+                </div>
+            @endif
+
+        @elseif(rol != null && "ADMIN".equalsIgnoreCase(rol.trim()))
+            <!-- SECCIÓN ADMIN -->
+            <h2 class="section-title">Administración de Talleres</h2>
+            <div class="admin-form">
+                <form action="/talleres" method="POST">
+                    <div class="form-group">
+                        <label>Nombre del Taller</label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <input type="text" name="descripcion" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Cupos Totales</label>
+                        <input type="number" name="cupos" class="form-control" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Inicio</label>
+                        <input type="date" name="fechaInicio" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha de Fin</label>
+                        <input type="date" name="fechaFin" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bloque Horario (A-F)</label>
+                        <input type="text" name="bloque" class="form-control" required maxlength="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Profesor Asignado</label>
+                        <select name="profesorId" class="form-control" required>
+                            @if(docentes != null)
+                                @for(Usuario docente : docentes)
+                                    <option value="${docente.getId()}">${docente.getNombre()}</option>
+                                @endfor
+                            @endif
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Taller</button>
+                </form>
+            </div>
+            
+        @else
+            <!-- SECCIÓN DOCENTE -->
+            <h2 class="section-title">Mis Talleres Asignados</h2>
+            <div class="grid-cards">
+                @if(talleres != null && !talleres.isEmpty())
+                    @for(Taller t : talleres)
+                        <div class="card">
+                            <div class="card-title">${t.getNombre()}</div>
+                            <div class="card-info"><strong>Cupos:</strong> ${t.getCuposTotales()}</div>
+                            <div class="card-info"><strong>Bloque:</strong> ${t.getBloqueHorario()}</div>
+                            
+                            <a href="/talleres/${t.getId()}/alumnos" class="btn btn-primary" style="text-decoration: none;">Ver Lista de Alumnos</a>
+                        </div>
+                    @endfor
+                @else
+                    <div class="empty-state">No tienes talleres asignados actualmente.</div>
+                @endif
+            </div>
+        @endif
+    </div>
     `
 )

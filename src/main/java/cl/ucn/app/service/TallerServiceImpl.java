@@ -85,10 +85,10 @@ public class TallerServiceImpl implements ITallerService {
         String mensaje;
         if (inscritosActuales < taller.getCuposTotales()) {
             inscripcion.setEstado("INSCRITO");
-            mensaje = "¡Inscripción exitosa! Lograste conseguir un cupo.";
+            mensaje = "Inscripcion exitosa. Lograste conseguir un cupo.";
         } else {
             inscripcion.setEstado("EN_ESPERA");
-            mensaje = "El taller está lleno. Has quedado en Lista de Espera.";
+            mensaje = "El taller esta lleno. Has quedado en Lista de Espera.";
         }
 
         inscripcionRepository.save(inscripcion);
