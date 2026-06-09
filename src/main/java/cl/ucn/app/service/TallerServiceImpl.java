@@ -238,6 +238,9 @@ public class TallerServiceImpl implements ITallerService {
             }
         }
 
+        int cuposAntiguos = taller.getCuposTotales();
+        int nuevosCuposDisponibles = cupos - cuposAntiguos;
+
         taller.setNombre(nombre);
         taller.setDescripcion(descripcion);
         taller.setCategoria(categoria);
@@ -249,5 +252,35 @@ public class TallerServiceImpl implements ITallerService {
         taller.setEspacio(espacio);
 
         tallerRepository.save(taller);
+
+        if (nuevosCuposDisponibles > 0) {
+            List<Inscripcion> enEspera = inscripcionRepository.findAllEnEspera(tallerId);
+            for (Inscripcion inscripcion : enEspera) {
+                if (nuevosCuposDisponibles <= 0) {
+                    break;
+                }
+                
+                boolean tieneConflicto = false;
+                List<Inscripcion> misInscripciones = inscripcionRepository.findByUsuario(inscripcion.getUsuario().getId());
+                for (Inscripcion ins : misInscripciones) {
+                    if (ins.getEstado().equals("INSCRITO")) {
+                        Taller tInscrito = ins.getTaller();
+                        if (tInscrito.getBloqueHorario().equals(taller.getBloqueHorario())) {
+                            if (!taller.getFechaInicio().isAfter(tInscrito.getFechaFin()) && 
+                                !taller.getFechaFin().isBefore(tInscrito.getFechaInicio())) {
+                                tieneConflicto = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (!tieneConflicto) {
+                    inscripcion.setEstado("INSCRITO");
+                    inscripcionRepository.save(inscripcion);
+                    nuevosCuposDisponibles--;
+                }
+            }
+        }
     }
 }

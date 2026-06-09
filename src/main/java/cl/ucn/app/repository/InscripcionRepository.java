@@ -75,6 +75,19 @@ public class InscripcionRepository {
             em.close();
         }
     }
+
+    // Busca y devuelve a todos los que estan en lista de espera ordenados por fecha
+    public List<Inscripcion> findAllEnEspera(Long tallerId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Inscripcion> query = em.createQuery(
+                    "SELECT i FROM Inscripcion i WHERE i.taller.id = :tallerId AND i.estado = 'EN_ESPERA' ORDER BY i.fechaInscripcion ASC", Inscripcion.class);
+            query.setParameter("tallerId", tallerId);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
     
     // MEtodo para listar todos los talleres a los que se inscribió un usuario 
     public List<Inscripcion> findByUsuario(Long usuarioId) {
