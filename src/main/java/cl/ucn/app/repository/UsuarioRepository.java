@@ -45,7 +45,14 @@ public class UsuarioRepository {
     public Usuario findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(Usuario.class, id);
+            TypedQuery<Usuario> query = em.createQuery(
+                    "SELECT u FROM Usuario u JOIN FETCH u.rol WHERE u.id = :id",
+                    Usuario.class
+            );
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
