@@ -1,8 +1,10 @@
 package cl.ucn.app.service;
 
+import cl.ucn.app.model.Espacio;
 import cl.ucn.app.model.Inscripcion;
 import cl.ucn.app.model.Taller;
 import cl.ucn.app.model.Usuario;
+import cl.ucn.app.repository.EspacioRepository;
 import cl.ucn.app.repository.InscripcionRepository;
 import cl.ucn.app.repository.UsuarioRepository;
 
@@ -19,22 +21,25 @@ public class TallerServiceImpl implements ITallerService {
     private final ITallerRepository tallerRepository;
     private final InscripcionRepository inscripcionRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EspacioRepository espacioRepository;
 
     public TallerServiceImpl() {
         this.tallerRepository = new TallerRepositoryImpl();
         this.inscripcionRepository = new InscripcionRepository();
         this.usuarioRepository = new UsuarioRepository();
+        this.espacioRepository = new EspacioRepository();
     }
 
     public TallerServiceImpl(ITallerRepository tallerRepository, InscripcionRepository inscripcionRepository,
-            UsuarioRepository usuarioRepository) {
+            UsuarioRepository usuarioRepository, EspacioRepository espacioRepository) {
         this.tallerRepository = tallerRepository;
         this.inscripcionRepository = inscripcionRepository;
         this.usuarioRepository = usuarioRepository;
+        this.espacioRepository = espacioRepository;
     }
 
     public Taller crearTaller(String nombre, String descripcion, Integer cupos, LocalDate inicio, LocalDate fin,
-            Character bloque, Long profesorId) throws Exception {
+            Character bloque, Long profesorId, Long espacioId) throws Exception {
         if (cupos <= 0) {
             throw new Exception("Los cupos deben ser mayores a cero.");
         }
@@ -51,7 +56,18 @@ public class TallerServiceImpl implements ITallerService {
             throw new Exception("Fecha de inicio invalida");
         }
 
-        Taller taller = new Taller(nombre, descripcion, cupos, inicio, fin, "ABIERTO", bloque, profesor, null);
+        Espacio espacio = null;
+        if (espacioId != null) {
+            espacio = espacioRepository.findById(espacioId);
+            if (espacio == null) {
+                throw new Exception("El espacio asignado no existe.");
+            }
+            if (tallerRepository.existeConflicto(espacioId, bloque, inicio, fin)) {
+                throw new Exception("Conflicto de horario: Ya existe un taller en el espacio '" + espacio.getNombre() + "' en el bloque " + bloque + " durante estas fechas.");
+            }
+        }
+
+        Taller taller = new Taller(nombre, descripcion, cupos, inicio, fin, "ABIERTO", bloque, profesor, espacio);
         tallerRepository.save(taller);
         return taller;
 
@@ -147,6 +163,10 @@ public class TallerServiceImpl implements ITallerService {
 
     public List<Usuario> obtenerDocentes() {
         return usuarioRepository.findByRol("DOCENTE");
+    }
+
+    public List<Espacio> obtenerEspacios() {
+        return espacioRepository.findAll();
     }
 
     public void eliminarTaller(Long tallerId) throws Exception {

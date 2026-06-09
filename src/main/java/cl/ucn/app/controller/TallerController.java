@@ -1,5 +1,6 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.model.Espacio;
 import cl.ucn.app.model.Inscripcion;
 import cl.ucn.app.model.Taller;
 import io.javalin.http.Context;
@@ -34,8 +35,10 @@ public class TallerController {
         }
 
         List<Usuario> docentes = null;
+        List<Espacio> espacios = null;
         if ("ADMIN".equals(rolUsuario)) {
             docentes = tallerService.obtenerDocentes();
+            espacios = tallerService.obtenerEspacios();
         }
 
         String successMsg = ctx.queryParam("success");
@@ -48,6 +51,7 @@ public class TallerController {
                 "talleres", talleres,
                 "misInscripciones", misInscripciones != null ? misInscripciones : List.of(),
                 "docentes", docentes != null ? docentes : List.of(),
+                "espacios", espacios != null ? espacios : List.of(),
                 "successMsg", successMsg != null ? successMsg : "",
                 "errorMsg", errorMsg != null ? errorMsg : ""
         ));
@@ -67,10 +71,20 @@ public class TallerController {
             Integer cupos = Integer.parseInt(ctx.formParam("cupos"));
             LocalDate inicio = LocalDate.parse(ctx.formParam("fechaInicio"));
             LocalDate fin = LocalDate.parse(ctx.formParam("fechaFin"));
-            Character bloque = ctx.formParam("bloque").charAt(0);
+            String bloqueParam = ctx.formParam("bloque");
+            if (bloqueParam == null || bloqueParam.isBlank()) {
+                throw new Exception("El bloque horario es obligatorio.");
+            }
+            Character bloque = bloqueParam.toUpperCase().charAt(0);
+            if (bloque < 'A' || bloque > 'F') {
+                throw new Exception("El bloque horario debe ser una letra entre A y F.");
+            }
             Long profesorId = Long.parseLong(ctx.formParam("profesorId"));
 
-            tallerService.crearTaller(nombre, descripcion, cupos, inicio, fin, bloque, profesorId);
+            String espacioIdStr = ctx.formParam("espacioId");
+            Long espacioId = (espacioIdStr != null && !espacioIdStr.isBlank()) ? Long.parseLong(espacioIdStr) : null;
+
+            tallerService.crearTaller(nombre, descripcion, cupos, inicio, fin, bloque, profesorId, espacioId);
             ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Taller creado con exito", java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception e) {
             String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
@@ -142,7 +156,7 @@ public class TallerController {
     }
 
     public static void eliminarTaller(Context ctx) {
-        String rolUsuario = ctx.sessionAttribute("rol");
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
         if (!"ADMIN".equals(rolUsuario)) {
             ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode("Acceso denegado. Solo administradores pueden eliminar talleres.", java.nio.charset.StandardCharsets.UTF_8));
             return;

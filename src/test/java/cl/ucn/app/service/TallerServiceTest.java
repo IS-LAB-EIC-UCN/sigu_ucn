@@ -3,11 +3,10 @@ package cl.ucn.app.service;
 import cl.ucn.app.model.Inscripcion;
 import cl.ucn.app.model.Taller;
 import cl.ucn.app.model.Usuario;
+import cl.ucn.app.repository.EspacioRepository;
 import cl.ucn.app.repository.InscripcionRepository;
 import cl.ucn.app.repository.ITallerRepository;
 import cl.ucn.app.repository.UsuarioRepository;
-import cl.ucn.app.service.ITallerService;
-import cl.ucn.app.service.TallerServiceImpl;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,16 @@ import static org.mockito.Mockito.when;
 public class TallerServiceTest {
 
     private ITallerService tallerService;
+    private EspacioRepository espacioRepoStub;
 
     @BeforeEach
     public void setup() {
+        espacioRepoStub = new EspacioRepository() {
+            @Override
+            public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override
+            public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        };
 
         ITallerRepository tallerRepoStub = new ITallerRepository() {
             @Override
@@ -30,6 +36,12 @@ public class TallerServiceTest {
             
             @Override
             public List<Taller> findAll() { return List.of(); }
+
+            @Override
+            public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+
+            @Override
+            public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
             
             @Override
             public Taller findById(Long id) {
@@ -38,6 +50,7 @@ public class TallerServiceTest {
                 tallerFalso.setEstado("ABIERTO");
                 return tallerFalso;
             }
+
             @Override
             public void delete(Long id) {}
         };
@@ -54,9 +67,7 @@ public class TallerServiceTest {
             }
 
             @Override
-            public void save(Inscripcion inscripcion) {
-
-            }
+            public void save(Inscripcion inscripcion) {}
         };
 
         UsuarioRepository usuarioRepoStub = new UsuarioRepository() {
@@ -66,38 +77,43 @@ public class TallerServiceTest {
             }
         };
 
-        tallerService = new TallerServiceImpl(tallerRepoStub, inscripcionRepoStub, usuarioRepoStub);
+        tallerService = new TallerServiceImpl(tallerRepoStub, inscripcionRepoStub, usuarioRepoStub, espacioRepoStub);
     }
 
     @Test
     public void siElTallerEstaLleno_DebeQuedarEnListaDeEspera() throws Exception {
-
         String resultado = tallerService.inscribirAlumno(1L, 2L);
-
- 
         assertEquals("El taller está lleno. Has quedado en Lista de Espera.", resultado);
     }
 
     @Test
     public void siEsElProfesorDelTaller_DebeRetornarListaDeInscripciones() throws Exception {
-        // Configuramos el mock para que el profesor coincida
         ITallerRepository tallerRepoStub = new ITallerRepository() {
             @Override
             public void save(Taller taller) {}
             
             @Override
             public List<Taller> findAll() { return List.of(); }
+
+            @Override
+            public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+
+            @Override
+            public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
             
             @Override
             public Taller findById(Long id) {
-                Usuario profesor = mock(Usuario.class);
-                when(profesor.getId()).thenReturn(5L);
+                Usuario profesor = new Usuario() {
+                    @Override
+                    public Long getId() { return 5L; }
+                };
 
                 Taller taller = new Taller();
                 taller.setId(id);
                 taller.setProfesor(profesor);
                 return taller;
             }
+
             @Override
             public void delete(Long id) {}
         };
@@ -105,7 +121,7 @@ public class TallerServiceTest {
         InscripcionRepository inscripcionRepoStub = new InscripcionRepository() {
             @Override
             public java.util.List<Inscripcion> findByTallerId(Long tallerId) {
-                return java.util.List.of(new Inscripcion(), new Inscripcion()); // 2 inscripciones simuladas
+                return java.util.List.of(new Inscripcion(), new Inscripcion());
             }
         };
 
@@ -116,7 +132,10 @@ public class TallerServiceTest {
             }
         };
 
-        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, inscripcionRepoStub, usuarioRepoStub);
+        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, inscripcionRepoStub, usuarioRepoStub, new EspacioRepository() {
+            @Override public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        });
 
         java.util.List<Inscripcion> alumnos = serviceTest.obtenerInscripcionesPorTaller(1L, 5L);
 
@@ -131,25 +150,37 @@ public class TallerServiceTest {
             
             @Override
             public List<Taller> findAll() { return List.of(); }
+
+            @Override
+            public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+
+            @Override
+            public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
             
             @Override
             public Taller findById(Long id) {
-                Usuario profesor = mock(Usuario.class);
-                when(profesor.getId()).thenReturn(5L);
+                Usuario profesor = new Usuario() {
+                    @Override
+                    public Long getId() { return 5L; }
+                };
 
                 Taller taller = new Taller();
                 taller.setId(id);
                 taller.setProfesor(profesor);
                 return taller;
             }
+
             @Override
             public void delete(Long id) {}
         };
 
-        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, new InscripcionRepository(), new UsuarioRepository());
+        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, new InscripcionRepository(), new UsuarioRepository(), new EspacioRepository() {
+            @Override public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        });
 
         try {
-            serviceTest.obtenerInscripcionesPorTaller(1L, 99L); // Intenta acceder como 99
+            serviceTest.obtenerInscripcionesPorTaller(1L, 99L);
         } catch (Exception e) {
             assertEquals("No tienes permiso para ver los alumnos de este taller.", e.getMessage());
         }
@@ -158,7 +189,7 @@ public class TallerServiceTest {
     @Test
     public void alCrearTallerConCuposInvalidos_DebeLanzarExcepcion() {
         try {
-            tallerService.crearTaller("Taller 1", "Desc", 0, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(1), 'A', 1L);
+            tallerService.crearTaller("Taller 1", "Desc", 0, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(1), 'A', 1L, null);
         } catch (Exception e) {
             assertEquals("Los cupos deben ser mayores a cero.", e.getMessage());
         }
@@ -172,6 +203,8 @@ public class TallerServiceTest {
         ITallerRepository tallerRepoStubLocal = new ITallerRepository() {
             @Override public void save(Taller taller) {}
             @Override public List<Taller> findAll() { return List.of(); }
+            @Override public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+            @Override public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
             @Override public Taller findById(Long id) { return new Taller(); }
             @Override public void delete(Long id) { tallerEliminado[0] = true; }
         };
@@ -186,7 +219,10 @@ public class TallerServiceTest {
             @Override public void deleteByTallerId(Long tallerId) { inscripcionesEliminadas[0] = true; }
         };
 
-        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStubLocal, inscripcionRepoStubLocal, new UsuarioRepository());
+        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStubLocal, inscripcionRepoStubLocal, new UsuarioRepository(), new EspacioRepository() {
+            @Override public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        });
 
         serviceTest.eliminarTaller(1L);
 
@@ -197,7 +233,7 @@ public class TallerServiceTest {
     @Test
     public void alCrearTallerConFechasInvalidas_DebeLanzarExcepcion() {
         try {
-            tallerService.crearTaller("Taller 1", "Desc", 10, java.time.LocalDate.now().plusDays(5), java.time.LocalDate.now(), 'A', 1L);
+            tallerService.crearTaller("Taller 1", "Desc", 10, java.time.LocalDate.now().plusDays(5), java.time.LocalDate.now(), 'A', 1L, null);
         } catch (Exception e) {
             assertEquals("La fecha de inicio no puede ser después de la fecha de fin.", e.getMessage());
         }
@@ -223,14 +259,21 @@ public class TallerServiceTest {
             @Override
             public List<Taller> findAll() { return List.of(); }
             @Override
+            public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+            @Override
+            public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
+            @Override
             public Taller findById(Long id) { return null; }
             @Override
             public void delete(Long id) {}
         };
 
-        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, new InscripcionRepository(), usuarioRepoStub);
+        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, new InscripcionRepository(), usuarioRepoStub, new EspacioRepository() {
+            @Override public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        });
 
-        Taller taller = serviceTest.crearTaller("Magia", "Desc", 15, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(2), 'B', 1L);
+        Taller taller = serviceTest.crearTaller("Magia", "Desc", 15, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(2), 'B', 1L, null);
         assertEquals("Magia", taller.getNombre());
         assertEquals(15, taller.getCuposTotales());
         assertEquals("ABIERTO", taller.getEstado());
@@ -247,11 +290,11 @@ public class TallerServiceTest {
         InscripcionRepository inscripcionRepoStub = new InscripcionRepository() {
             @Override
             public Inscripcion findByTallerAndUsuario(Long tallerId, Long usuarioId) {
-                return inscripcionActiva; // Simula la inscripcion activa que se quiere cancelar
+                return inscripcionActiva;
             }
             @Override
             public Inscripcion findFirstEnEspera(Long tallerId) {
-                return inscripcionEnEspera; // Simula el afortunado en lista de espera
+                return inscripcionEnEspera;
             }
             @Override
             public void save(Inscripcion inscripcion) {}
@@ -260,9 +303,14 @@ public class TallerServiceTest {
         ITallerService serviceTest = new TallerServiceImpl(new ITallerRepository() {
             @Override public void save(Taller taller) {}
             @Override public List<Taller> findAll() { return List.of(); }
+            @Override public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+            @Override public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
             @Override public Taller findById(Long id) { return new Taller(); }
             @Override public void delete(Long id) {}
-        }, inscripcionRepoStub, new UsuarioRepository());
+        }, inscripcionRepoStub, new UsuarioRepository(), new EspacioRepository() {
+            @Override public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        });
 
         serviceTest.cancelarInscripcion(1L, 2L);
 

@@ -2,6 +2,7 @@
 @import cl.ucn.app.model.Taller
 @import cl.ucn.app.model.Inscripcion
 @import cl.ucn.app.model.Usuario
+@import cl.ucn.app.model.Espacio
 
 @param String title
 @param String usuarioNombre
@@ -9,6 +10,7 @@
 @param List<Taller> talleres
 @param List<Inscripcion> misInscripciones
 @param List<Usuario> docentes
+@param List<Espacio> espacios
 @param String successMsg = ""
 @param String errorMsg = ""
 
@@ -190,7 +192,7 @@
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            border: 1px solid #e2e8f0;
         }
         .form-group {
             margin-bottom: 1rem;
@@ -294,73 +296,114 @@
 
         @elseif(rol != null && "ADMIN".equalsIgnoreCase(rol.trim()))
             <!-- SECCIÓN ADMIN -->
-            <h2 class="section-title">Administración de Talleres</h2>
-            <div class="admin-form">
-                <form action="/talleres" method="POST">
-                    <div class="form-group">
-                        <label>Nombre del Taller</label>
-                        <input type="text" name="nombre" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descripción</label>
-                        <input type="text" name="descripcion" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Cupos Totales</label>
-                        <input type="number" name="cupos" class="form-control" required min="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Inicio</label>
-                        <input type="date" name="fechaInicio" class="form-control" required min="${java.time.LocalDate.now().toString()}">
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Fin</label>
-                        <input type="date" name="fechaFin" class="form-control" required min="${java.time.LocalDate.now().toString()}">
-                    </div>
-                    <div class="form-group">
-                        <label>Bloque Horario (A-F)</label>
-                        <select name="bloque" class="form-control" required>
-                            <option value="A">Bloque A</option>
-                            <option value="B">Bloque B</option>
-                            <option value="C">Bloque C</option>
-                            <option value="D">Bloque D</option>
-                            <option value="E">Bloque E</option>
-                            <option value="F">Bloque F</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Profesor Asignado</label>
-                        <select name="profesorId" class="form-control" required>
-                            @if(docentes != null)
-                                @for(Usuario docente : docentes)
-                                    <option value="${docente.getId()}">${docente.getNombre()}</option>
-                                @endfor
-                            @endif
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Taller</button>
-                </form>
-            </div>
+            <h2 class="section-title">Panel de Control: Talleres</h2>
             
-            <h2 class="section-title" style="margin-top: 40px;">Catálogo de Talleres Existentes</h2>
-            <div class="grid-cards">
-                @if(talleres != null && !talleres.isEmpty())
-                    @for(Taller t : talleres)
-                        <div class="card">
-                            <div class="card-title">${t.getNombre()}</div>
-                            <div class="card-info"><strong>Cupos Totales:</strong> ${t.getCuposTotales()}</div>
-                            <div class="card-info"><strong>Profesor:</strong> ${t.getProfesor().getNombre()}</div>
-                            <div class="card-info"><strong>Fechas:</strong> ${t.getFechaInicio().toString()} a ${t.getFechaFin().toString()}</div>
-                            <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${t.getBloqueHorario()}</div>
-                            
-                            <form action="/talleres/${t.getId()}/eliminar" method="POST" style="margin-top: 15px;" onsubmit="return confirm('¿Está seguro que desea eliminar este taller? Esta acción es irreversible.');">
-                                <button type="submit" class="btn btn-danger">Eliminar Taller</button>
-                            </form>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                <!-- Formulario -->
+                <div class="admin-form">
+                    <h3 style="margin-top: 0; color: #1e293b; margin-bottom: 1.5rem;">Crear Taller</h3>
+                    <form action="/talleres" method="POST">
+                        <div class="form-group">
+                            <label>Nombre del Taller</label>
+                            <input type="text" name="nombre" class="form-control" required>
                         </div>
-                    @endfor
-                @else
-                    <div class="empty-state">No hay talleres registrados en el sistema.</div>
-                @endif
+                        <div class="form-group">
+                            <label>Descripción</label>
+                            <input type="text" name="descripcion" class="form-control">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Cupos Totales</label>
+                                <input type="number" name="cupos" class="form-control" required min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Bloque (A-F)</label>
+                                <select name="bloque" class="form-control" required>
+                                    <option value="A">Bloque A</option>
+                                    <option value="B">Bloque B</option>
+                                    <option value="C">Bloque C</option>
+                                    <option value="D">Bloque D</option>
+                                    <option value="E">Bloque E</option>
+                                    <option value="F">Bloque F</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Fecha de Inicio</label>
+                                <input type="date" name="fechaInicio" class="form-control" required min="${java.time.LocalDate.now().toString()}">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Fin</label>
+                                <input type="date" name="fechaFin" class="form-control" required min="${java.time.LocalDate.now().toString()}">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label>Profesor Asignado</label>
+                                <select name="profesorId" class="form-control" required>
+                                    <option value="" disabled selected>Seleccione docente</option>
+                                    @if(docentes != null)
+                                        @for(Usuario docente : docentes)
+                                            <option value="${docente.getId()}">${docente.getNombre()}</option>
+                                        @endfor
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Lugar (Opcional)</label>
+                                <select name="espacioId" class="form-control">
+                                    <option value="">Por definir</option>
+                                    @if(espacios != null)
+                                        @for(Espacio espacio : espacios)
+                                            <option value="${espacio.getId()}">${espacio.getNombre()} (${espacio.getTipo()})</option>
+                                        @endfor
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Registrar Taller</button>
+                    </form>
+                </div>
+                
+                <!-- Lista de Talleres -->
+                <div>
+                    <h3 style="margin-top: 0; color: #1e293b; margin-bottom: 1.5rem;">Talleres Existentes</h3>
+                    <div style="background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                        @if(talleres == null || talleres.isEmpty())
+                            <div class="empty-state" style="padding: 2rem;">No hay talleres registrados en el sistema.</div>
+                        @else
+                            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr style="background-color: #f1f5f9; color: #475569;">
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Nombre</th>
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Docente</th>
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Cupos</th>
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Lugar</th>
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Bloque</th>
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for(Taller t : talleres)
+                                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                                            <td style="padding: 1rem; color: #0f172a;"><strong>${t.getNombre()}</strong></td>
+                                            <td style="padding: 1rem; color: #475569;">${t.getProfesor().getNombre()}</td>
+                                            <td style="padding: 1rem; color: #475569;">${t.getCuposTotales()}</td>
+                                            <td style="padding: 1rem; color: #475569;">${t.getEspacio() != null ? t.getEspacio().getNombre() : "Por definir"}</td>
+                                            <td style="padding: 1rem; color: #475569;">${t.getBloqueHorario()}</td>
+                                            <td style="padding: 1rem;">
+                                                <form action="/talleres/${t.getId()}/eliminar" method="POST" onsubmit="return confirm('¿Está seguro que desea eliminar este taller? Esta acción es irreversible.');" style="margin: 0;">
+                                                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem; margin-top: 0; font-size: 0.85rem;">Eliminar</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
+                        @endif
+                    </div>
+                </div>
             </div>
             
         @else

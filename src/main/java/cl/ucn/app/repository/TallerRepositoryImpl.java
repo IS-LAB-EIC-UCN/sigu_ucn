@@ -79,4 +79,21 @@ public class TallerRepositoryImpl implements ITallerRepository {
             em.close();
         }
     }
+
+    public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Long count = em.createQuery(
+                "SELECT COUNT(t) FROM Taller t WHERE t.espacio.id = :espacioId AND t.bloqueHorario = :bloque " +
+                "AND t.fechaInicio <= :fin AND t.fechaFin >= :inicio", Long.class)
+                .setParameter("espacioId", espacioId)
+                .setParameter("bloque", bloque)
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
 }
