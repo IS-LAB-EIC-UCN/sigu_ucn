@@ -32,17 +32,22 @@ public class Reserva {
     @JoinColumn(name = "espacio_id", nullable = false)
     private Espacio espacio;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "vehiculo_id", nullable = false)
+    private Vehiculo vehiculo;
+
     public Reserva() {
     }
 
     public Reserva(LocalDate fechaReserva, LocalTime horaInicio, LocalTime horaFin,
-                   String estado, Usuario usuario, Espacio espacio) {
+                   String estado, Usuario usuario, Espacio espacio, Vehiculo vehiculo) {
         this.fechaReserva = fechaReserva;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
         this.estado = estado;
         this.usuario = usuario;
         this.espacio = espacio;
+        this.vehiculo = vehiculo;
     }
 
     public Long getId() {
@@ -73,6 +78,10 @@ public class Reserva {
         return espacio;
     }
 
+    public Vehiculo getVehiculo() {
+        return vehiculo;
+    }
+
     public void setFechaReserva(LocalDate fechaReserva) {
         this.fechaReserva = fechaReserva;
     }
@@ -95,5 +104,9 @@ public class Reserva {
 
     public void setEspacio(Espacio espacio) {
         this.espacio = espacio;
+    }
+
+    public void setVehiculo(Vehiculo vehiculo) {
+        this.vehiculo = vehiculo;
     }
 }

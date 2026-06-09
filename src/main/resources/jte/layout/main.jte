@@ -39,7 +39,9 @@
                 <li><a href="#">Grupo 6 - Eventos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>
                 <li><a href="#">Grupo 8 - Tutorías</a></li>
-                <li><a href="/estacionamientos">Grupo 9 - Estacionamientos</a></li>
+                <li><a href="/estacionamientos">Grupo 9 - Gestión de estacionamientos</a></li>
+                <li><a href="/reservas/estacionamientos">Reservar estacionamiento</a></li>
+                <li><a href="/mis-reservas/estacionamientos">Mis reservas</a></li>
             </ul>
         </aside>
     @endif

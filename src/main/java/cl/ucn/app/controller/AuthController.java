@@ -3,6 +3,7 @@ package cl.ucn.app.controller;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.service.AuthService;
 import io.javalin.http.Context;
+import java.util.HashMap;
 
 import java.util.Map;
 

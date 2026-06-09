@@ -43,5 +43,19 @@ public final class EstacionamientoRoutes {
                 controller::actualizar
         );
 
+        config.routes.get(
+                "/reservas/estacionamientos",
+                controller::showReservar
+        );
+
+        config.routes.post(
+                "/reservas/estacionamientos",
+                controller::reservar
+        );
+
+        config.routes.get(
+                "/mis-reservas/estacionamientos",
+                controller::misReservas
+        );
     }
 }
