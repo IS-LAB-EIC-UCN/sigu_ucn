@@ -1,9 +1,18 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.model.Ticket;
+import cl.ucn.app.service.TicketService;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
+import java.util.List;
 
 public class TicketController {
+
+    private final TicketService ticketService;
+
+    public TicketController() {
+        this.ticketService = new TicketService();
+    }
 
     public void registerRoutes(JavalinConfig config) {
         config.routes.get("/tickets", this::listarTickets);
@@ -12,15 +21,23 @@ public class TicketController {
     }
 
     private void listarTickets(Context ctx) {
-        ctx.result("lista de tickets");
+        List<Ticket> tickets = ticketService.listarTodos();
+        ctx.json(tickets);
     }
 
     private void crearTicket(Context ctx) {
-        ctx.result("ticket creado");
+        Ticket ticket = ctx.bodyAsClass(Ticket.class);
+        ticketService.crearTicket(ticket);
+        ctx.status(201).result("Ticket creado");
     }
 
     private void obtenerTicket(Context ctx) {
-        String id = ctx.pathParam("id");
-        ctx.result("ticket " + id);
+        Long id = Long.parseLong(ctx.pathParam("id"));
+        Ticket ticket = ticketService.buscarPorId(id);
+        if (ticket == null) {
+            ctx.status(404).result("Ticket no encontrado");
+        } else {
+            ctx.json(ticket);
+        }
     }
 }
