@@ -311,15 +311,22 @@
                     </div>
                     <div class="form-group">
                         <label>Fecha de Inicio</label>
-                        <input type="date" name="fechaInicio" class="form-control" required>
+                        <input type="date" name="fechaInicio" class="form-control" required min="${java.time.LocalDate.now().toString()}">
                     </div>
                     <div class="form-group">
                         <label>Fecha de Fin</label>
-                        <input type="date" name="fechaFin" class="form-control" required>
+                        <input type="date" name="fechaFin" class="form-control" required min="${java.time.LocalDate.now().toString()}">
                     </div>
                     <div class="form-group">
                         <label>Bloque Horario (A-F)</label>
-                        <input type="text" name="bloque" class="form-control" required maxlength="1">
+                        <select name="bloque" class="form-control" required>
+                            <option value="A">Bloque A</option>
+                            <option value="B">Bloque B</option>
+                            <option value="C">Bloque C</option>
+                            <option value="D">Bloque D</option>
+                            <option value="E">Bloque E</option>
+                            <option value="F">Bloque F</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Profesor Asignado</label>
