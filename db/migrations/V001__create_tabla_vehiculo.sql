@@ -1,7 +1,7 @@
 CREATE TABLE Vehiculo (
     patente VARCHAR(20) NOT NULL,
     propietario VARCHAR(100) NOT NULL,
-    usuario_id BIGINT NOT NULL, -- Coincide con el tipo BIGSERIAL (BIGINT) de tu tabla usuarios
+    usuario_id BIGINT NOT NULL, -- Coincide con el tipo BIGSERIAL (BIGINT) de tabla usuarios
     
     -- Clave Primaria basada en la patente del vehículo
     CONSTRAINT pk_vehiculo 

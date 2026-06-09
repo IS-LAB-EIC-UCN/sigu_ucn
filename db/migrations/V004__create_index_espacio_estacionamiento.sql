@@ -1,0 +1,1 @@
+CREATE INDEX idx_espacios_estacionamiento_id ON espacios(estacionamiento_id);
