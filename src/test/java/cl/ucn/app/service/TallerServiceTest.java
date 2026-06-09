@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +38,8 @@ public class TallerServiceTest {
                 tallerFalso.setEstado("ABIERTO");
                 return tallerFalso;
             }
+            @Override
+            public void delete(Long id) {}
         };
 
         InscripcionRepository inscripcionRepoStub = new InscripcionRepository() {
@@ -95,6 +98,8 @@ public class TallerServiceTest {
                 taller.setProfesor(profesor);
                 return taller;
             }
+            @Override
+            public void delete(Long id) {}
         };
 
         InscripcionRepository inscripcionRepoStub = new InscripcionRepository() {
@@ -137,6 +142,8 @@ public class TallerServiceTest {
                 taller.setProfesor(profesor);
                 return taller;
             }
+            @Override
+            public void delete(Long id) {}
         };
 
         ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, new InscripcionRepository(), new UsuarioRepository());
@@ -155,6 +162,36 @@ public class TallerServiceTest {
         } catch (Exception e) {
             assertEquals("Los cupos deben ser mayores a cero.", e.getMessage());
         }
+    }
+
+    @Test
+    public void alEliminarTaller_DebeEliminarInscripcionesYTaller() throws Exception {
+        final boolean[] tallerEliminado = {false};
+        final boolean[] inscripcionesEliminadas = {false};
+
+        ITallerRepository tallerRepoStubLocal = new ITallerRepository() {
+            @Override public void save(Taller taller) {}
+            @Override public List<Taller> findAll() { return List.of(); }
+            @Override public Taller findById(Long id) { return new Taller(); }
+            @Override public void delete(Long id) { tallerEliminado[0] = true; }
+        };
+
+        InscripcionRepository inscripcionRepoStubLocal = new InscripcionRepository() {
+            @Override public void save(Inscripcion inscripcion) {}
+            @Override public Long countByTallerAndEstado(Long tallerId, String estado) { return 0L; }
+            @Override public Inscripcion findByTallerAndUsuario(Long tallerId, Long usuarioId) { return null; }
+            @Override public Inscripcion findFirstEnEspera(Long tallerId) { return null; }
+            @Override public List<Inscripcion> findByUsuario(Long usuarioId) { return List.of(); }
+            @Override public List<Inscripcion> findByTallerId(Long tallerId) { return List.of(); }
+            @Override public void deleteByTallerId(Long tallerId) { inscripcionesEliminadas[0] = true; }
+        };
+
+        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStubLocal, inscripcionRepoStubLocal, new UsuarioRepository());
+
+        serviceTest.eliminarTaller(1L);
+
+        assertTrue(inscripcionesEliminadas[0], "Deberia haber llamado a eliminar las inscripciones");
+        assertTrue(tallerEliminado[0], "Deberia haber llamado a eliminar el taller");
     }
 
     @Test
@@ -187,6 +224,8 @@ public class TallerServiceTest {
             public List<Taller> findAll() { return List.of(); }
             @Override
             public Taller findById(Long id) { return null; }
+            @Override
+            public void delete(Long id) {}
         };
 
         ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, new InscripcionRepository(), usuarioRepoStub);
@@ -222,6 +261,7 @@ public class TallerServiceTest {
             @Override public void save(Taller taller) {}
             @Override public List<Taller> findAll() { return List.of(); }
             @Override public Taller findById(Long id) { return new Taller(); }
+            @Override public void delete(Long id) {}
         }, inscripcionRepoStub, new UsuarioRepository());
 
         serviceTest.cancelarInscripcion(1L, 2L);

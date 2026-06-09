@@ -342,6 +342,27 @@
                 </form>
             </div>
             
+            <h2 class="section-title" style="margin-top: 40px;">Catálogo de Talleres Existentes</h2>
+            <div class="grid-cards">
+                @if(talleres != null && !talleres.isEmpty())
+                    @for(Taller t : talleres)
+                        <div class="card">
+                            <div class="card-title">${t.getNombre()}</div>
+                            <div class="card-info"><strong>Cupos Totales:</strong> ${t.getCuposTotales()}</div>
+                            <div class="card-info"><strong>Profesor:</strong> ${t.getProfesor().getNombre()}</div>
+                            <div class="card-info"><strong>Fechas:</strong> ${t.getFechaInicio().toString()} a ${t.getFechaFin().toString()}</div>
+                            <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${t.getBloqueHorario()}</div>
+                            
+                            <form action="/talleres/${t.getId()}/eliminar" method="POST" style="margin-top: 15px;" onsubmit="return confirm('¿Está seguro que desea eliminar este taller? Esta acción es irreversible.');">
+                                <button type="submit" class="btn btn-danger">Eliminar Taller</button>
+                            </form>
+                        </div>
+                    @endfor
+                @else
+                    <div class="empty-state">No hay talleres registrados en el sistema.</div>
+                @endif
+            </div>
+            
         @else
             <!-- SECCIÓN DOCENTE -->
             <h2 class="section-title">Mis Talleres Asignados</h2>

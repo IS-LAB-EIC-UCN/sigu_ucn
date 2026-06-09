@@ -7,4 +7,5 @@ public interface ITallerRepository {
     void save(Taller taller);
     Taller findById(Long id);
     List<Taller> findAll();
+    void delete(Long id);
 }

@@ -148,4 +148,13 @@ public class TallerServiceImpl implements ITallerService {
     public List<Usuario> obtenerDocentes() {
         return usuarioRepository.findByRol("DOCENTE");
     }
+
+    public void eliminarTaller(Long tallerId) throws Exception {
+        Taller taller = tallerRepository.findById(tallerId);
+        if (taller == null) {
+            throw new Exception("El taller no existe.");
+        }
+        inscripcionRepository.deleteByTallerId(tallerId);
+        tallerRepository.delete(tallerId);
+    }
 }

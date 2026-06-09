@@ -140,4 +140,21 @@ public class TallerController {
             ctx.redirect("/talleres?error=" + e.getMessage());
         }
     }
+
+    public static void eliminarTaller(Context ctx) {
+        String rolUsuario = ctx.sessionAttribute("rol");
+        if (!"ADMIN".equals(rolUsuario)) {
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode("Acceso denegado. Solo administradores pueden eliminar talleres.", java.nio.charset.StandardCharsets.UTF_8));
+            return;
+        }
+
+        try {
+            Long tallerId = Long.parseLong(ctx.pathParam("id"));
+            tallerService.eliminarTaller(tallerId);
+            ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Taller eliminado con exito", java.nio.charset.StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error al eliminar taller";
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
 }

@@ -15,4 +15,5 @@ public interface ITallerService {
     List<Inscripcion> obtenerMisInscripciones(Long usuarioId);
     List<Inscripcion> obtenerInscripcionesPorTaller(Long tallerId, Long docenteId) throws Exception;
     List<Usuario> obtenerDocentes();
+    void eliminarTaller(Long tallerId) throws Exception;
 }

@@ -101,4 +101,23 @@ public class InscripcionRepository {
             em.close();
         }
     }
+
+    // Eliminar todas las inscripciones de un taller especifico
+    public void deleteByTallerId(Long tallerId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            em.createQuery("DELETE FROM Inscripcion i WHERE i.taller.id = :tallerId")
+              .setParameter("tallerId", tallerId)
+              .executeUpdate();
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

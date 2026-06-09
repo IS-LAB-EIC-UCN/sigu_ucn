@@ -60,4 +60,23 @@ public class TallerRepositoryImpl implements ITallerRepository {
             em.close();
         }
     }
+
+    public void delete(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Taller t = em.find(Taller.class, id);
+            if (t != null) {
+                em.remove(t);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }
