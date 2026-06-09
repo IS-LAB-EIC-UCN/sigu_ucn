@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Scanner;
 
+import cl.ucn.app.model.Rol;
 import cl.ucn.app.model.Salida;
+import cl.ucn.app.repository.DB_local;
 import cl.ucn.app.repository.PrestamoRepository;
 import cl.ucn.app.service.Interfaces.IAdmin;
 import cl.ucn.app.service.Interfaces.IObserver;
@@ -46,7 +48,7 @@ public class AdminService implements IAdmin, IObserver {
         if(!checker.validar_string(tipo)) return;
         tipo = tipo.toUpperCase();
 
-        //pasar a DB_local con addRecurso(nombre, stock, tipo);
+        DB_local.addRecurso(nombre, stock, tipo);
 
     }
 
@@ -81,8 +83,9 @@ public class AdminService implements IAdmin, IObserver {
         console.log("Rol");
         String nombre_rol = scanner.nextLine();
 
-        //pasar a DB_local con addUsuario(nombre, correo, password, activo, nombre_rol);
-
+        Rol roltemp = new Rol(nombre_rol);
+        DB_local.addUsuario(nombre, correo, password, activo, roltemp);
+        roltemp = null;
     }
 
     @Override
@@ -107,7 +110,7 @@ public class AdminService implements IAdmin, IObserver {
 
         if(!checker.validar_telefono(telefono)) return;
 
-        //pasar a DB_local con addProveedor(nombre, correo, telefono);
+        DB_local.addProveedor(nombre, correo, telefono);
     }
 
     @Override
@@ -124,6 +127,9 @@ public class AdminService implements IAdmin, IObserver {
         Long id_recurso = (long) -1;
         Long id_proveedor = (long) -1;
         Long id_usuario = (long) -1;
+        int cantidad = -1;
+        LocalDate fecha = null;
+        LocalTime hora = null;
         String estado = null;
 
         //->...
@@ -138,19 +144,19 @@ public class AdminService implements IAdmin, IObserver {
             String cantidad_str = scanner.nextLine();
 
             if(!checker.validar_num(cantidad_str)) return;
-            int cantidad = Integer.parseInt(cantidad_str);
+            cantidad = Integer.parseInt(cantidad_str);
 
             console.log("Fecha:");
             String fecha_str = scanner.nextLine();
             
             if(!checker.validar_fecha(fecha_str)) return;
-            LocalDate fecha = LocalDate.parse(fecha_str);
+            fecha = LocalDate.parse(fecha_str);
 
             console.log("Hora:");
             String hora_str = scanner.nextLine();
 
             if(!checker.validar_hora(hora_str)) return;
-            LocalTime hora = LocalTime.parse(hora_str);
+            hora = LocalTime.parse(hora_str);
 
             //->...
             if (tipo.toUpperCase().equals("ENTRADA")) {
@@ -176,10 +182,9 @@ public class AdminService implements IAdmin, IObserver {
 
             String eleccion = scanner.nextLine();
 
-            if (eleccion.toUpperCase().equals("EDITAR")) prestamoRepository.alter(id_recurso, estado);
+            if (eleccion.toUpperCase().equals("EDITAR")) prestamoRepository.alter(id_recurso, estado); return;
         }
-        
-        //pasar a DB_local con addMovimiento(tipo, id_recurso, cantidad, fecha, hora, y los opcionales: id_proveedor, id_usuario, estado);
+        DB_local.addMovimiento(tipo, id_recurso, cantidad, fecha, hora, id_proveedor, id_usuario, estado);
     }
 
     @Override
