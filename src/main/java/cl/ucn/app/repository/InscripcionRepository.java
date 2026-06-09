@@ -76,13 +76,12 @@ public class InscripcionRepository {
         }
     }
     
-    // 4. Método para listar todos los talleres a los que se inscribió un usuario (Para la vista "Mis Talleres")
+    // MEtodo para listar todos los talleres a los que se inscribió un usuario 
     public List<Inscripcion> findByUsuario(Long usuarioId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            // Se debe hacer FETCH al profesor también para evitar LazyInitializationException en JTE
             TypedQuery<Inscripcion> query = em.createQuery(
-                    "SELECT i FROM Inscripcion i JOIN FETCH i.taller t JOIN FETCH t.profesor WHERE i.usuario.id = :usuarioId", Inscripcion.class);
+                    "SELECT i FROM Inscripcion i JOIN FETCH i.taller t JOIN FETCH t.profesor LEFT JOIN FETCH t.espacio WHERE i.usuario.id = :usuarioId", Inscripcion.class);
             query.setParameter("usuarioId", usuarioId);
             return query.getResultList();
         } finally {

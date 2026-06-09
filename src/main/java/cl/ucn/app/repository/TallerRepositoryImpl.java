@@ -42,7 +42,19 @@ public class TallerRepositoryImpl implements ITallerRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Taller> query = em.createQuery(
-                    "SELECT t FROM Taller t JOIN FETCH t.profesor", Taller.class);
+                    "SELECT t FROM Taller t JOIN FETCH t.profesor LEFT JOIN FETCH t.espacio", Taller.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Taller> findByProfesor(Long profesorId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Taller> query = em.createQuery(
+                    "SELECT t FROM Taller t JOIN FETCH t.profesor LEFT JOIN FETCH t.espacio WHERE t.profesor.id = :profesorId", Taller.class);
+            query.setParameter("profesorId", profesorId);
             return query.getResultList();
         } finally {
             em.close();

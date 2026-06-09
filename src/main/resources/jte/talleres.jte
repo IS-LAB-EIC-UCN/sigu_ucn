@@ -252,6 +252,7 @@
                                 
                                 <div class="card-info"><strong>Profesor:</strong> ${i.getTaller().getProfesor().getNombre()}</div>
                                 <div class="card-info"><strong>Inicio:</strong> ${i.getTaller().getFechaInicio().toString()}</div>
+                                <div class="card-info"><strong>Lugar:</strong> ${i.getTaller().getEspacio() != null ? i.getTaller().getEspacio().getNombre() : "Por definir"}</div>
                                 <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${i.getTaller().getBloqueHorario()}</div>
                                 
                                 <form action="/talleres/${i.getTaller().getId()}/cancelar" method="POST">
@@ -277,6 +278,7 @@
                             <div class="card-info"><strong>Cupos Totales:</strong> ${t.getCuposTotales()}</div>
                             <div class="card-info"><strong>Profesor:</strong> ${t.getProfesor().getNombre()}</div>
                             <div class="card-info"><strong>Fechas:</strong> ${t.getFechaInicio().toString()} a ${t.getFechaFin().toString()}</div>
+                            <div class="card-info"><strong>Lugar:</strong> ${t.getEspacio() != null ? t.getEspacio().getNombre() : "Por definir"}</div>
                             <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${t.getBloqueHorario()}</div>
                             <div class="card-info" style="margin-top: 10px; font-style: italic;">
                                 ${t.getDescripcion() != null ? t.getDescripcion() : "Sin descripción"}
@@ -342,6 +344,7 @@
                         <div class="card">
                             <div class="card-title">${t.getNombre()}</div>
                             <div class="card-info"><strong>Cupos:</strong> ${t.getCuposTotales()}</div>
+                            <div class="card-info"><strong>Lugar:</strong> ${t.getEspacio() != null ? t.getEspacio().getNombre() : "Por definir"}</div>
                             <div class="card-info"><strong>Bloque:</strong> ${t.getBloqueHorario()}</div>
                             
                             <a href="/talleres/${t.getId()}/alumnos" class="btn btn-primary" style="text-decoration: none;">Ver Lista de Alumnos</a>
