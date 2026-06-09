@@ -9,6 +9,7 @@ import cl.ucn.app.model.Proveedor;
 import cl.ucn.app.model.Recurso;
 import cl.ucn.app.model.Rol;
 import cl.ucn.app.model.Usuario;
+import cl.ucn.app.service.ConsoleService;
 import cl.ucn.app.service.MovimientoFactoryService;
 import cl.ucn.app.service.RecursoFactoryService;
 
@@ -24,6 +25,7 @@ public class DB_local {
     private static RecursoFactoryService recFactory;
     private static MovimientoFactoryService movFactory;
     private static MovimientoInventarioRepository movimientoRepository;
+    private static ConsoleService console;
 
     public DB_local() {
         recursoRepository = new RecursoRepository();
@@ -32,6 +34,7 @@ public class DB_local {
         recFactory = new RecursoFactoryService();
         movFactory = new MovimientoFactoryService();
         movimientoRepository = new MovimientoInventarioRepository();
+        console = new ConsoleService();
     }
 
     public static ArrayList<Recurso> getRecursos() {
@@ -69,12 +72,22 @@ public class DB_local {
     public static void addMovimiento(String tipo, Long id_recurso, int cantidad, LocalDate fecha,
         LocalTime hora, Long id_proveedor, Long id_usuario, String estado) {
         
-        if (id_recurso < 0 || cantidad < 0 || fecha == null || hora == null) return;
+        if (id_recurso < 0 || cantidad < 0 || fecha == null || hora == null) {
+            console.log("Error, los datos ingresados son incorrectos, reintentar");
+            return;
+        }
         
-        MovimientoInventario movimiento = null;
         Recurso recurso = recursoRepository.findById(id_recurso);
+
+        if (recurso.getStock() - cantidad < 0 &&
+        (tipo.toUpperCase().equals("PRESTAMO") || tipo.toUpperCase().equals("DEVOLUCION"))) {
+            console.log("No queda suficiente stock, reintentar");
+            return;
+        }
+
         Proveedor proveedor = proveedorRepository.findById(id_proveedor);
         Usuario usuario = usuarioRepository.findById(id_usuario);
+        MovimientoInventario movimiento = null;
 
         if(tipo.toUpperCase().equals("ENTRADA")) movimiento = movFactory.crearEntrada(recurso, cantidad, fecha, hora, proveedor);
         if(tipo.toUpperCase().equals("SALIDA")) movimiento = movFactory.crearSalida(recurso, cantidad, fecha, hora);
