@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ITallerService {
-    Taller crearTaller(String nombre, String descripcion, Integer cupos, LocalDate inicio, LocalDate fin, Character bloque, Long profesorId, Long espacioId) throws Exception;
+    Taller crearTaller(String nombre, String descripcion, String categoria, Integer cupos, LocalDate inicio, LocalDate fin, Character bloque, Long profesorId, Long espacioId) throws Exception;
     String inscribirAlumno(Long tallerId, Long usuarioId) throws Exception;
     void cancelarInscripcion(Long tallerId, Long usuarioId) throws Exception;
     List<Taller> obtenerTalleres(Long usuarioId, String rol);
@@ -18,4 +18,6 @@ public interface ITallerService {
     List<Usuario> obtenerDocentes();
     List<Espacio> obtenerEspacios();
     void eliminarTaller(Long tallerId) throws Exception;
+    Taller obtenerTallerPorId(Long id) throws Exception;
+    void editarTaller(Long tallerId, String nombre, String descripcion, String categoria, Integer cupos, LocalDate inicio, LocalDate fin, Character bloque, Long profesorId, Long espacioId) throws Exception;
 }

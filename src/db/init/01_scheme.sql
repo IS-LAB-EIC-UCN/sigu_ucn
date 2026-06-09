@@ -60,6 +60,7 @@ CREATE TABLE talleres (
     id BIGSERIAL PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     descripcion TEXT,
+    categoria VARCHAR(100) NOT NULL,
     cupos_totales INTEGER NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,

@@ -17,6 +17,9 @@ public class Taller {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    @Column(nullable = false, length = 100)
+    private String categoria;
+
     @Column(name = "cupos_totales", nullable = false)
     private Integer cuposTotales;
 
@@ -43,9 +46,10 @@ public class Taller {
     public Taller() {
     }
 
-    public Taller(String nombre, String descripcion, Integer cuposTotales, LocalDate fechaInicio, LocalDate fechaFin, String estado, Character bloqueHorario, Usuario profesor, Espacio espacio) {
+    public Taller(String nombre, String descripcion, String categoria, Integer cuposTotales, LocalDate fechaInicio, LocalDate fechaFin, String estado, Character bloqueHorario, Usuario profesor, Espacio espacio) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.categoria = categoria;
         this.cuposTotales = cuposTotales;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -77,6 +81,14 @@ public class Taller {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public Integer getCuposTotales() {

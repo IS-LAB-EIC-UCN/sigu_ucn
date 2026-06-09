@@ -189,7 +189,7 @@ public class TallerServiceTest {
     @Test
     public void alCrearTallerConCuposInvalidos_DebeLanzarExcepcion() {
         try {
-            tallerService.crearTaller("Taller 1", "Desc", 0, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(1), 'A', 1L, null);
+            tallerService.crearTaller("Taller 1", "Desc", "General", 0, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(1), 'A', 1L, null);
         } catch (Exception e) {
             assertEquals("Los cupos deben ser mayores a cero.", e.getMessage());
         }
@@ -233,7 +233,7 @@ public class TallerServiceTest {
     @Test
     public void alCrearTallerConFechasInvalidas_DebeLanzarExcepcion() {
         try {
-            tallerService.crearTaller("Taller 1", "Desc", 10, java.time.LocalDate.now().plusDays(5), java.time.LocalDate.now(), 'A', 1L, null);
+            tallerService.crearTaller("Taller 1", "Desc", "General", 10, java.time.LocalDate.now().plusDays(5), java.time.LocalDate.now(), 'A', 1L, null);
         } catch (Exception e) {
             assertEquals("La fecha de inicio no puede ser después de la fecha de fin.", e.getMessage());
         }
@@ -273,8 +273,9 @@ public class TallerServiceTest {
             @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
         });
 
-        Taller taller = serviceTest.crearTaller("Magia", "Desc", 15, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(2), 'B', 1L, null);
+        Taller taller = serviceTest.crearTaller("Magia", "Desc", "Arte", 15, java.time.LocalDate.now(), java.time.LocalDate.now().plusDays(2), 'B', 1L, null);
         assertEquals("Magia", taller.getNombre());
+        assertEquals("Arte", taller.getCategoria());
         assertEquals(15, taller.getCuposTotales());
         assertEquals("ABIERTO", taller.getEstado());
     }
@@ -316,5 +317,62 @@ public class TallerServiceTest {
 
         assertEquals("CANCELADO", inscripcionActiva.getEstado());
         assertEquals("INSCRITO", inscripcionEnEspera.getEstado());
+    }
+
+    @Test
+    public void alInscribirAlumno_SiHayChoqueHorario_DebeLanzarExcepcion() {
+        Taller tallerInscrito = new Taller();
+        tallerInscrito.setNombre("Taller de Dibujo");
+        tallerInscrito.setBloqueHorario('A');
+        tallerInscrito.setFechaInicio(java.time.LocalDate.now());
+        tallerInscrito.setFechaFin(java.time.LocalDate.now().plusDays(10));
+
+        Inscripcion inscripcionActiva = new Inscripcion();
+        inscripcionActiva.setTaller(tallerInscrito);
+        inscripcionActiva.setEstado("INSCRITO");
+
+        ITallerRepository tallerRepoStub = new ITallerRepository() {
+            @Override public void save(Taller taller) {}
+            @Override public List<Taller> findAll() { return List.of(); }
+            @Override public List<Taller> findByProfesor(Long profesorId) { return List.of(); }
+            @Override public boolean existeConflicto(Long espacioId, Character bloque, java.time.LocalDate inicio, java.time.LocalDate fin) { return false; }
+            @Override public Taller findById(Long id) { 
+                Taller tallerNuevo = new Taller();
+                tallerNuevo.setEstado("ABIERTO");
+                tallerNuevo.setBloqueHorario('A');
+                tallerNuevo.setFechaInicio(java.time.LocalDate.now().plusDays(5));
+                tallerNuevo.setFechaFin(java.time.LocalDate.now().plusDays(15));
+                return tallerNuevo; 
+            }
+            @Override public void delete(Long id) {}
+        };
+
+        InscripcionRepository inscripcionRepoStub = new InscripcionRepository() {
+            @Override public Inscripcion findByTallerAndUsuario(Long tallerId, Long usuarioId) { return null; }
+            @Override public Long countByTallerAndEstado(Long tallerId, String estado) { return 0L; }
+            @Override public void save(Inscripcion inscripcion) {}
+            @Override public Inscripcion findFirstEnEspera(Long tallerId) { return null; }
+            @Override public List<Inscripcion> findByUsuario(Long usuarioId) { return List.of(inscripcionActiva); }
+            @Override public List<Inscripcion> findByTallerId(Long tallerId) { return List.of(); }
+            @Override public void deleteByTallerId(Long tallerId) {}
+        };
+
+        UsuarioRepository usuarioRepoStub = new UsuarioRepository() {
+            @Override public Usuario findById(Long id) { return new Usuario(); }
+        };
+
+        ITallerService serviceTest = new TallerServiceImpl(tallerRepoStub, inscripcionRepoStub, usuarioRepoStub, new EspacioRepository() {
+            @Override public List<cl.ucn.app.model.Espacio> findAll() { return List.of(); }
+            @Override public cl.ucn.app.model.Espacio findById(Long id) { return null; }
+        });
+
+        boolean lanzoExcepcion = false;
+        try {
+            serviceTest.inscribirAlumno(2L, 1L);
+        } catch (Exception e) {
+            lanzoExcepcion = true;
+            assertEquals("No puedes inscribirte: Choque de horario con el taller 'Taller de Dibujo' en el bloque A.", e.getMessage());
+        }
+        assertTrue(lanzoExcepcion, "Debio lanzar una excepcion por choque horario");
     }
 }

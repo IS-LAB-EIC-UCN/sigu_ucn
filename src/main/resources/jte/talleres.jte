@@ -278,6 +278,7 @@
                             <span class="badge badge-abierto">Disponible</span>
                             
                             <div class="card-info"><strong>Cupos Totales:</strong> ${t.getCuposTotales()}</div>
+                            <div class="card-info"><strong>Categoría:</strong> ${t.getCategoria()}</div>
                             <div class="card-info"><strong>Profesor:</strong> ${t.getProfesor().getNombre()}</div>
                             <div class="card-info"><strong>Fechas:</strong> ${t.getFechaInicio().toString()} a ${t.getFechaFin().toString()}</div>
                             <div class="card-info"><strong>Lugar:</strong> ${t.getEspacio() != null ? t.getEspacio().getNombre() : "Por definir"}</div>
@@ -310,6 +311,10 @@
                         <div class="form-group">
                             <label>Descripción</label>
                             <input type="text" name="descripcion" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoría</label>
+                            <input type="text" name="categoria" class="form-control" required>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div class="form-group">
@@ -378,6 +383,7 @@
                                     <tr style="background-color: #f1f5f9; color: #475569;">
                                         <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Nombre</th>
                                         <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Docente</th>
+                                        <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Categoría</th>
                                         <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Cupos</th>
                                         <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Lugar</th>
                                         <th style="padding: 1rem; border-bottom: 1px solid #e2e8f0;">Bloque</th>
@@ -389,10 +395,12 @@
                                         <tr style="border-bottom: 1px solid #e2e8f0;">
                                             <td style="padding: 1rem; color: #0f172a;"><strong>${t.getNombre()}</strong></td>
                                             <td style="padding: 1rem; color: #475569;">${t.getProfesor().getNombre()}</td>
+                                            <td style="padding: 1rem; color: #475569;">${t.getCategoria()}</td>
                                             <td style="padding: 1rem; color: #475569;">${t.getCuposTotales()}</td>
                                             <td style="padding: 1rem; color: #475569;">${t.getEspacio() != null ? t.getEspacio().getNombre() : "Por definir"}</td>
                                             <td style="padding: 1rem; color: #475569;">${t.getBloqueHorario()}</td>
-                                            <td style="padding: 1rem;">
+                                            <td style="padding: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                                <a href="/talleres/${t.getId()}/editar" class="btn btn-primary" style="padding: 0.5rem; margin-top: 0; font-size: 0.85rem; text-decoration: none;">Editar</a>
                                                 <form action="/talleres/${t.getId()}/eliminar" method="POST" onsubmit="return confirm('¿Está seguro que desea eliminar este taller? Esta acción es irreversible.');" style="margin: 0;">
                                                     <button type="submit" class="btn btn-danger" style="padding: 0.5rem; margin-top: 0; font-size: 0.85rem;">Eliminar</button>
                                                 </form>

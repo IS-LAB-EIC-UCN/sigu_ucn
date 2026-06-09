@@ -38,7 +38,7 @@ public class TallerServiceImpl implements ITallerService {
         this.espacioRepository = espacioRepository;
     }
 
-    public Taller crearTaller(String nombre, String descripcion, Integer cupos, LocalDate inicio, LocalDate fin,
+    public Taller crearTaller(String nombre, String descripcion, String categoria, Integer cupos, LocalDate inicio, LocalDate fin,
             Character bloque, Long profesorId, Long espacioId) throws Exception {
         if (cupos <= 0) {
             throw new Exception("Los cupos deben ser mayores a cero.");
@@ -67,7 +67,7 @@ public class TallerServiceImpl implements ITallerService {
             }
         }
 
-        Taller taller = new Taller(nombre, descripcion, cupos, inicio, fin, "ABIERTO", bloque, profesor, espacio);
+        Taller taller = new Taller(nombre, descripcion, categoria, cupos, inicio, fin, "ABIERTO", bloque, profesor, espacio);
         tallerRepository.save(taller);
         return taller;
 
@@ -88,6 +88,19 @@ public class TallerServiceImpl implements ITallerService {
         Inscripcion existente = inscripcionRepository.findByTallerAndUsuario(tallerId, usuarioId);
         if (existente != null && !existente.getEstado().equals("CANCELADO")) {
             throw new Exception("Ya tienes estado '" + existente.getEstado() + "' en este taller.");
+        }
+
+        List<Inscripcion> misInscripciones = inscripcionRepository.findByUsuario(usuarioId);
+        for (Inscripcion ins : misInscripciones) {
+            if (ins.getEstado().equals("INSCRITO")) {
+                Taller tInscrito = ins.getTaller();
+                if (tInscrito.getBloqueHorario().equals(taller.getBloqueHorario())) {
+                    if (!taller.getFechaInicio().isAfter(tInscrito.getFechaFin()) && 
+                        !taller.getFechaFin().isBefore(tInscrito.getFechaInicio())) {
+                        throw new Exception("No puedes inscribirte: Choque de horario con el taller '" + tInscrito.getNombre() + "' en el bloque " + taller.getBloqueHorario() + ".");
+                    }
+                }
+            }
         }
 
         Inscripcion inscripcion = (existente != null) ? existente : new Inscripcion();
@@ -176,5 +189,65 @@ public class TallerServiceImpl implements ITallerService {
         }
         inscripcionRepository.deleteByTallerId(tallerId);
         tallerRepository.delete(tallerId);
+    }
+
+    public Taller obtenerTallerPorId(Long id) throws Exception {
+        Taller taller = tallerRepository.findById(id);
+        if (taller == null) {
+            throw new Exception("El taller no existe.");
+        }
+        return taller;
+    }
+
+    public void editarTaller(Long tallerId, String nombre, String descripcion, String categoria, Integer cupos, LocalDate inicio, LocalDate fin, Character bloque, Long profesorId, Long espacioId) throws Exception {
+        Taller taller = tallerRepository.findById(tallerId);
+        if (taller == null) {
+            throw new Exception("El taller no existe.");
+        }
+
+        if (cupos <= 0) {
+            throw new Exception("Los cupos deben ser mayores a cero.");
+        }
+
+        Long inscritos = inscripcionRepository.countByTallerAndEstado(tallerId, "INSCRITO");
+        if (cupos < inscritos) {
+            throw new Exception("No puedes reducir los cupos a un valor menor que la cantidad de alumnos ya inscritos (" + inscritos + ").");
+        }
+
+        if (inicio.isAfter(fin)) {
+            throw new Exception("La fecha de inicio no puede ser después de la fecha de fin.");
+        }
+
+        Usuario profesor = usuarioRepository.findById(profesorId);
+        if (profesor == null || !profesor.getRol().getNombre().equals("DOCENTE")) {
+            throw new Exception("El profesor asignado no es válido.");
+        }
+
+        Espacio espacio = (espacioId != null) ? espacioRepository.findById(espacioId) : null;
+        if (espacioId != null && espacio == null) {
+            throw new Exception("El espacio asignado no es válido.");
+        }
+
+        if (espacio != null) {
+            boolean cambioClave = taller.getEspacio() == null || !taller.getEspacio().getId().equals(espacioId) || 
+                                  !taller.getBloqueHorario().equals(bloque) || 
+                                  !taller.getFechaInicio().equals(inicio) || 
+                                  !taller.getFechaFin().equals(fin);
+            if (cambioClave && tallerRepository.existeConflicto(espacioId, bloque, inicio, fin)) {
+                throw new Exception("El espacio seleccionado ya está ocupado en ese bloque y rango de fechas.");
+            }
+        }
+
+        taller.setNombre(nombre);
+        taller.setDescripcion(descripcion);
+        taller.setCategoria(categoria);
+        taller.setCuposTotales(cupos);
+        taller.setFechaInicio(inicio);
+        taller.setFechaFin(fin);
+        taller.setBloqueHorario(bloque);
+        taller.setProfesor(profesor);
+        taller.setEspacio(espacio);
+
+        tallerRepository.save(taller);
     }
 }

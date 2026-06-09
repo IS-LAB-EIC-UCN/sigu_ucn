@@ -68,6 +68,7 @@ public class TallerController {
         try {
             String nombre = ctx.formParam("nombre");
             String descripcion = ctx.formParam("descripcion");
+            String categoria = ctx.formParam("categoria");
             Integer cupos = Integer.parseInt(ctx.formParam("cupos"));
             LocalDate inicio = LocalDate.parse(ctx.formParam("fechaInicio"));
             LocalDate fin = LocalDate.parse(ctx.formParam("fechaFin"));
@@ -84,7 +85,7 @@ public class TallerController {
             String espacioIdStr = ctx.formParam("espacioId");
             Long espacioId = (espacioIdStr != null && !espacioIdStr.isBlank()) ? Long.parseLong(espacioIdStr) : null;
 
-            tallerService.crearTaller(nombre, descripcion, cupos, inicio, fin, bloque, profesorId, espacioId);
+            tallerService.crearTaller(nombre, descripcion, categoria, cupos, inicio, fin, bloque, profesorId, espacioId);
             ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Taller creado con exito", java.nio.charset.StandardCharsets.UTF_8));
         } catch (Exception e) {
             String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
@@ -152,6 +153,63 @@ public class TallerController {
             ));
         } catch (Exception e) {
             ctx.redirect("/talleres?error=" + e.getMessage());
+        }
+    }
+
+    public static void mostrarFormularioEdicion(Context ctx) {
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
+        String nombreUsuario = ctx.sessionAttribute("usuarioNombre");
+        if (!"ADMIN".equals(rolUsuario)) {
+            ctx.status(403).result("Solo los administradores pueden editar talleres.");
+            return;
+        }
+
+        try {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Taller taller = tallerService.obtenerTallerPorId(id);
+            List<Usuario> docentes = tallerService.obtenerDocentes();
+            List<Espacio> espacios = tallerService.obtenerEspacios();
+
+            ctx.render("editar_taller.jte", Map.of(
+                    "title", "Editar Taller",
+                    "taller", taller,
+                    "docentes", docentes,
+                    "espacios", espacios,
+                    "usuarioNombre", nombreUsuario != null ? nombreUsuario : "Admin",
+                    "rol", rolUsuario
+            ));
+        } catch (Exception e) {
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(e.getMessage() != null ? e.getMessage() : "Error", java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void procesarEdicionTaller(Context ctx) {
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(rolUsuario)) {
+            ctx.status(403).result("Solo los administradores pueden editar talleres.");
+            return;
+        }
+
+        Long tallerId = Long.parseLong(ctx.pathParam("id"));
+
+        try {
+            String nombre = ctx.formParam("nombre");
+            String descripcion = ctx.formParam("descripcion");
+            String categoria = ctx.formParam("categoria");
+            Integer cupos = Integer.parseInt(ctx.formParam("cupos_totales"));
+            LocalDate inicio = LocalDate.parse(ctx.formParam("fecha_inicio"));
+            LocalDate fin = LocalDate.parse(ctx.formParam("fecha_fin"));
+            Character bloque = ctx.formParam("bloque_horario").charAt(0);
+            Long profesorId = Long.parseLong(ctx.formParam("profesor_id"));
+            String espacioIdStr = ctx.formParam("espacio_id");
+            Long espacioId = (espacioIdStr != null && !espacioIdStr.isEmpty()) ? Long.parseLong(espacioIdStr) : null;
+
+            tallerService.editarTaller(tallerId, nombre, descripcion, categoria, cupos, inicio, fin, bloque, profesorId, espacioId);
+
+            ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Taller actualizado exitosamente.", java.nio.charset.StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error al actualizar el taller";
+            ctx.redirect("/talleres/" + tallerId + "/editar?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
         }
     }
 
