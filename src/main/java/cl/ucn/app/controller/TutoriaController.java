@@ -1,13 +1,12 @@
 package cl.ucn.app.controller;
 
 import io.javalin.http.Context;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeController {
+public class TutoriaController {
 
-    public void showHome(Context ctx) {
+    public void showTutoria(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
 
         if (usuarioNombre == null) {
@@ -19,6 +18,6 @@ public class HomeController {
         model.put("title", "Inicio - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
 
-        ctx.render("home.jte", model);
+        ctx.render("tutorias.jte", model);
     }
 }

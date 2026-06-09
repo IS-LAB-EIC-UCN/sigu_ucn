@@ -13,6 +13,6 @@ public final class HomeRoutes {
 
         config.routes.get("/", ctx -> ctx.redirect("/login"));
         config.routes.get("/home", homeController::showHome);
-        config.routes.get("/tutorias", homeController::showTutoria);
+
     }
 }

@@ -5,22 +5,37 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3a1625d1-5da0-4033-82c9-ed8703289353" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/init/03_scheme_migration.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/init/04_seed_migrations.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/migrations/scheme_migration.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db/migrations/seed_migrations.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Asignatura.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/TutoriaReserva.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/jte/tutorias.jte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/db/init/01_scheme.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/db/init/02_seed.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/config/JPAUtil.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/TutoriaController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/main/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/UsuarioRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/TutoriaRoutes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/service/AuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/util/AppProperties.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/jte/.jteroot" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/jte/home.jte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/jte/login.jte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/css/styles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/init/01_scheme.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init/01_scheme.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/init/02_seed.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init/02_seed.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/HomeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Tutoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Tutoria.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/AuthRoutes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/AuthRoutes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Espacio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Espacio.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Reserva.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Reserva.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Rol.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Rol.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Usuario.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Usuario.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/HomeRoutes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/HomeRoutes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/jte/layout/main.jte" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/jte/layout/main.jte" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +76,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Merging grupo-8&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/dsanmartins/Insync/daniel.sanmartin@ucn.cl/GDrive/Developments/sigu_ucn&quot;,
@@ -107,6 +122,12 @@
       <workItem from="1780513398966" duration="3021000" />
       <workItem from="1780812494232" duration="1064000" />
       <workItem from="1780859654868" duration="19262000" />
+      <workItem from="1780892362957" duration="936000" />
+      <workItem from="1780894836209" duration="816000" />
+      <workItem from="1780919557449" duration="291000" />
+      <workItem from="1780920577859" duration="167000" />
+      <workItem from="1780927372400" duration="4799000" />
+      <workItem from="1780941818420" duration="11244000" />
     </task>
     <servers />
   </component>

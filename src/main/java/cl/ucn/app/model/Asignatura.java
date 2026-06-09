@@ -10,7 +10,7 @@ public class Asignatura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, unique = true, length = 20)
     private String codigo;
 
     @Column(nullable = false, length = 100)
@@ -23,14 +23,20 @@ public class Asignatura {
         this.nombre = nombre;
     }
 
-    public Asignatura() {}
+    public Asignatura() {
+
+    }
 
 
     public Long getId() { return id; }
+
     public String getNombre() { return nombre; }
+
     public String getCodigo() { return codigo; }
 
     public void setId(Long id) { this.id = id; }
+
     public void setCodigo(String codigo) { this.codigo = codigo; }
+
     public void setNombre(String nombre) { this.nombre = nombre; }
 }
