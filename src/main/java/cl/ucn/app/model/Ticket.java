@@ -49,8 +49,12 @@ public class Ticket {
     public void setIdTicket(Long id) { this.idTicket = id; }
     public String getTitulo() { return titulo; }
     public String getDescripcion() { return descripcion; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
     public String getPrioridad() { return prioridad; }
     public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
     public String getResolucion() { return resolucion; }
     public void setResolucion(String r) { this.resolucion = r; }
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
