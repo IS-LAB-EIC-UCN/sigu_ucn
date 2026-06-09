@@ -1,0 +1,18 @@
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: sigu_ucn_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sigu_ucn
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_data:

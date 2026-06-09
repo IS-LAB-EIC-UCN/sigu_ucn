@@ -1,4 +1,7 @@
 package cl.ucn.app.model;
 
-public class Rol {
+public enum Rol {
+    ESTUDIANTE,
+    PROFESOR,
+    ADMINISTRADOR
 }
