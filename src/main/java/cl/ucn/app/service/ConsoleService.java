@@ -14,11 +14,13 @@ public class ConsoleService implements IConsole {
 
     private final RecursoRepository recursoRepository;
     private final NotificacionService notificador;
+    private final FiltradoCategoriaService filtrador;
     private final CheckerService checker;
 
     public ConsoleService() {
         this.recursoRepository = new RecursoRepository();
         this.notificador = new NotificacionService();
+        this.filtrador = new FiltradoCategoriaService();
         this.checker = new CheckerService();
     }
 
@@ -46,7 +48,7 @@ public class ConsoleService implements IConsole {
             return;
         }
         if (checker.validar_string(categoria)) {
-            System.out.println(recursoRepository.findByCategoria(categoria));
+            filtrador.filtrar(categoria);
         }
     }
 
