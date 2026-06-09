@@ -55,3 +55,45 @@ CREATE INDEX idx_usuarios_rol_id ON usuarios(rol_id);
 CREATE INDEX idx_reservas_usuario_id ON reservas(usuario_id);
 CREATE INDEX idx_reservas_espacio_id ON reservas(espacio_id);
 CREATE INDEX idx_reservas_fecha_reserva ON reservas(fecha_reserva);
+
+CREATE TABLE talleres (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion TEXT,
+    cupos_totales INTEGER NOT NULL,
+    fecha_inicio DATE NOT NULL,
+    fecha_fin DATE NOT NULL,
+    estado VARCHAR(30) NOT NULL,
+    bloque_horario CHAR(1) NOT NULL,
+    profesor_id BIGINT NOT NULL,
+    espacio_id BIGINT,
+    CONSTRAINT fk_talleres_usuarios
+        FOREIGN KEY (profesor_id)
+            REFERENCES usuarios(id)
+            ON UPDATE CASCADE
+            ON DELETE RESTRICT,
+    CONSTRAINT fk_talleres_espacios
+        FOREIGN KEY (espacio_id)
+            REFERENCES espacios(id)
+            ON UPDATE CASCADE
+            ON DELETE RESTRICT
+);
+
+CREATE TABLE inscripciones (
+    id BIGSERIAL PRIMARY KEY,
+    taller_id BIGINT NOT NULL,
+    usuario_id BIGINT NOT NULL,
+    fecha_inscripcion TIMESTAMP NOT NULL,
+    estado VARCHAR(30) NOT NULL,
+    CONSTRAINT fk_inscripciones_talleres
+        FOREIGN KEY (taller_id)
+            REFERENCES talleres(id)
+            ON UPDATE CASCADE
+            ON DELETE RESTRICT,
+    CONSTRAINT fk_inscripciones_usuarios
+        FOREIGN KEY (usuario_id)
+            REFERENCES usuarios(id)
+            ON UPDATE CASCADE
+            ON DELETE RESTRICT,
+    CONSTRAINT uk_inscripciones_taller_usuario UNIQUE (taller_id, usuario_id)
+);

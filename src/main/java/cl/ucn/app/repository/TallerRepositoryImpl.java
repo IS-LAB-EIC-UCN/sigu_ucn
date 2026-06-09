@@ -7,7 +7,7 @@ import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
-public class TallerRepository {
+public class TallerRepositoryImpl implements ITallerRepository {
 
     public void save(Taller taller) {
         EntityManager em = JPAUtil.getEntityManager();

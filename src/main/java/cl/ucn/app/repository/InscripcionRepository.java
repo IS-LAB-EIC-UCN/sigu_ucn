@@ -88,4 +88,17 @@ public class InscripcionRepository {
             em.close();
         }
     }
+
+    // Devuelve una lista de todas las inscripciones (alumnos) de un taller específico
+    public List<Inscripcion> findByTallerId(Long tallerId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Inscripcion> query = em.createQuery(
+                    "SELECT i FROM Inscripcion i JOIN FETCH i.usuario u WHERE i.taller.id = :tallerId", Inscripcion.class);
+            query.setParameter("tallerId", tallerId);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

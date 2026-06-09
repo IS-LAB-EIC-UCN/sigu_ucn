@@ -4,7 +4,6 @@ import cl.ucn.app.model.Inscripcion;
 import cl.ucn.app.model.Taller;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.InscripcionRepository;
-import cl.ucn.app.repository.TallerRepository;
 import cl.ucn.app.repository.UsuarioRepository;
 
 import java.time.LocalDate;
@@ -12,25 +11,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TallerService {
+import cl.ucn.app.repository.ITallerRepository;
+import cl.ucn.app.repository.TallerRepositoryImpl;
 
-    private final TallerRepository tallerRepository;
+public class TallerServiceImpl implements ITallerService {
+
+    private final ITallerRepository tallerRepository;
     private final InscripcionRepository inscripcionRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public TallerService() {
-        this.tallerRepository = new TallerRepository();
+    public TallerServiceImpl() {
+        this.tallerRepository = new TallerRepositoryImpl();
         this.inscripcionRepository = new InscripcionRepository();
         this.usuarioRepository = new UsuarioRepository();
     }
 
-    public TallerService(TallerRepository tallerRepository, InscripcionRepository inscripcionRepository, UsuarioRepository usuarioRepository) {
+    public TallerServiceImpl(ITallerRepository tallerRepository, InscripcionRepository inscripcionRepository,
+            UsuarioRepository usuarioRepository) {
         this.tallerRepository = tallerRepository;
         this.inscripcionRepository = inscripcionRepository;
         this.usuarioRepository = usuarioRepository;
     }
 
-    public Taller crearTaller(String nombre, String descripcion, Integer cupos, LocalDate inicio, LocalDate fin, Character bloque, Long profesorId) throws Exception {
+    public Taller crearTaller(String nombre, String descripcion, Integer cupos, LocalDate inicio, LocalDate fin,
+            Character bloque, Long profesorId) throws Exception {
         if (cupos <= 0) {
             throw new Exception("Los cupos deben ser mayores a cero.");
         }
@@ -43,11 +47,15 @@ public class TallerService {
             throw new Exception("El profesor asignado no existe o no es Docente.");
         }
 
+        if (inicio.isBefore(LocalDate.now())) {
+            throw new Exception("Fecha de inicio invalida");
+        }
+
         Taller taller = new Taller(nombre, descripcion, cupos, inicio, fin, "ABIERTO", bloque, profesor, null);
         tallerRepository.save(taller);
         return taller;
-    }
 
+    }
 
     public String inscribirAlumno(Long tallerId, Long usuarioId) throws Exception {
         Taller taller = tallerRepository.findById(tallerId);
@@ -87,16 +95,16 @@ public class TallerService {
         return mensaje;
     }
 
-    //Lista de espera
+    // Lista de espera
     public void cancelarInscripcion(Long tallerId, Long usuarioId) throws Exception {
         Inscripcion inscripcion = inscripcionRepository.findByTallerAndUsuario(tallerId, usuarioId);
-        
+
         if (inscripcion == null || inscripcion.getEstado().equals("CANCELADO")) {
             throw new Exception("No tienes una inscripción activa para cancelar.");
         }
 
         boolean teniaCupo = inscripcion.getEstado().equals("INSCRITO");
-        
+
         inscripcion.setEstado("CANCELADO");
         inscripcionRepository.save(inscripcion);
 
@@ -104,12 +112,12 @@ public class TallerService {
             Inscripcion afortunado = inscripcionRepository.findFirstEnEspera(tallerId);
             if (afortunado != null) {
                 afortunado.setEstado("INSCRITO");
-                inscripcionRepository.save(afortunado); 
+                inscripcionRepository.save(afortunado);
             }
         }
     }
 
-    //visibilidad de rol
+    // visibilidad de rol
     public List<Taller> obtenerTalleres(Long usuarioId, String rol) {
         List<Taller> todos = tallerRepository.findAll();
 
@@ -118,11 +126,26 @@ public class TallerService {
                     .filter(t -> t.getProfesor().getId().equals(usuarioId))
                     .collect(Collectors.toList());
         }
-        
+
         return todos;
     }
 
     public List<Inscripcion> obtenerMisInscripciones(Long usuarioId) {
         return inscripcionRepository.findByUsuario(usuarioId);
+    }
+
+    public List<Inscripcion> obtenerInscripcionesPorTaller(Long tallerId, Long docenteId) throws Exception {
+        Taller taller = tallerRepository.findById(tallerId);
+        if (taller == null) {
+            throw new Exception("El taller no existe.");
+        }
+        if (!taller.getProfesor().getId().equals(docenteId)) {
+            throw new Exception("No tienes permiso para ver los alumnos de este taller.");
+        }
+        return inscripcionRepository.findByTallerId(tallerId);
+    }
+
+    public List<Usuario> obtenerDocentes() {
+        return usuarioRepository.findByRol("DOCENTE");
     }
 }

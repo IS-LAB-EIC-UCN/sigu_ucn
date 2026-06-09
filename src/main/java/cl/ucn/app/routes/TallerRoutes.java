@@ -12,5 +12,6 @@ public class TallerRoutes {
         config.routes.post("/talleres", TallerController::registrarTaller);
         config.routes.post("/talleres/{id}/inscribir", TallerController::inscribirAlumno);
         config.routes.post("/talleres/{id}/cancelar", TallerController::cancelarInscripcion);
+        config.routes.get("/talleres/{id}/alumnos", TallerController::listarAlumnosPorTaller);
     }
 }

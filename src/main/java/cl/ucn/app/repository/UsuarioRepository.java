@@ -60,4 +60,18 @@ public class UsuarioRepository {
             em.close();
         }
     }
+
+    public List<Usuario> findByRol(String rolNombre) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Usuario> query = em.createQuery(
+                    "SELECT u FROM Usuario u JOIN FETCH u.rol r WHERE r.nombre = :rolNombre",
+                    Usuario.class
+            );
+            query.setParameter("rolNombre", rolNombre);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

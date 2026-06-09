@@ -2,15 +2,17 @@ package cl.ucn.app.controller;
 
 import cl.ucn.app.model.Inscripcion;
 import cl.ucn.app.model.Taller;
-import cl.ucn.app.service.TallerService;
 import io.javalin.http.Context;
 import java.time.LocalDate;
+import cl.ucn.app.model.Usuario;
 import java.util.List;
 import java.util.Map;
+import cl.ucn.app.service.ITallerService;
+import cl.ucn.app.service.TallerServiceImpl;
 
 public class TallerController {
 
-    private static final TallerService tallerService = new TallerService();
+    private static final ITallerService tallerService = new TallerServiceImpl();
 
     public static void listarTalleres(Context ctx) {
         Long usuarioId = ctx.sessionAttribute("usuarioId");
@@ -31,12 +33,18 @@ public class TallerController {
             misInscripciones = tallerService.obtenerMisInscripciones(usuarioId);
         }
 
+        List<Usuario> docentes = null;
+        if ("ADMIN".equals(rolUsuario)) {
+            docentes = tallerService.obtenerDocentes();
+        }
+
         ctx.render("talleres.jte", Map.of(
                 "title", "Talleres - SIGU-UCN",
                 "usuarioNombre", nombreUsuario != null ? nombreUsuario : "Demo",
                 "rol", rolUsuario,
                 "talleres", talleres,
-                "misInscripciones", misInscripciones != null ? misInscripciones : List.of()
+                "misInscripciones", misInscripciones != null ? misInscripciones : List.of(),
+                "docentes", docentes != null ? docentes : List.of()
         ));
     }
 
@@ -95,6 +103,31 @@ public class TallerController {
             Long tallerId = Long.parseLong(ctx.pathParam("id"));
             tallerService.cancelarInscripcion(tallerId, usuarioId);
             ctx.redirect("/talleres?success=Inscripcion+cancelada+correctamente");
+        } catch (Exception e) {
+            ctx.redirect("/talleres?error=" + e.getMessage());
+        }
+    }
+
+    public static void listarAlumnosPorTaller(Context ctx) {
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
+        String nombreUsuario = ctx.sessionAttribute("usuarioNombre");
+
+        if (usuarioId == null || !"DOCENTE".equals(rolUsuario)) {
+            ctx.status(403).result("Acceso denegado: Solo los docentes pueden ver los alumnos.");
+            return;
+        }
+
+        try {
+            Long tallerId = Long.parseLong(ctx.pathParam("id"));
+            List<Inscripcion> inscripciones = tallerService.obtenerInscripcionesPorTaller(tallerId, usuarioId);
+            
+            ctx.render("alumnos_taller.jte", Map.of(
+                    "title", "Alumnos del Taller",
+                    "usuarioNombre", nombreUsuario != null ? nombreUsuario : "Demo",
+                    "rol", rolUsuario,
+                    "inscripciones", inscripciones
+            ));
         } catch (Exception e) {
             ctx.redirect("/talleres?error=" + e.getMessage());
         }

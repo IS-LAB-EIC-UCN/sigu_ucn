@@ -6,9 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="3a1625d1-5da0-4033-82c9-ed8703289353" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/init/02_seed.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init/02_seed.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/main/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/main/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/jte/layout/main.jte" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/jte/layout/main.jte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/db/init/01_scheme.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/db/init/01_scheme.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/TallerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/TallerController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/InscripcionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/InscripcionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/TallerRoutes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/TallerRoutes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/service/TallerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/service/TallerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/jte/talleres.jte" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/jte/talleres.jte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/cl/ucn/app/service/TallerServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/cl/ucn/app/service/TallerServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,26 +42,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "grupo-3",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/dsanmartins/Insync/daniel.sanmartin@ucn.cl/GDrive/Developments/sigu_ucn",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;grupo-3&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/claudio/Escritorio/desktop/Talleres/IGSO/sigu_ucn&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.javacompiler&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
