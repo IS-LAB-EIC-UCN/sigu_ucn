@@ -16,6 +16,13 @@ public class Asignatura {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    public Asignatura() {
+    }
+
+    public Asignatura(String codigo, String nombre) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+    }
 
     public Asignatura(Long id, String codigo, String nombre) {
         this.id = id;
@@ -23,20 +30,27 @@ public class Asignatura {
         this.nombre = nombre;
     }
 
-    public Asignatura() {
-
+    public Long getId() {
+        return id;
     }
 
+    public String getCodigo() {
+        return codigo;
+    }
 
-    public Long getId() { return id; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public String getNombre() { return nombre; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
 
-    public void setId(Long id) { this.id = id; }
-
-    public void setCodigo(String codigo) { this.codigo = codigo; }
-
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }

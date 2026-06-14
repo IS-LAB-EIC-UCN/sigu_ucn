@@ -13,6 +13,5 @@ public final class AuthRoutes {
         config.routes.get("/login", authController::showLogin);
         config.routes.post("/login", authController::doLogin);
         config.routes.get("/logout", authController::logout);
-
     }
 }

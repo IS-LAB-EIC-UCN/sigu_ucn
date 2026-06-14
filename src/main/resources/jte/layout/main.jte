@@ -38,7 +38,7 @@
                 <li><a href="#">Grupo 5 - Inventario</a></li>
                 <li><a href="#">Grupo 6 - Eventos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>
-                <li><a href="/tutorias">Grupo 8 - Tutorías</a></li>
+                <li><a href="/tutorias">Grupo 8 - Tutorias</a></li>
                 <li><a href="#">Grupo 9 - Estacionamientos</a></li>
             </ul>
         </aside>

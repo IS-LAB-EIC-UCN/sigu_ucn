@@ -1,5 +1,4 @@
-<<<<<<< Updated upstream
-=======
+
 
 services:
   postgres:
@@ -15,9 +14,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
-      - ./db/migrations/scheme_migration.sql:/docker-entrypoint-initdb.d/scheme_migration.sql
-      - ./db/migrations/seed_migrations.sql:/docker-entrypoint-initdb.d/seed_migrations.sql
+      - ./db/migrations/V001__modulo_tutorias.sql:/docker-entrypoint-initdb.d/V001__modulo_tutorias.sql
+      - ./db/migrations/V002__crear_rol_tutor.sql:/docker-entrypoint-initdb.d/V002__crear_rol_tutor.sql
 
 volumes:
   postgres_data:
->>>>>>> Stashed changes
