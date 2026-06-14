@@ -24,12 +24,6 @@ public class Asignatura {
         this.nombre = nombre;
     }
 
-    public Asignatura(Long id, String codigo, String nombre) {
-        this.id = id;
-        this.codigo = codigo;
-        this.nombre = nombre;
-    }
-
     public Long getId() {
         return id;
     }

@@ -38,14 +38,6 @@ public class TutoriaReserva {
         this.creadoEn = LocalDateTime.now();
     }
 
-    public TutoriaReserva(Long id, Tutoria tutoria, Usuario estudiante, Boolean asistio, LocalDateTime creadoEn) {
-        this.id = id;
-        this.tutoria = tutoria;
-        this.estudiante = estudiante;
-        this.asistio = asistio;
-        this.creadoEn = creadoEn;
-    }
-
     public Long getId() {
         return id;
     }

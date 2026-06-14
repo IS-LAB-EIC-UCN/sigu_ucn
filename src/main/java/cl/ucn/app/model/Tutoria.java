@@ -46,17 +46,6 @@ public class Tutoria {
         this.estado = estado;
     }
 
-    public Tutoria(Long id, Usuario usuario, Asignatura asignatura, LocalDate fecha,
-                   LocalTime horaInicio, LocalTime horaFin, String estado) {
-        this.id = id;
-        this.usuario = usuario;
-        this.asignatura = asignatura;
-        this.fecha = fecha;
-        this.horaInicio = horaInicio;
-        this.horaFin = horaFin;
-        this.estado = estado;
-    }
-
     public Long getId() {
         return id;
     }
