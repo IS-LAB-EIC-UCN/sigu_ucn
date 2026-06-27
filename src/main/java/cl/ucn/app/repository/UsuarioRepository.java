@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UsuarioRepository {
 
-    public Usuario findByCorreo(String correo) {
+    public Usuario findByEmail(String correo) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Usuario> query = em.createQuery(
