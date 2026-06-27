@@ -1,51 +1,56 @@
 package cl.ucn.app.controller;
 
-import cl.ucn.app.model.Usuario;
 import cl.ucn.app.service.AuthService;
+import cl.ucn.app.model.Usuario;
 import io.javalin.http.Context;
-
+import io.javalin.http.HttpStatus;
 import java.util.Map;
 
 public class AuthController {
 
     private final AuthService authService;
 
-    public AuthController() {
-        this.authService = new AuthService();
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
-    public void showLogin(Context ctx) {
-        ctx.render("login.jte", Map.of("error", ""));
+    public void renderLogin(Context ctx) {
+        ctx.render("jte/login.jte");
     }
 
-    public void doLogin(Context ctx) {
-        String correo = ctx.formParam("correo");
+    public void handleLogin(Context ctx) {
+        String email = ctx.formParam("email");
         String password = ctx.formParam("password");
 
-        if (correo == null || correo.isBlank() || password == null || password.isBlank()) {
-            ctx.status(400);
-            ctx.render("login.jte", Map.of("error", "Debe ingresar correo y contraseña."));
+        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+            ctx.status(HttpStatus.BAD_REQUEST);
+            ctx.render("jte/login.jte", Map.of("error", "Todos los campos son obligatorios."));
             return;
         }
 
-        Usuario usuario = authService.autenticar(correo, password);
-
-        if (usuario == null) {
-            ctx.status(401);
-            ctx.render("login.jte", Map.of("error", "Credenciales inválidas o usuario inactivo."));
+        if (!email.endsWith("@alumnos.ucn.cl") && !email.endsWith("@ucn.cl")) {
+            ctx.status(HttpStatus.BAD_REQUEST);
+            ctx.render("jte/login.jte", Map.of("error", "Debe utilizar un correo institucional de la UCN."));
             return;
         }
 
-        ctx.sessionAttribute("usuarioId", usuario.getId());
-        ctx.sessionAttribute("usuarioNombre", usuario.getNombre());
-        ctx.sessionAttribute("usuarioCorreo", usuario.getCorreo());
-        ctx.sessionAttribute("usuarioRol", usuario.getRol().getNombre());
-
-        ctx.redirect("/home");
+        try {
+            Usuario usuario = authService.authenticate(email, password);
+            if (usuario != null) {
+                ctx.sessionAttribute("currentUser", usuario);
+                ctx.redirect("/home");
+            } else {
+                ctx.status(HttpStatus.UNAUTHORIZED);
+                ctx.render("jte/login.jte", Map.of("error", "Credenciales inválidas. Intente nuevamente."));
+            }
+        } catch (Exception e) {
+            ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            ctx.render("jte/login.jte", Map.of("error", "Ocurrió un error interno. Intente más tarde."));
+        }
     }
 
-    public void logout(Context ctx) {
-        ctx.req().getSession().invalidate();
+    public void handleLogout(Context ctx) {
+        ctx.consumeSessionAttribute("currentUser");
         ctx.redirect("/login");
     }
 }
