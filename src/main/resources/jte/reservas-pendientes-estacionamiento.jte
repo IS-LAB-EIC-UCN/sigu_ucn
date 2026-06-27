@@ -1,5 +1,6 @@
 @param String title
 @param String usuarioNombre
+@param String usuarioRol
 @param java.util.List<cl.ucn.app.model.Reserva> reservas
 
 @template.layout.main(
@@ -9,15 +10,16 @@ content = @`
 
     <section class="dashboard">
 
-        <h1>Mis Reservas de Estacionamiento</h1>
+        <h1>Reservas Pendientes de Estacionamiento</h1>
 
         <p>
-            <a href="/reservas/estacionamientos">Nueva reserva</a> |
-            <a href="/estacionamientos/historial">Ver historial</a>
+            <a href="/estacionamientos">Volver a estacionamientos</a>
         </p>
 
         @if(reservas.isEmpty())
-            <p>No tienes reservas registradas.</p>
+
+            <p>No existen reservas pendientes.</p>
+
         @else
 
             <table class="table">
@@ -25,6 +27,7 @@ content = @`
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Usuario</th>
                     <th>Espacio</th>
                     <th>Puesto</th>
                     <th>Vehículo</th>
@@ -43,6 +46,8 @@ content = @`
                     <tr>
 
                         <td>${reserva.getId()}</td>
+
+                        <td>${reserva.getUsuario().getNombre()}</td>
 
                         <td>${reserva.getEspacio().getNombre()}</td>
 
@@ -63,41 +68,17 @@ content = @`
                         <td>${reserva.getEstado()}</td>
 
                         <td>
+                            <form method="post"
+                                  action="/estacionamientos/reservas-pendientes/aprobar/${reserva.getId()}"
+                                  style="display:inline;">
+                                <button type="submit">Aprobar</button>
+                            </form>
 
-                            @if(reserva.getEstado().equals("APROBADA"))
-
-                                <form method="post"
-                                      action="/mis-reservas/estacionamientos/ingreso/${reserva.getId()}"
-                                      style="display:inline;">
-                                    <button type="submit">
-                                        Registrar ingreso
-                                    </button>
-                                </form>
-
-                                <a href="/mis-reservas/estacionamientos/cancelar/${reserva.getId()}">
-                                    Cancelar
-                                </a>
-
-                            @elseif(reserva.getEstado().equals("PENDIENTE"))
-
-                                <a href="/mis-reservas/estacionamientos/cancelar/${reserva.getId()}">
-                                    Cancelar
-                                </a>
-
-                            @elseif(reserva.getEstado().equals("ACTIVA"))
-
-                                En uso
-
-                            @elseif(reserva.getEstado().equals("FINALIZADA"))
-
-                                Finalizada
-
-                            @else
-
-                                Sin acción
-
-                            @endif
-
+                            <form method="post"
+                                  action="/estacionamientos/reservas-pendientes/rechazar/${reserva.getId()}"
+                                  style="display:inline;">
+                                <button type="submit">Rechazar</button>
+                            </form>
                         </td>
 
                     </tr>

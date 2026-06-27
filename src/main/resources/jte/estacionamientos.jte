@@ -2,6 +2,7 @@
 @param String usuarioNombre
 @param String usuarioRol
 @param java.util.List<cl.ucn.app.model.Espacio> espacios
+@param java.util.Map<Long, java.util.List<Integer>> puestosOcupados
 
 @template.layout.main(
 title = title,
@@ -11,7 +12,7 @@ content = @`
 
         <h1>Estacionamientos disponibles</h1>
 
-        <p>Listado de espacios de estacionamiento registrados en el sistema.</p>
+        <p>Vista general de los espacios de estacionamiento registrados en el sistema.</p>
 
         @if(usuarioRol.equals("ADMIN"))
             <p>
@@ -21,43 +22,58 @@ content = @`
             </p>
         @endif
 
-        <table class="table">
-
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Capacidad</th>
-                <th>Estado</th>
-
-                @if(usuarioRol.equals("ADMIN"))
-                    <th>Acciones</th>
-                @endif
-
-            </tr>
-            </thead>
-
-            <tbody>
+        <div class="card-grid">
 
             @for(var espacio : espacios)
 
-                <tr>
-                    <td>${espacio.getId()}</td>
-                    <td>${espacio.getNombre()}</td>
-                    <td>${espacio.getTipo()}</td>
-                    <td>${espacio.getCapacidad()}</td>
+                <div class="info-card">
 
-                    <td>
-                        @if(espacio.getDisponible())
-                            Disponible
-                        @else
-                            Ocupado
-                        @endif
-                    </td>
+                    <h3>${espacio.getNombre()}</h3>
+
+                    <p>
+                        <strong>Tipo:</strong> ${espacio.getTipo()}
+                    </p>
+
+                    <p>
+                        <strong>Capacidad:</strong> ${espacio.getCapacidad()} vehículos
+                    </p>
+
+                    <div class="parking-grid">
+
+                        @for(int i = 1; i <= espacio.getCapacidad() && i <= 20; i++)
+
+                            @if(
+                                puestosOcupados.containsKey(espacio.getId())
+                                && puestosOcupados.get(espacio.getId()).contains(i)
+                            )
+
+                                <span class="parking-slot ocupado"
+                                      title="Puesto ${i} ocupado">
+                                    🚗
+                                </span>
+
+                            @else
+
+                                <a class="parking-slot disponible"
+                                   href="/reservas/estacionamientos?espacioId=${espacio.getId()}&puesto=${i}"
+                                   title="Seleccionar puesto ${i} en ${espacio.getNombre()}">
+                                    🅿️
+                                </a>
+
+                            @endif
+
+                        @endfor
+
+                    </div>
+
+                    @if(espacio.getCapacidad() > 20)
+                        <p class="small-text">
+                            Se muestran 20 de ${espacio.getCapacidad()} cupos.
+                        </p>
+                    @endif
 
                     @if(usuarioRol.equals("ADMIN"))
-                        <td>
+                        <p>
                             <a href="/estacionamientos/editar/${espacio.getId()}">
                                 Editar
                             </a>
@@ -65,16 +81,18 @@ content = @`
                             <a href="/estacionamientos/eliminar/${espacio.getId()}">
                                 Eliminar
                             </a>
-                        </td>
+                        </p>
+                    @else
+                        <p class="small-text">
+                            Seleccione un puesto libre (🅿️) para reservar.
+                        </p>
                     @endif
 
-                </tr>
+                </div>
 
             @endfor
 
-            </tbody>
-
-        </table>
+        </div>
 
     </section>
 `

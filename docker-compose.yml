@@ -1,4 +1,3 @@
-
 services:
   postgres:
     image: postgres:16
@@ -12,7 +11,13 @@ services:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/init/01_scheme.sql:/docker-entrypoint-initdb.d/01_scheme.sql
+      - ./db/init/02_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+      - ./db/migrations/V001__vehiculos_y_reservas_estacionamiento.sql:/docker-entrypoint-initdb.d/03_vehiculos_y_reservas_estacionamiento.sql
+      - ./db/migrations/V002__mejoras_vehiculos_estacionamiento.sql:/docker-entrypoint-initdb.d/04_mejoras_vehiculos_estacionamiento.sql
+      - ./db/migrations/V003__datos_estacionamiento.sql:/docker-entrypoint-initdb.d/05_datos_estacionamiento.sql
+      - ./db/migrations/V004__registros_estacionamiento.sql:/docker-entrypoint-initdb.d/06_registros_estacionamiento.sql
+      - ./db/migrations/V005__actualizar_estados_reservas_estacionamiento.sql:/docker-entrypoint-initdb.d/07_actualizar_estados_reservas_estacionamiento.sql
 
 volumes:
   postgres_data:

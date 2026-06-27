@@ -13,6 +13,8 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        <class>cl.ucn.app.model.Vehiculo</class>
+        <class>cl.ucn.app.model.RegistroEstacionamiento</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
@@ -24,6 +26,9 @@
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
+
+
+
         </properties>
 
     </persistence-unit>

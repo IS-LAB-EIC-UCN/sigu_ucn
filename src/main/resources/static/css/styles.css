@@ -5,10 +5,11 @@
 
 body {
     margin: 0;
-    background: #f5f7fb;
-    color: #222;
+    background: #f3f6fb;
+    color: #1f2937;
 }
 
+/* LOGIN */
 .login-body {
     min-height: 100vh;
     display: flex;
@@ -21,73 +22,30 @@ body {
     width: 100%;
     max-width: 420px;
     background: white;
-    border-radius: 14px;
-    padding: 28px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.10);
 }
 
 .login-card h1 {
     margin-top: 0;
     margin-bottom: 8px;
+    color: #111827;
 }
 
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #c9d2df;
-    border-radius: 8px;
-}
-
-.primary-btn, .logout-btn {
-    display: inline-block;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.primary-btn {
-    width: 100%;
-}
-
-.alert-error {
-    background: #ffe6e6;
-    color: #8f1d1d;
-    border: 1px solid #efb7b7;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-}
-
-.demo-box {
-    margin-top: 18px;
-    font-size: 0.95rem;
-    color: #555;
-}
-
+/* LAYOUT */
 .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #1f3b73;
+    background: #111827;
     color: white;
-    padding: 14px 22px;
+    padding: 14px 24px;
 }
 
 .brand {
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 20px;
 }
 
 .topbar-right {
@@ -100,25 +58,21 @@ body {
     font-size: 0.95rem;
 }
 
-.logout-btn {
-    background: white;
-    color: #1f3b73;
-}
-
 .app-container {
     display: flex;
     min-height: calc(100vh - 56px);
 }
 
 .sidebar {
-    width: 270px;
-    background: #ffffff;
-    border-right: 1px solid #e2e7ef;
-    padding: 20px;
+    width: 280px;
+    background: #111827;
+    color: white;
+    padding: 22px;
 }
 
 .sidebar h3 {
     margin-top: 0;
+    color: white;
 }
 
 .menu-list {
@@ -128,46 +82,372 @@ body {
 }
 
 .menu-list li {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .menu-list a {
+    color: #d1d5db;
+    display: block;
+    padding: 10px 12px;
+    border-radius: 9px;
     text-decoration: none;
-    color: #1f3b73;
     font-weight: 500;
+}
+
+.menu-list a:hover {
+    background: #374151;
+    color: white;
 }
 
 .content-area {
     flex: 1;
-    padding: 24px;
+    padding: 28px;
+}
+
+/* CARDS / DASHBOARD */
+.dashboard,
+.info-card,
+.login-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.dashboard {
+    padding: 30px;
+}
+
+.dashboard h1 {
+    margin-top: 0;
+    margin-bottom: 18px;
+    color: #111827;
+}
+
+.dashboard h3 {
+    margin-top: 24px;
+    color: #1f2937;
 }
 
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 22px;
 }
 
 .info-card {
-    background: white;
-    padding: 18px;
-    border-radius: 12px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    padding: 20px;
 }
 
-.topbar-right {
+/* FORMS */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label,
+form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: #374151;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    margin: 4px 0 14px 0;
+    background: white;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.filter-form {
+    display: flex;
+    align-items: end;
+    gap: 14px;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 14px;
+    margin: 18px 0;
+    flex-wrap: wrap;
+}
+
+.filter-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-form label {
+    margin-bottom: 6px;
+}
+
+.filter-form input {
+    width: 220px;
+    margin: 0;
+}
+
+.filter-form button {
+    height: 42px;
+    min-width: 110px;
+}
+
+.filter-form a {
+    height: 42px;
     display: flex;
     align-items: center;
-    gap: 12px;
+}
+
+/* BUTTONS */
+button,
+.primary-btn,
+.logout-btn {
+    display: inline-block;
+    border: none;
+    border-radius: 9px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+button,
+.primary-btn {
+    background: #2563eb;
+    color: white;
+}
+
+button:hover,
+.primary-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
 }
 
 .logout-btn {
-    display: inline-block;
-    padding: 8px 14px;
-    border-radius: 8px;
+    background: #ef4444;
+    color: white;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
     text-decoration: none;
+}
+
+.btn-success {
+    background: #16a34a;
+}
+
+.btn-success:hover {
+    background: #15803d;
+}
+
+.btn-danger {
+    background: #dc2626;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.btn-warning {
+    background: #f59e0b;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+}
+
+.btn-secondary {
+    background: #6b7280;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+/* LINKS */
+a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* TABLES */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
     background: white;
-    color: #1f3b73;
-    font-weight: bold;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+}
+
+.table th {
+    background: #1f2937;
+    color: white;
+    padding: 13px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.table td {
+    padding: 13px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.table tr:hover {
+    background: #eef2ff;
+}
+
+/* ALERTS */
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+/* BADGES */
+.badge {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.badge-pendiente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-aprobada {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-activa {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-finalizada {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.badge-cancelada {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-rechazada {
+    background: #fde68a;
+    color: #92400e;
+}
+
+/* PARKING */
+.parking-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 44px);
+    gap: 9px;
+    margin: 12px 0;
+}
+
+.parking-slot {
+    width: 44px;
+    height: 44px;
+    border: 1px solid #2563eb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbeafe;
+    font-weight: 700;
+    color: #1e3a8a;
+    transition: 0.2s ease;
+}
+
+.parking-slot:hover {
+    background: #bfdbfe;
+    transform: scale(1.04);
+}
+
+.parking-slot.disponible {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #166534;
+}
+
+.parking-slot.ocupado {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #991b1b;
+}
+
+.parking-slot.bloqueado {
+    background: #e5e7eb;
+    color: #6b7280;
+    border-color: #9ca3af;
+}
+
+.small-text,
+.demo-box {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-form input,
+    .filter-form button {
+        width: 100%;
+    }
+
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
 }
