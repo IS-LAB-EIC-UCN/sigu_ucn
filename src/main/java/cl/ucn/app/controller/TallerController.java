@@ -149,10 +149,42 @@ public class TallerController {
                     "title", "Alumnos del Taller",
                     "usuarioNombre", nombreUsuario != null ? nombreUsuario : "Demo",
                     "rol", rolUsuario,
+                    "tallerId", tallerId,
                     "inscripciones", inscripciones
             ));
         } catch (Exception e) {
             ctx.redirect("/talleres?error=" + e.getMessage());
+        }
+    }
+
+    public static void descargarCsvAlumnos(Context ctx) {
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
+
+        if (usuarioId == null || !"DOCENTE".equals(rolUsuario)) {
+            ctx.status(403).result("Acceso denegado: Solo los docentes pueden descargar la lista de alumnos.");
+            return;
+        }
+
+        try {
+            Long tallerId = Long.parseLong(ctx.pathParam("id"));
+            List<Inscripcion> inscripciones = tallerService.obtenerInscripcionesPorTaller(tallerId, usuarioId);
+
+            StringBuilder csv = new StringBuilder();
+            csv.append("Nombre Alumno,Correo Institucional,Estado\n");
+
+            for (Inscripcion i : inscripciones) {
+                String nombre = i.getUsuario().getNombre().replace(",", " ");
+                String correo = i.getUsuario().getCorreo().replace(",", " ");
+                String estado = i.getEstado();
+                csv.append(nombre).append(",").append(correo).append(",").append(estado).append("\n");
+            }
+
+            ctx.header("Content-Type", "text/csv; charset=utf-8");
+            ctx.header("Content-Disposition", "attachment; filename=\"alumnos_taller_" + tallerId + ".csv\"");
+            ctx.result(csv.toString());
+        } catch (Exception e) {
+            ctx.status(500).result("Error al generar el archivo CSV: " + e.getMessage());
         }
     }
 

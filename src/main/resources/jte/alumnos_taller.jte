@@ -4,6 +4,7 @@
 @param String title
 @param String usuarioNombre
 @param String rol
+@param Long tallerId
 @param List<Inscripcion> inscripciones
 
 @template.layout.main(
@@ -53,6 +54,23 @@
 
         .btn-back:hover {
             background: #eff6ff;
+        }
+
+        .btn-csv {
+            display: inline-block;
+            padding: 0.6rem 1.2rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-right: 1rem;
+        }
+
+        .btn-csv:hover {
+            background: #059669;
         }
 
         .table-container {
@@ -116,7 +134,10 @@
                 <h1>Gestión de Alumnos</h1>
                 <p>Lista de estudiantes registrados en tu taller.</p>
             </div>
-            <a href="/talleres" class="btn-back">&larr; Volver a Mis Talleres</a>
+            <div>
+                <a href="/talleres/${tallerId}/alumnos/csv" class="btn-csv">Descargar CSV</a>
+                <a href="/talleres" class="btn-back">&larr; Volver a Mis Talleres</a>
+            </div>
         </div>
 
         <div class="table-container">

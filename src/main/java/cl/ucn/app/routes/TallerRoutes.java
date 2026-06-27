@@ -13,6 +13,7 @@ public class TallerRoutes {
         config.routes.post("/talleres/{id}/inscribir", TallerController::inscribirAlumno);
         config.routes.post("/talleres/{id}/cancelar", TallerController::cancelarInscripcion);
         config.routes.get("/talleres/{id}/alumnos", TallerController::listarAlumnosPorTaller);
+        config.routes.get("/talleres/{id}/alumnos/csv", TallerController::descargarCsvAlumnos);
         config.routes.get("/talleres/{id}/editar", TallerController::mostrarFormularioEdicion);
         config.routes.post("/talleres/{id}/editar", TallerController::procesarEdicionTaller);
         config.routes.post("/talleres/{id}/eliminar", TallerController::eliminarTaller);
