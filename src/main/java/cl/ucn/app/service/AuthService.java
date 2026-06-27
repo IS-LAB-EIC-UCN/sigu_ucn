@@ -11,8 +11,8 @@ public class AuthService {
         this.usuarioRepository = new UsuarioRepository();
     }
 
-    public Usuario autenticar(String correo, String password) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo);
+    public Usuario authenticate(String correo, String password) {
+        Usuario usuario = usuarioRepository.findByEmail(correo);
 
         if (usuario == null) {
             return null;
