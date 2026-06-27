@@ -1,17 +1,19 @@
 package cl.ucn.app.routes;
 
 import cl.ucn.app.controller.AuthController;
-import io.javalin.config.JavalinConfig;
+import io.javalin.Javalin;
 
-public final class AuthRoutes {
-    private AuthRoutes() {}
+public class AuthRoutes {
 
-    public static void register(JavalinConfig config) {
-        AuthController authController = new AuthController();
+    private final AuthController authController;
 
-        // Usamos la propiedad .routes del objeto config
-        config.routes.get("/login", authController::showLogin);
-        config.routes.post("/login", authController::doLogin);
-        config.routes.get("/logout", authController::logout);
+    public AuthRoutes(AuthController authController) {
+        this.authController = authController;
+    }
+
+    public void register(Javalin app) {
+        app.get("/login", authController::renderLogin);
+        app.post("/login", authController::handleLogin);
+        app.get("/logout", authController::handleLogout);
     }
 }
