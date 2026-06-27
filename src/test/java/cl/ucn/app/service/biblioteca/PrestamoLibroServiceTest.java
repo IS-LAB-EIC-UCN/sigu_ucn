@@ -6,7 +6,7 @@ import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,8 +27,16 @@ public class PrestamoLibroServiceTest{
     @Mock
     private EjemplarRepository ejemplarRepository;
 
-    @InjectMocks
     private PrestamoLibroService prestamoLibroService;
+
+    @BeforeEach
+    public void setUp(){
+        prestamoLibroService = new PrestamoLibroService(
+                prestamoLibroRepository,
+                lectorRepository,
+                ejemplarRepository
+        );
+    }
 
     @Test
     public void testPrestamoLibroExitoso(){
@@ -55,6 +63,7 @@ public class PrestamoLibroServiceTest{
         Mockito.verify(prestamoLibroRepository, Mockito.times(1)).save(resultado);
     }
 
+    @Test
     public void testPrestamoFallido(){
         LocalDate fechaVencimiento = LocalDate.now().plusDays(7);
         Lector lectorTest = new Lector();
@@ -76,6 +85,7 @@ public class PrestamoLibroServiceTest{
         Mockito.verify(prestamoLibroRepository, Mockito.never()).save(Mockito.any());
     }
 
+    @Test
     public void testPrestamoLectorBlock(){
         LocalDate fechaVencimiento = LocalDate.now().plusDays(7);
         Lector lectorTest = new Lector();

@@ -18,6 +18,14 @@ public class PrestamoLibroService {
         this.ejemplarRepository = new EjemplarRepository();
         this.prestamoLibroRepository = new PrestamoLibroRepository();
     }
+    //para Testing
+    PrestamoLibroService(PrestamoLibroRepository prestamoLibroRepository,
+                         LectorRepository lectorRepository,
+                         EjemplarRepository ejemplarRepository) {
+        this.prestamoLibroRepository = prestamoLibroRepository;
+        this.lectorRepository = lectorRepository;
+        this.ejemplarRepository = ejemplarRepository;
+    }
 
     public PrestamoLibro solicitarPrestamo(Long lectorId, Long ejemplarId, LocalDate fechaVencimiento){
 
