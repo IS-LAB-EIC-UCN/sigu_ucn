@@ -1,0 +1,17 @@
+package cl.ucn.app.routes;
+
+import cl.ucn.app.controller.InventarioController;
+import io.javalin.Javalin;
+
+public class InventarioRoutes {
+
+    private final InventarioController inventarioController;
+
+    public InventarioRoutes(InventarioController inventarioController) {
+        this.inventarioController = inventarioController;
+    }
+
+    public void register(Javalin app) {
+        app.get("/inventario", inventarioController::listarInventario);
+    }
+}
