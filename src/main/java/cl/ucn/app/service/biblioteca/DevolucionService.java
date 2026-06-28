@@ -7,15 +7,18 @@ import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
+import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
+import cl.ucn.app.repository.biblioteca.api.IPrestamoLibroRepository;
+import cl.ucn.app.service.biblioteca.api.IDevolucionService;
 
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class DevolucionService {
-    private final EjemplarRepository ejemplarRepository;
-    private final PrestamoLibroRepository prestamoLibroRepository;
+public class DevolucionService implements IDevolucionService {
+    private final IEjemplarRepository ejemplarRepository;
+    private final IPrestamoLibroRepository prestamoLibroRepository;
     private final MultaService multaService;
 
     public DevolucionService(){
@@ -24,9 +27,9 @@ public class DevolucionService {
         this.multaService = new MultaService();
     }
 
-    DevolucionService(EjemplarRepository ejemplarRepository,
-                      PrestamoLibroRepository prestamoLibroRepository,
-                      MultaService multaService) {
+    public DevolucionService(IEjemplarRepository ejemplarRepository,
+                             IPrestamoLibroRepository prestamoLibroRepository,
+                             MultaService multaService) {
         this.ejemplarRepository = ejemplarRepository;
         this.prestamoLibroRepository = prestamoLibroRepository;
         this.multaService = multaService;

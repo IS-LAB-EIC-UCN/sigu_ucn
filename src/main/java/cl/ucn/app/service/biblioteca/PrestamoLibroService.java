@@ -8,6 +8,11 @@ import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
 import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
+import cl.ucn.app.repository.biblioteca.api.IPrestamoLibroRepository;
+import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
+import cl.ucn.app.repository.biblioteca.api.ILectorRepository;
+import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
+import cl.ucn.app.service.biblioteca.api.IPrestamoService;
 import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.model.biblioteca.Lector;
@@ -17,11 +22,11 @@ import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.util.List;
-public class PrestamoLibroService {
-    private final LectorRepository lectorRepository;
-    private final EjemplarRepository ejemplarRepository;
-    private final PrestamoLibroRepository prestamoLibroRepository;
-    private final LibroRepository libroRepository;
+public class PrestamoLibroService implements IPrestamoService {
+    private final ILectorRepository lectorRepository;
+    private final IEjemplarRepository ejemplarRepository;
+    private final IPrestamoLibroRepository prestamoLibroRepository;
+    private final ILibroRepository libroRepository;
 
     public PrestamoLibroService(){
         this.lectorRepository = new LectorRepository();
@@ -30,10 +35,10 @@ public class PrestamoLibroService {
         this.libroRepository = new LibroRepository();
     }
     //para Testing
-    PrestamoLibroService(PrestamoLibroRepository prestamoLibroRepository,
-                         LectorRepository lectorRepository,
-                         EjemplarRepository ejemplarRepository,
-                         LibroRepository libroRepository) {
+    public PrestamoLibroService(IPrestamoLibroRepository prestamoLibroRepository,
+                                ILectorRepository lectorRepository,
+                                IEjemplarRepository ejemplarRepository,
+                                ILibroRepository libroRepository) {
         this.prestamoLibroRepository = prestamoLibroRepository;
         this.lectorRepository = lectorRepository;
         this.ejemplarRepository = ejemplarRepository;

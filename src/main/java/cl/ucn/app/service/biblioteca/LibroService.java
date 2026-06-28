@@ -6,19 +6,21 @@ import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.exceptions.ValidacionException;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
+import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
+import cl.ucn.app.service.biblioteca.api.ILibroService;
 import cl.ucn.app.model.biblioteca.Libro;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 
-public class LibroService {
+public class LibroService implements ILibroService {
 
-    private final LibroRepository libroRepository;
+    private final ILibroRepository libroRepository;
 
     public LibroService() {
         this.libroRepository = new LibroRepository();
     }
 
-    LibroService(LibroRepository libroRepository) {
+    public LibroService(ILibroRepository libroRepository) {
         this.libroRepository = libroRepository;
     }
 

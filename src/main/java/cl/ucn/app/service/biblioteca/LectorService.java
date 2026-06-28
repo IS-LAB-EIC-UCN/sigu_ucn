@@ -8,15 +8,19 @@ import cl.ucn.app.model.biblioteca.Multa;
 import cl.ucn.app.repository.biblioteca.MultaRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
 import cl.ucn.app.repository.biblioteca.LectorRepository;
+import cl.ucn.app.repository.biblioteca.api.ILectorRepository;
+import cl.ucn.app.repository.biblioteca.api.IMultaRepository;
+import cl.ucn.app.repository.biblioteca.api.IPrestamoLibroRepository;
+import cl.ucn.app.service.biblioteca.api.ILectorService;
 import cl.ucn.app.model.biblioteca.Lector;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 
-public class LectorService {
+public class LectorService implements ILectorService {
 
-    private final LectorRepository lectorRepository;
-    private final MultaRepository multaRepository;
-    private final PrestamoLibroRepository prestamoLibroRepository;
+    private final ILectorRepository lectorRepository;
+    private final IMultaRepository multaRepository;
+    private final IPrestamoLibroRepository prestamoLibroRepository;
 
     public LectorService() {
         this.lectorRepository = new LectorRepository();
@@ -24,7 +28,7 @@ public class LectorService {
         this.prestamoLibroRepository = new PrestamoLibroRepository();
     }
 
-    LectorService(LectorRepository lectorRepository) {
+    public LectorService(ILectorRepository lectorRepository) {
         this.lectorRepository = lectorRepository;
         this.multaRepository = new MultaRepository();
         this.prestamoLibroRepository = new PrestamoLibroRepository();

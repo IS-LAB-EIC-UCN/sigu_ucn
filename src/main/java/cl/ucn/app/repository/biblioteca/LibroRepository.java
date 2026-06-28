@@ -2,11 +2,12 @@ package cl.ucn.app.repository.biblioteca;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.biblioteca.Libro;
+import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-public class LibroRepository {
+public class LibroRepository implements ILibroRepository {
 
     public void save(Libro libro) {
         EntityManager em = JPAUtil.getEntityManager();

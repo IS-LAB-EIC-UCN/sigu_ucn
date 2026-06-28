@@ -6,38 +6,49 @@ import cl.ucn.app.model.biblioteca.Multa;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.MultaRepository;
+import cl.ucn.app.repository.biblioteca.api.ILectorRepository;
+import cl.ucn.app.repository.biblioteca.api.IMultaRepository;
+import cl.ucn.app.service.biblioteca.api.IMultaService;
+import cl.ucn.app.service.biblioteca.api.ILectorService;
+import cl.ucn.app.service.biblioteca.strategy.ICalculadorMulta;
+import cl.ucn.app.service.biblioteca.strategy.MultaLinealPorDias;
 
 import jakarta.persistence.EntityManager;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 
-public class MultaService {
-    private final MultaRepository multaRepository;
-    private final LectorRepository lectorRepository;
-    private final LectorService lectorService;
-
-    private static final BigDecimal MONTO_POR_DIA = new BigDecimal("1000");
+public class MultaService implements IMultaService {
+    private final IMultaRepository multaRepository;
+    private final ILectorRepository lectorRepository;
+    private final ILectorService lectorService;
+    private final ICalculadorMulta calculador;
 
     public MultaService(){
         this.multaRepository = new MultaRepository();
         this.lectorRepository = new LectorRepository();
         this.lectorService = new LectorService();
+        this.calculador = new MultaLinealPorDias();
     }
 
-    MultaService(MultaRepository multaRepository, LectorRepository lectorRepository) {
+    public MultaService(IMultaRepository multaRepository, ILectorRepository lectorRepository) {
         this.multaRepository = multaRepository;
         this.lectorRepository = lectorRepository;
         this.lectorService = new LectorService();
+        this.calculador = new MultaLinealPorDias();
+    }
+
+    public MultaService(IMultaRepository multaRepository, ILectorRepository lectorRepository, ICalculadorMulta calculador) {
+        this.multaRepository = multaRepository;
+        this.lectorRepository = lectorRepository;
+        this.lectorService = new LectorService();
+        this.calculador = calculador;
     }
 
     public Multa generarMulta(PrestamoLibro prestamo, int diasAtraso) {
         if (prestamo == null || diasAtraso <= 0){return null;}
 
-        BigDecimal montoAtrasado = MONTO_POR_DIA
-            .multiply(BigDecimal.valueOf(diasAtraso))
-            .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal montoAtrasado = calculador.calcular(diasAtraso);
 
         Multa multa = new Multa();
         multa.setDiasAtraso(diasAtraso);

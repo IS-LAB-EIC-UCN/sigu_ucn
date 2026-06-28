@@ -2,12 +2,13 @@ package cl.ucn.app.repository.biblioteca;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.biblioteca.Lector;
+import cl.ucn.app.repository.biblioteca.api.ILectorRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-public class LectorRepository {
+public class LectorRepository implements ILectorRepository {
 
     public void save(Lector lector) {
         EntityManager em = JPAUtil.getEntityManager();

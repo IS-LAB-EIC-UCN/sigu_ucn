@@ -1,4 +1,5 @@
 package cl.ucn.app.service.biblioteca;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,20 +9,22 @@ import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
-public class BusquedaService {
+import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
+import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
+import cl.ucn.app.service.biblioteca.api.IBusquedaService;
+public class BusquedaService implements IBusquedaService {
 
-    private final LibroRepository libroRepository;
-    private final EjemplarRepository ejemplarRepository;
+    private final ILibroRepository libroRepository;
+    private final IEjemplarRepository ejemplarRepository;
     public BusquedaService(){
         this.libroRepository = new LibroRepository();
         this.ejemplarRepository = new EjemplarRepository();
     }
 
-    BusquedaService(LibroRepository libroRepository, EjemplarRepository ejemplarRepository) {
+    public BusquedaService(ILibroRepository libroRepository, IEjemplarRepository ejemplarRepository) {
         this.libroRepository = libroRepository;
         this.ejemplarRepository = ejemplarRepository;
     }
-
     public List<Libro> buscar(String termino){
         if (termino == null){return new ArrayList<>();}
 

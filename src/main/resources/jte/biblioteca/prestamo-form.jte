@@ -29,7 +29,7 @@ content = @`
                 <label>Lector</label>
                 <select name="lectorId">
                     @for(Lector l : lectores)
-                    @if(lectorId != null && lectorId.equals(String.valueOf(l.getId())))
+                    @if(lectorId != null && !lectorId.isEmpty() && lectorId.equals(String.valueOf(l.getId())))
                         <option value="${l.getId()}" selected>${l.getNombre()} - ${l.getRut()}</option>
                     @else
                         <option value="${l.getId()}">${l.getNombre()} - ${l.getRut()}</option>
@@ -42,7 +42,7 @@ content = @`
                 <select name="libroId">
                     @if(librosDisponibles != null)
                         @for(LibroDisponible ld : librosDisponibles)
-                        @if(libroId != null && ld.getLibro().getId().equals(Long.parseLong(libroId)))
+                        @if(libroId != null && !libroId.isEmpty() && ld.getLibro().getId().equals(Long.parseLong(libroId)))
                             <option value="${ld.getLibro().getId()}" selected>${ld.getLabel()}</option>
                         @else
                             <option value="${ld.getLibro().getId()}">${ld.getLabel()}</option>

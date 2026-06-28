@@ -3,11 +3,12 @@ package cl.ucn.app.repository.biblioteca;
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.Multa;
+import cl.ucn.app.repository.biblioteca.api.IMultaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-public class MultaRepository {
+public class MultaRepository implements IMultaRepository {
 
     public void save(Multa multa) {
         EntityManager em = JPAUtil.getEntityManager();

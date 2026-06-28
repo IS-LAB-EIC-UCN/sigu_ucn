@@ -6,6 +6,9 @@ import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
+import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
+import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
+import cl.ucn.app.service.biblioteca.api.IEjemplarService;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Libro;
 import jakarta.persistence.EntityManager;
@@ -13,17 +16,17 @@ import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EjemplarService {
+public class EjemplarService implements IEjemplarService {
 
-    private final EjemplarRepository ejemplarRepository;
-    private final LibroRepository libroRepository;
+    private final IEjemplarRepository ejemplarRepository;
+    private final ILibroRepository libroRepository;
 
     public EjemplarService() {
         this.ejemplarRepository = new EjemplarRepository();
         this.libroRepository = new LibroRepository();
     }
 
-    EjemplarService(EjemplarRepository ejemplarRepository, LibroRepository libroRepository) {
+    public EjemplarService(IEjemplarRepository ejemplarRepository, ILibroRepository libroRepository) {
         this.ejemplarRepository = ejemplarRepository;
         this.libroRepository = libroRepository;
     }

@@ -4,12 +4,13 @@ import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
+import cl.ucn.app.repository.biblioteca.api.IPrestamoLibroRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-public class PrestamoLibroRepository {
+public class PrestamoLibroRepository implements IPrestamoLibroRepository {
 
     public void save(PrestamoLibro prestamo) {
         EntityManager em = JPAUtil.getEntityManager();

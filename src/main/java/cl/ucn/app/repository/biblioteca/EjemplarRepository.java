@@ -3,11 +3,12 @@ package cl.ucn.app.repository.biblioteca;
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Libro;
+import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-public class EjemplarRepository {
+public class EjemplarRepository implements IEjemplarRepository {
 
     public void save(Ejemplar ejemplar) {
         EntityManager em = JPAUtil.getEntityManager();
