@@ -33,12 +33,16 @@ public class EventoController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
 
         List<Evento> eventos = eventoService.listarTodos();
 
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Eventos - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", usuarioRol);
+        model.put("usuarioId", usuarioId);
         model.put("eventos", eventos);
         model.put("error", ctx.queryParam("error"));
         model.put("success", ctx.queryParam("success"));
@@ -52,6 +56,11 @@ public class EventoController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
+            return;
+        }
 
         List<Espacio> espacios = espacioRepository.findDisponibles();
         List<Expositor> expositores = expositorRepository.findAll();
@@ -59,6 +68,7 @@ public class EventoController {
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Registrar Evento - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", usuarioRol);
         model.put("espacios", espacios);
         model.put("expositores", expositores);
         model.put("error", "");
@@ -70,6 +80,11 @@ public class EventoController {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
         if (usuarioNombre == null) {
             ctx.redirect("/login");
+            return;
+        }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
             return;
         }
 
@@ -131,6 +146,7 @@ public class EventoController {
             Map<String, Object> model = new HashMap<>();
             model.put("title", "Registrar Evento - SIGU-UCN");
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("espacios", espacios);
             model.put("expositores", expositores);
             model.put("error", e.getMessage());
@@ -142,6 +158,7 @@ public class EventoController {
             Map<String, Object> model = new HashMap<>();
             model.put("title", "Registrar Evento - SIGU-UCN");
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("espacios", espacios);
             model.put("expositores", expositores);
             model.put("error", "Error inesperado: " + e.getMessage());
@@ -154,6 +171,11 @@ public class EventoController {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
         if (usuarioNombre == null) {
             ctx.redirect("/login");
+            return;
+        }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
             return;
         }
 
@@ -180,6 +202,11 @@ public class EventoController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
+            return;
+        }
 
         try {
             String idStr = ctx.formParam("id");
@@ -190,6 +217,70 @@ public class EventoController {
             Long id = Long.parseLong(idStr);
             eventoService.eliminar(id);
             ctx.redirect("/eventos?success=Evento eliminado permanentemente.");
+
+        } catch (IllegalArgumentException e) {
+            ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));
+        } catch (Exception e) {
+            ctx.redirect("/eventos?error=Error inesperado: " + java.net.URLEncoder.encode(e.getMessage()));
+        }
+    }
+
+    public void inscribir(Context ctx) {
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        if (usuarioNombre == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"DOCENTE".equals(usuarioRol) && !"ESTUDIANTE".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Las inscripciones son exclusivas para docentes y estudiantes.");
+            return;
+        }
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        try {
+            String eventoIdStr = ctx.formParam("eventoId");
+            if (eventoIdStr == null || eventoIdStr.isBlank()) {
+                throw new IllegalArgumentException("El ID del evento es obligatorio.");
+            }
+            Long eventoId = Long.parseLong(eventoIdStr);
+
+            eventoService.inscribirAsistente(usuarioId, eventoId);
+            ctx.redirect("/eventos?success=" + java.net.URLEncoder.encode("Inscripción realizada con éxito."));
+
+        } catch (IllegalArgumentException e) {
+            ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));
+        } catch (Exception e) {
+            ctx.redirect("/eventos?error=Error inesperado: " + java.net.URLEncoder.encode(e.getMessage()));
+        }
+    }
+
+    public void cancelarInscripcion(Context ctx) {
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        if (usuarioNombre == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"DOCENTE".equals(usuarioRol) && !"ESTUDIANTE".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Las inscripciones son exclusivas para docentes y estudiantes.");
+            return;
+        }
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        try {
+            String eventoIdStr = ctx.formParam("eventoId");
+            if (eventoIdStr == null || eventoIdStr.isBlank()) {
+                throw new IllegalArgumentException("El ID del evento es obligatorio.");
+            }
+            Long eventoId = Long.parseLong(eventoIdStr);
+
+            eventoService.cancelarInscripcion(usuarioId, eventoId);
+            ctx.redirect("/eventos?success=" + java.net.URLEncoder.encode("Inscripción cancelada con éxito."));
 
         } catch (IllegalArgumentException e) {
             ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));

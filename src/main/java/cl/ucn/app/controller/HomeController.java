@@ -14,10 +14,12 @@ public class HomeController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
 
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Inicio - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", usuarioRol);
 
         ctx.render("home.jte", model);
     }

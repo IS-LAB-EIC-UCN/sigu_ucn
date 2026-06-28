@@ -2,7 +2,11 @@ package cl.ucn.app.service;
 
 import cl.ucn.app.model.Evento;
 import cl.ucn.app.model.Expositor;
+import cl.ucn.app.model.Inscripcion;
+import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.EventoRepository;
+import cl.ucn.app.repository.InscripcionRepository;
+import cl.ucn.app.repository.UsuarioRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,9 +17,13 @@ import java.util.Set;
 public class EventoService {
 
     private final EventoRepository eventoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final InscripcionRepository inscripcionRepository;
 
     public EventoService() {
         this.eventoRepository = new EventoRepository();
+        this.usuarioRepository = new UsuarioRepository();
+        this.inscripcionRepository = new InscripcionRepository();
     }
 
     public Evento registrar(Evento evento) {
@@ -125,6 +133,7 @@ public class EventoService {
             throw new IllegalArgumentException("El evento ya se encuentra cancelado.");
         }
         evento.setEstado("CANCELADO");
+        evento.getInscripciones().clear(); // Invalida todas las inscripciones asociadas
         return eventoRepository.save(evento);
     }
 
@@ -134,5 +143,47 @@ public class EventoService {
             throw new IllegalArgumentException("Solo se pueden eliminar eventos cancelados.");
         }
         eventoRepository.delete(evento);
+    }
+
+    public void inscribirAsistente(Long usuarioId, Long eventoId) {
+        if (usuarioId == null || eventoId == null) {
+            throw new IllegalArgumentException("El ID de usuario y de evento son obligatorios.");
+        }
+
+        Evento evento = buscarPorId(eventoId);
+        if ("CANCELADO".equals(evento.getEstado())) {
+            throw new IllegalArgumentException("No es posible inscribirse en un evento cancelado.");
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado con ID: " + usuarioId);
+        }
+
+        Inscripcion existente = inscripcionRepository.findByUsuarioAndEvento(usuarioId, eventoId);
+        if (existente != null) {
+            throw new IllegalArgumentException("Ya estás inscrito en este evento.");
+        }
+
+        int cuposDisponibles = evento.getCapacidad() - evento.getInscripciones().size();
+        if (cuposDisponibles <= 0) {
+            throw new IllegalArgumentException("El evento se encuentra sin cupos disponibles.");
+        }
+
+        Inscripcion inscripcion = new Inscripcion(usuario, evento);
+        inscripcionRepository.save(inscripcion);
+    }
+
+    public void cancelarInscripcion(Long usuarioId, Long eventoId) {
+        if (usuarioId == null || eventoId == null) {
+            throw new IllegalArgumentException("El ID de usuario y de evento son obligatorios.");
+        }
+
+        Inscripcion inscripcion = inscripcionRepository.findByUsuarioAndEvento(usuarioId, eventoId);
+        if (inscripcion == null) {
+            throw new IllegalArgumentException("No se encontró una inscripción activa para este evento.");
+        }
+
+        inscripcionRepository.delete(inscripcion);
     }
 }

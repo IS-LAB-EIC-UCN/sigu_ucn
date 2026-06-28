@@ -1,5 +1,6 @@
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
 @param java.util.List<cl.ucn.app.model.Espacio> espacios
 @param java.util.List<cl.ucn.app.model.Expositor> expositores
 @param String error
@@ -7,6 +8,7 @@
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
+usuarioRol = usuarioRol,
 content = @`
     <section class="page-section">
         <div class="page-header">

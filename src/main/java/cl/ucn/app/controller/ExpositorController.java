@@ -22,10 +22,17 @@ public class ExpositorController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
+            return;
+        }
+
         List<Expositor> expositores = expositorService.listarTodos();
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Expositores - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", usuarioRol);
         model.put("expositores", expositores);
         model.put("error", ctx.queryParam("error"));
         model.put("success", ctx.queryParam("success"));
@@ -38,9 +45,16 @@ public class ExpositorController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
+            return;
+        }
+
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Registrar Expositor - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", usuarioRol);
         model.put("error", "");
         ctx.render("expositores/formulario.jte", model);
     }
@@ -51,6 +65,12 @@ public class ExpositorController {
             ctx.redirect("/login");
             return;
         }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403).result("Acceso denegado: Se requieren privilegios de administrador.");
+            return;
+        }
+
         try {
             String nombre = ctx.formParam("nombre");
             String email = ctx.formParam("email");
@@ -74,6 +94,7 @@ public class ExpositorController {
             Map<String, Object> model = new HashMap<>();
             model.put("title", "Registrar Expositor - SIGU-UCN");
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("error", e.getMessage());
             ctx.status(400);
             ctx.render("expositores/formulario.jte", model);
@@ -81,6 +102,7 @@ public class ExpositorController {
             Map<String, Object> model = new HashMap<>();
             model.put("title", "Registrar Expositor - SIGU-UCN");
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("error", "Error inesperado: " + e.getMessage());
             ctx.status(500);
             ctx.render("expositores/formulario.jte", model);
