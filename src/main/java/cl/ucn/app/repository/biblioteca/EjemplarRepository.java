@@ -13,10 +13,33 @@ public class EjemplarRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            if (ejemplar.getId() == null) {
-                em.persist(ejemplar);
-            } else {
-                em.merge(ejemplar);
+            save(ejemplar, em);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void save(Ejemplar ejemplar, EntityManager em) {
+        if (ejemplar.getId() == null) {
+            em.persist(ejemplar);
+        } else {
+            em.merge(ejemplar);
+        }
+    }
+
+    public void delete(Ejemplar ejemplar) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Ejemplar managed = ejemplar.getId() != null ? em.find(Ejemplar.class, ejemplar.getId()) : ejemplar;
+            if (managed != null) {
+                em.remove(managed);
             }
             em.getTransaction().commit();
         } catch (Exception e) {

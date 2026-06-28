@@ -13,7 +13,7 @@ public class Ejemplar {
     @Column(name = "estado", nullable = false, length = 20)
     private String estado = "DISPONIBLE";
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "libro_id", nullable = false)
     private Libro libro;
 

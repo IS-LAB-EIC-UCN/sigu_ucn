@@ -1,5 +1,6 @@
 package cl.ucn.app.controller.biblioteca;
 
+import cl.ucn.app.exceptions.ValidacionException;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.Libro;
@@ -82,17 +83,21 @@ public class LibroController {
         if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         List<Lector> lectores = lectorService.listarTodos();
-        List<Ejemplar> disponibles = new ArrayList<>();
+        Map<Libro, Integer> disponiblesPorLibro = new HashMap<>();
         for (Ejemplar e : ejemplarRepository.findAll()) {
             if ("DISPONIBLE".equalsIgnoreCase(e.getEstado())) {
-                disponibles.add(e);
+                disponiblesPorLibro.merge(e.getLibro(), 1, Integer::sum);
             }
+        }
+        List<LibroDisponible> librosDisponibles = new ArrayList<>();
+        for (Map.Entry<Libro, Integer> entry : disponiblesPorLibro.entrySet()) {
+            librosDisponibles.add(new LibroDisponible(entry.getKey(), entry.getValue()));
         }
 
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
         model.put("lectores", lectores);
-        model.put("ejemplares", disponibles);
+        model.put("librosDisponibles", librosDisponibles);
         model.put("error", null);
         ctx.render("biblioteca/prestamo-form.jte", model);
     }
@@ -101,26 +106,37 @@ public class LibroController {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
         if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
-        try {
-            Long lectorId = Long.parseLong(ctx.formParam("lectorId"));
-            Long ejemplarId = Long.parseLong(ctx.formParam("ejemplarId"));
-            LocalDate fechaVencimiento = LocalDate.parse(ctx.formParam("fechaVencimiento"));
+        String lectorIdStr = ctx.formParam("lectorId");
+        String libroIdStr = ctx.formParam("libroId");
+        String fechaVencimientoStr = ctx.formParam("fechaVencimiento");
 
-            prestamoService.solicitarPrestamo(lectorId, ejemplarId, fechaVencimiento);
+        Long lectorId = Long.parseLong(lectorIdStr);
+        Long libroId = Long.parseLong(libroIdStr);
+        LocalDate fechaVencimiento = LocalDate.parse(fechaVencimientoStr);
+
+        try {
+            prestamoService.solicitarPrestamo(lectorId, libroId, fechaVencimiento);
             ctx.redirect("/biblioteca/historial");
-        } catch (Exception e) {
+        } catch (ValidacionException e) {
             List<Lector> lectores = lectorService.listarTodos();
-            List<Ejemplar> disponibles = new ArrayList<>();
+            Map<Libro, Integer> disponiblesPorLibro = new HashMap<>();
             for (Ejemplar ej : ejemplarRepository.findAll()) {
                 if ("DISPONIBLE".equalsIgnoreCase(ej.getEstado())) {
-                    disponibles.add(ej);
+                    disponiblesPorLibro.merge(ej.getLibro(), 1, Integer::sum);
                 }
+            }
+            List<LibroDisponible> librosDisponibles = new ArrayList<>();
+            for (Map.Entry<Libro, Integer> entry : disponiblesPorLibro.entrySet()) {
+                librosDisponibles.add(new LibroDisponible(entry.getKey(), entry.getValue()));
             }
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
             model.put("lectores", lectores);
-            model.put("ejemplares", disponibles);
+            model.put("librosDisponibles", librosDisponibles);
             model.put("error", e.getMessage());
+            model.put("lectorId", lectorIdStr);
+            model.put("libroId", libroIdStr);
+            model.put("fechaVencimiento", fechaVencimientoStr);
             ctx.render("biblioteca/prestamo-form.jte", model);
         }
     }
@@ -148,36 +164,21 @@ public class LibroController {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
         if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
-        try {
-            Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
-            devolucionService.registrarDevolucion(prestamoId);
+        Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
+        devolucionService.registrarDevolucion(prestamoId);
 
-            List<PrestamoLibro> activos = new ArrayList<>();
-            for (PrestamoLibro p : prestamoLibroRepository.findAll()) {
-                if ("ACTIVO".equalsIgnoreCase(p.getEstado())) {
-                    activos.add(p);
-                }
+        List<PrestamoLibro> activos = new ArrayList<>();
+        for (PrestamoLibro p : prestamoLibroRepository.findAll()) {
+            if ("ACTIVO".equalsIgnoreCase(p.getEstado())) {
+                activos.add(p);
             }
-            Map<String, Object> model = new HashMap<>();
-            model.put("usuarioNombre", usuarioNombre);
-            model.put("prestamos", activos);
-            model.put("error", null);
-            model.put("mensaje", "Devolucion registrada exitosamente");
-            ctx.render("biblioteca/devolucion-form.jte", model);
-        } catch (Exception e) {
-            List<PrestamoLibro> activos = new ArrayList<>();
-            for (PrestamoLibro p : prestamoLibroRepository.findAll()) {
-                if ("ACTIVO".equalsIgnoreCase(p.getEstado())) {
-                    activos.add(p);
-                }
-            }
-            Map<String, Object> model = new HashMap<>();
-            model.put("usuarioNombre", usuarioNombre);
-            model.put("prestamos", activos);
-            model.put("error", e.getMessage());
-            model.put("mensaje", null);
-            ctx.render("biblioteca/devolucion-form.jte", model);
         }
+        Map<String, Object> model = new HashMap<>();
+        model.put("usuarioNombre", usuarioNombre);
+        model.put("prestamos", activos);
+        model.put("error", null);
+        model.put("mensaje", "Devolucion registrada exitosamente");
+        ctx.render("biblioteca/devolucion-form.jte", model);
     }
 
     public void historial(Context ctx) {
@@ -236,6 +237,10 @@ public class LibroController {
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
             model.put("error", "Todos los campos son obligatorios");
+            model.put("titulo", titulo);
+            model.put("autor", autor);
+            model.put("categoria", categoria);
+            model.put("isbn", isbn);
             ctx.render("biblioteca/registrar-libro.jte", model);
             return;
         }
@@ -243,10 +248,17 @@ public class LibroController {
         try {
             libroService.registrarLibro(titulo.trim(), autor.trim(), categoria.trim(), isbn.trim());
             ctx.redirect("/biblioteca/libros");
-        } catch (Exception e) {
+        } catch (ValidacionException e) {
+            String msg = e.getMessage();
+            // Limpiar el campo en error para que el placeholder con formato de ejemplo sea visible
+            String isbnPersistido = msg.toLowerCase().contains("isbn") ? "" : isbn;
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
             model.put("error", e.getMessage());
+            model.put("titulo", titulo);
+            model.put("autor", autor);
+            model.put("categoria", categoria);
+            model.put("isbn", isbnPersistido);
             ctx.render("biblioteca/registrar-libro.jte", model);
         }
     }
@@ -268,24 +280,39 @@ public class LibroController {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
         if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
-        try {
-            Long libroId = Long.parseLong(ctx.formParam("libroId"));
-            ejemplarService.agregarEjemplar(libroId);
+        String libroIdStr = ctx.formParam("libroId");
+        String cantidadStr = ctx.formParam("cantidad");
 
-            List<Libro> libros = libroService.listarTodos();
+        List<Libro> libros = libroService.listarTodos();
+        try {
+            Long libroId = Long.parseLong(libroIdStr);
+            int cantidad = Integer.parseInt(cantidadStr != null ? cantidadStr : "1");
+            if (cantidad < 1 || cantidad > 100) {
+                throw new ValidacionException("La cantidad debe estar entre 1 y 100");
+            }
+            ejemplarService.agregarEjemplares(libroId, cantidad);
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
             model.put("libros", libros);
             model.put("error", null);
-            model.put("mensaje", "Ejemplar registrado exitosamente");
+            model.put("mensaje", cantidad + (cantidad == 1 ? " ejemplar registrado" : " ejemplares registrados") + " exitosamente");
+            model.put("libroId", libroIdStr);
             ctx.render("biblioteca/registrar-ejemplar.jte", model);
-        } catch (Exception e) {
-            List<Libro> libros = libroService.listarTodos();
+        } catch (ValidacionException e) {
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
             model.put("libros", libros);
             model.put("error", e.getMessage());
             model.put("mensaje", null);
+            model.put("libroId", libroIdStr);
+            ctx.render("biblioteca/registrar-ejemplar.jte", model);
+        } catch (NumberFormatException e) {
+            Map<String, Object> model = new HashMap<>();
+            model.put("usuarioNombre", usuarioNombre);
+            model.put("libros", libros);
+            model.put("error", "Cantidad invalida");
+            model.put("mensaje", null);
+            model.put("libroId", libroIdStr);
             ctx.render("biblioteca/registrar-ejemplar.jte", model);
         }
     }

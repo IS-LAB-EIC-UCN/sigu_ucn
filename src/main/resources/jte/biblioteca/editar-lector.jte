@@ -22,16 +22,23 @@ content = @`
             <input type="hidden" name="id" value="${lector.getId()}"/>
             <div class="form-group">
                 <label>Nombre completo</label>
-                <input type="text" name="nombre" value="${lector.getNombre()}" required/>
+                <input type="text" name="nombre" placeholder="Ej: Juan Perez" value="${lector.getNombre()}" required/>
             </div>
             <div class="form-group">
-                <label>Correo electrónico</label>
-                <input type="text" name="correo" value="${lector.getCorreo()}" required/>
+                <label>Correo electronico</label>
+                <input type="text" name="correo" placeholder="juan.perez@ucn.cl" value="${lector.getCorreo()}" required/>
             </div>
             <div class="form-group">
                 <label>RUT</label>
-                <input type="text" name="rut" value="${lector.getRut()}" required/>
+                <input type="text" name="rut" id="rutInput" value="${lector.getRut()}" maxlength="10" required oninput="formatRut(this)"/>
             </div>
+            <script>
+                function formatRut(input) {
+                    let v = input.value.replace(/[^0-9kK]/g, '');
+                    if (v.length > 1) v = v.slice(0,-1) + '-' + v.slice(-1);
+                    input.value = v;
+                }
+            </script>
             <button type="submit" class="primary-btn">Guardar cambios</button>
         </form>
     </div>

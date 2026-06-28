@@ -13,11 +13,7 @@ public class MultaRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            if (multa.getId() == null) {
-                em.persist(multa);
-            } else {
-                em.merge(multa);
-            }
+            save(multa, em);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
@@ -26,6 +22,14 @@ public class MultaRepository {
             throw e;
         } finally {
             em.close();
+        }
+    }
+
+    public void save(Multa multa, EntityManager em) {
+        if (multa.getId() == null) {
+            em.persist(multa);
+        } else {
+            em.merge(multa);
         }
     }
 

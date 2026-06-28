@@ -23,11 +23,11 @@ public class PrestamoLibro {
     @Column(name = "estado", nullable = false, length = 20)
     private String estado = "ACTIVO";
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lector_id", nullable = false)
     private Lector lector;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ejemplar_id", nullable = false)
     private Ejemplar ejemplar;
 

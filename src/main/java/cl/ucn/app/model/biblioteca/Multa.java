@@ -1,6 +1,7 @@
 package cl.ucn.app.model.biblioteca;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -14,8 +15,8 @@ public class Multa {
     @Column(name = "dias_atraso", nullable = false)
     private Integer diasAtraso;
 
-    @Column(name = "monto", nullable = false)
-    private Double monto;
+    @Column(name = "monto", nullable = false, precision = 10, scale = 2)
+    private BigDecimal monto;
 
     @Column(name = "pagada", nullable = false)
     private Boolean pagada = false;
@@ -23,7 +24,7 @@ public class Multa {
     @Column(name = "fecha_generacion", nullable = false)
     private LocalDate fechaGeneracion;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "prestamo_id", nullable = false, unique = true)
     private PrestamoLibro prestamo;
 
@@ -35,8 +36,8 @@ public class Multa {
     public Integer getDiasAtraso() { return diasAtraso; }
     public void setDiasAtraso(Integer diasAtraso) { this.diasAtraso = diasAtraso; }
 
-    public Double getMonto() { return monto; }
-    public void setMonto(Double monto) { this.monto = monto; }
+    public BigDecimal getMonto() { return monto; }
+    public void setMonto(BigDecimal monto) { this.monto = monto; }
 
     public Boolean getPagada() { return pagada; }
     public void setPagada(Boolean pagada) { this.pagada = pagada; }

@@ -34,6 +34,7 @@ content = @`
                     <th>ISBN</th>
                     <th>Ejemplares</th>
                     <th>Disponibles</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,6 +46,10 @@ content = @`
                     <td>${libro.getIsbn()}</td>
                     <td>${totalEjemplares.getOrDefault(libro.getId(), 0)}</td>
                     <td>${disponibles.getOrDefault(libro.getId(), 0)}</td>
+                    <td>
+                        <a href="/biblioteca/libros/editar?id=${libro.getId()}">Editar</a>
+                        <a href="/biblioteca/libros/eliminar?id=${libro.getId()}" style="color:#a83232;margin-left:8px;" onclick="return confirm('Eliminar este libro?');">Eliminar</a>
+                    </td>
                 </tr>
                 @endfor
             </tbody>

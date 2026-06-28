@@ -13,10 +13,33 @@ public class LectorRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            if (lector.getId() == null) {
-                em.persist(lector);
-            } else {
-                em.merge(lector);
+            save(lector, em);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void save(Lector lector, EntityManager em) {
+        if (lector.getId() == null) {
+            em.persist(lector);
+        } else {
+            em.merge(lector);
+        }
+    }
+
+    public void delete(Lector lector) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Lector managed = lector.getId() != null ? em.find(Lector.class, lector.getId()) : lector;
+            if (managed != null) {
+                em.remove(managed);
             }
             em.getTransaction().commit();
         } catch (Exception e) {

@@ -12,10 +12,33 @@ public class LibroRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            if (libro.getId() == null) {
-                em.persist(libro);
-            } else {
-                em.merge(libro);
+            save(libro, em);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void save(Libro libro, EntityManager em) {
+        if (libro.getId() == null) {
+            em.persist(libro);
+        } else {
+            em.merge(libro);
+        }
+    }
+
+    public void delete(Libro libro) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Libro managed = libro.getId() != null ? em.find(Libro.class, libro.getId()) : libro;
+            if (managed != null) {
+                em.remove(managed);
             }
             em.getTransaction().commit();
         } catch (Exception e) {

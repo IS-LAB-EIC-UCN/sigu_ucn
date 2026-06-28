@@ -4,6 +4,7 @@
 @param List<Libro> libros
 @param String error
 @param String mensaje
+@param String libroId
 
 @template.layout.main(
 title = "Registrar Ejemplar - SIGU-UCN",
@@ -28,11 +29,19 @@ content = @`
                 <label>Libro</label>
                 <select name="libroId">
                     @for(Libro libro : libros)
-                    <option value="${libro.getId()}">${libro.getTitulo()} — ${libro.getAutor()} (${libro.getIsbn()})</option>
+                    @if(libroId != null && libroId.equals(String.valueOf(libro.getId())))
+                        <option value="${libro.getId()}" selected>${libro.getTitulo()} - ${libro.getAutor()} (${libro.getIsbn()})</option>
+                    @else
+                        <option value="${libro.getId()}">${libro.getTitulo()} - ${libro.getAutor()} (${libro.getIsbn()})</option>
+                    @endif
                     @endfor
                 </select>
             </div>
-            <button type="submit" class="primary-btn">Registrar ejemplar</button>
+            <div class="form-group">
+                <label>Cantidad de ejemplares a registrar</label>
+                <input type="number" name="cantidad" min="1" max="100" value="1" required/>
+            </div>
+            <button type="submit" class="primary-btn">Registrar ejemplares</button>
         </form>
     </div>
 `

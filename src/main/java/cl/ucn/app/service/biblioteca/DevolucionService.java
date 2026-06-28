@@ -1,9 +1,14 @@
 package cl.ucn.app.service.biblioteca;
 
+import cl.ucn.app.config.JPAUtil;
+import cl.ucn.app.exceptions.ConflictoEstadoException;
+import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
+
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -21,8 +26,8 @@ public class DevolucionService {
 
     public void registrarDevolucion(long prestamoId){
         PrestamoLibro prestamo = prestamoLibroRepository.findById(prestamoId);
-        if (prestamo == null){throw new IllegalArgumentException("Prestamo no existe");}
-        if (prestamo.getEstado().equalsIgnoreCase("FINALIZADO")){throw new IllegalArgumentException("Este prestamo ya fue finalizado");}
+        if (prestamo == null){throw new RecursoNoEncontradoException("Prestamo no existe");}
+        if (prestamo.getEstado().equalsIgnoreCase("FINALIZADO")){throw new ConflictoEstadoException("Este prestamo ya fue finalizado");}
 
         LocalDate hoy = LocalDate.now();
         LocalDate vencimiento = prestamo.getFechaVencimiento();
@@ -31,18 +36,45 @@ public class DevolucionService {
             long atraso = ChronoUnit.DAYS.between(vencimiento, hoy);
             int diasAtraso = (int) atraso;
 
-            if (diasAtraso > 0){multaService.generarMulta(prestamo,diasAtraso);}
+            if (diasAtraso > 0){
+                try (EntityManager em = JPAUtil.getEntityManager()) {
+                    try {
+                        em.getTransaction().begin();
+                        multaService.generarMulta(prestamo, diasAtraso);
+                        em.getTransaction().commit();
+                    } catch (Exception e) {
+                        if (em.getTransaction().isActive()) {
+                            em.getTransaction().rollback();
+                        }
+                        throw e;
+                    }
+                }
+            }
         }
 
         Ejemplar ejemplar = prestamo.getEjemplar();
         if (ejemplar != null){
             ejemplar.setEstado("DISPONIBLE");
-            ejemplarRepository.save(ejemplar);
         }
 
         prestamo.setEstado("FINALIZADO");
         prestamo.setFechaDevolucion(LocalDate.now());
-        prestamoLibroRepository.save(prestamo);
+
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            try {
+                em.getTransaction().begin();
+                if (ejemplar != null) {
+                    ejemplarRepository.save(ejemplar, em);
+                }
+                prestamoLibroRepository.save(prestamo, em);
+                em.getTransaction().commit();
+            } catch (Exception e) {
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                throw e;
+            }
+        }
 
     }
 }

@@ -1,5 +1,9 @@
 @param String usuarioNombre
 @param String error
+@param String titulo
+@param String autor
+@param String categoria
+@param String isbn
 
 @template.layout.main(
 title = "Registrar Libro - SIGU-UCN",
@@ -18,21 +22,31 @@ content = @`
     <div class="info-card">
         <form method="post" action="/biblioteca/libros/nuevo">
             <div class="form-group">
-                <label>Título</label>
-                <input type="text" name="titulo" placeholder="Título del libro" required/>
+                <label>Titulo</label>
+                <input type="text" name="titulo" placeholder="Ej: Estructuras de Datos" value="${titulo != null ? titulo : ""}" required/>
             </div>
             <div class="form-group">
                 <label>Autor</label>
-                <input type="text" name="autor" placeholder="Nombre del autor" required/>
+                <input type="text" name="autor" placeholder="Ej: Alfred V. Aho" value="${autor != null ? autor : ""}" required/>
             </div>
             <div class="form-group">
-                <label>Categoría</label>
-                <input type="text" name="categoria" placeholder="Ej: Programación, Matemáticas" required/>
+                <label>Categoria</label>
+                <input type="text" name="categoria" placeholder="Ej: Programacion" value="${categoria != null ? categoria : ""}" required/>
             </div>
             <div class="form-group">
                 <label>ISBN</label>
-                <input type="text" name="isbn" placeholder="Ej: 978-3-16-148410-0" required/>
+                <input type="text" name="isbn" id="isbnInput" placeholder="978-0-201-00023-8" value="${isbn != null ? isbn : ""}" maxlength="17" required oninput="formatIsbn(this)"/>
             </div>
+            <script>
+                function formatIsbn(input) {
+                    let v = input.value.replace(/[^0-9Xx]/g, '');
+                    if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+                    if (v.length > 7) v = v.slice(0,7) + '-' + v.slice(7);
+                    if (v.length > 11) v = v.slice(0,11) + '-' + v.slice(11);
+                    if (v.length > 15) v = v.slice(0,15) + '-' + v.slice(15);
+                    input.value = v;
+                }
+            </script>
             <button type="submit" class="primary-btn">Registrar libro</button>
         </form>
     </div>

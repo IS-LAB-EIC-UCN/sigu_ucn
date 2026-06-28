@@ -3,6 +3,9 @@
 @param String usuarioNombre
 @param List<Lector> lectores
 @param String error
+@param String nombre
+@param String correo
+@param String rut
 
 @template.layout.main(
 title = "Gestión de Lectores - SIGU-UCN",
@@ -23,16 +26,23 @@ content = @`
         <form method="post" action="/biblioteca/lectores/nuevo">
             <div class="form-group">
                 <label>Nombre completo</label>
-                <input type="text" name="nombre" placeholder="Ej: Juan Pérez" required/>
+                <input type="text" name="nombre" placeholder="Ej: Juan Perez" value="${nombre != null ? nombre : ""}" required/>
             </div>
             <div class="form-group">
-                <label>Correo electrónico</label>
-                <input type="text" name="correo" placeholder="Ej: juan.perez@ucn.cl" required/>
+                <label>Correo electronico</label>
+                <input type="text" name="correo" placeholder="juan.perez@ucn.cl" value="${correo != null ? correo : ""}" required/>
             </div>
             <div class="form-group">
                 <label>RUT</label>
-                <input type="text" name="rut" placeholder="Ej: 12345678-9" required/>
+                <input type="text" name="rut" id="rutInput" placeholder="12345678-5" value="${rut != null ? rut : ""}" maxlength="10" required oninput="formatRut(this)"/>
             </div>
+            <script>
+                function formatRut(input) {
+                    let v = input.value.replace(/[^0-9kK]/g, '');
+                    if (v.length > 1) v = v.slice(0,-1) + '-' + v.slice(-1);
+                    input.value = v;
+                }
+            </script>
             <button type="submit" class="primary-btn">Registrar lector</button>
         </form>
     </div>
@@ -56,7 +66,10 @@ content = @`
                     <td>${l.getCorreo()}</td>
                     <td>${l.getRut()}</td>
                     <td>${l.isBloqueado() ? "BLOQUEADO" : "ACTIVO"}</td>
-                    <td><a href="/biblioteca/lectores/editar?id=${l.getId()}">Editar</a></td>
+                    <td>
+                        <a href="/biblioteca/lectores/editar?id=${l.getId()}">Editar</a>
+                        <a href="/biblioteca/lectores/eliminar?id=${l.getId()}" style="color:#a83232;margin-left:8px;">Eliminar</a>
+                    </td>
                 </tr>
                 @endfor
             </tbody>

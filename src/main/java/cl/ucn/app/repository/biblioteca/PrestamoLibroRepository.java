@@ -15,11 +15,7 @@ public class PrestamoLibroRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            if (prestamo.getId() == null) {
-                em.persist(prestamo);
-            } else {
-                em.merge(prestamo);
-            }
+            save(prestamo, em);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
@@ -28,6 +24,14 @@ public class PrestamoLibroRepository {
             throw e;
         } finally {
             em.close();
+        }
+    }
+
+    public void save(PrestamoLibro prestamo, EntityManager em) {
+        if (prestamo.getId() == null) {
+            em.persist(prestamo);
+        } else {
+            em.merge(prestamo);
         }
     }
 

@@ -1,20 +1,23 @@
-@import java.util.List
+@import cl.ucn.app.controller.biblioteca.LibroDisponible
 @import cl.ucn.app.model.biblioteca.Lector
-@import cl.ucn.app.model.biblioteca.Ejemplar
+@import java.util.List
 @param String usuarioNombre
 @param List<Lector> lectores
-@param List<Ejemplar> ejemplares
+@param List<LibroDisponible> librosDisponibles
 @param String error
+@param String lectorId
+@param String libroId
+@param String fechaVencimiento
 
 @template.layout.main(
-title = "Solicitar Préstamo - SIGU-UCN",
+title = "Solicitar Prestamo - SIGU-UCN",
 usuarioNombre = usuarioNombre,
 content = @`
     <link rel="stylesheet" href="/css/biblioteca.css">
 
-    <p><a href="/biblioteca/libros">Volver al catálogo</a></p>
+    <p><a href="/biblioteca/libros">Volver al catalogo</a></p>
 
-    <h1>Solicitar Préstamo</h1>
+    <h1>Solicitar Prestamo</h1>
 
     @if(error != null)
         <div class="alert-error">${error}</div>
@@ -26,25 +29,33 @@ content = @`
                 <label>Lector</label>
                 <select name="lectorId">
                     @for(Lector l : lectores)
-                    <option value="${l.getId()}">${l.getNombre()} — ${l.getRut()}</option>
+                    @if(lectorId != null && lectorId.equals(String.valueOf(l.getId())))
+                        <option value="${l.getId()}" selected>${l.getNombre()} - ${l.getRut()}</option>
+                    @else
+                        <option value="${l.getId()}">${l.getNombre()} - ${l.getRut()}</option>
+                    @endif
                     @endfor
                 </select>
             </div>
             <div class="form-group">
-                <label>Ejemplar disponible</label>
-                <select name="ejemplarId">
-                    @if(ejemplares != null)
-                        @for(Ejemplar e : ejemplares)
-                        <option value="${e.getId()}">${e.getLibro().getTitulo()} (ID: ${e.getId()})</option>
+                <label>Libro a solicitar</label>
+                <select name="libroId">
+                    @if(librosDisponibles != null)
+                        @for(LibroDisponible ld : librosDisponibles)
+                        @if(libroId != null && ld.getLibro().getId().equals(Long.parseLong(libroId)))
+                            <option value="${ld.getLibro().getId()}" selected>${ld.getLabel()}</option>
+                        @else
+                            <option value="${ld.getLibro().getId()}">${ld.getLabel()}</option>
+                        @endif
                         @endfor
                     @endif
                 </select>
             </div>
             <div class="form-group">
                 <label>Fecha de vencimiento</label>
-                <input type="date" name="fechaVencimiento" required/>
+                <input type="date" name="fechaVencimiento" value="${fechaVencimiento != null ? fechaVencimiento : ""}" required/>
             </div>
-            <button type="submit" class="primary-btn">Confirmar préstamo</button>
+            <button type="submit" class="primary-btn">Confirmar prestamo</button>
         </form>
     </div>
 `
