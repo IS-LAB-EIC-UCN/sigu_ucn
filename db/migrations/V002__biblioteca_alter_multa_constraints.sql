@@ -1,14 +1,38 @@
--- Agregar columna fecha_generacion a tabla multa
-ALTER TABLE multa ADD COLUMN fecha_generacion DATE NOT NULL DEFAULT CURRENT_DATE;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'multa' AND column_name = 'fecha_generacion'
+    ) THEN
+        ALTER TABLE multa ADD COLUMN fecha_generacion DATE NOT NULL DEFAULT CURRENT_DATE;
+    END IF;
+END $$;
 
--- Hacer prestamo_id UNIQUE para garantizar relación 1:1 entre Multa y PrestamoLibro
-ALTER TABLE multa ADD CONSTRAINT uk_multa_prestamo_id UNIQUE (prestamo_id);
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'uk_multa_prestamo_id'
+    ) THEN
+        ALTER TABLE multa ADD CONSTRAINT uk_multa_prestamo_id UNIQUE (prestamo_id);
+    END IF;
+END $$;
 
--- Agregar CHECK en ejemplar para restricción de estados válidos
-ALTER TABLE ejemplar ADD CONSTRAINT chk_ejemplar_estado
-  CHECK (estado IN ('DISPONIBLE', 'PRESTADO'));
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'chk_ejemplar_estado'
+    ) THEN
+        ALTER TABLE ejemplar ADD CONSTRAINT chk_ejemplar_estado
+            CHECK (estado IN ('DISPONIBLE', 'PRESTADO'));
+    END IF;
+END $$;
 
--- Agregar CHECK en prestamo para restricción de estados válidos
-ALTER TABLE prestamo ADD CONSTRAINT chk_prestamo_estado
-  CHECK (estado IN ('ACTIVO', 'FINALIZADO', 'ATRASADO'));
-
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'chk_prestamo_estado'
+    ) THEN
+        ALTER TABLE prestamo ADD CONSTRAINT chk_prestamo_estado
+            CHECK (estado IN ('ACTIVO', 'FINALIZADO', 'ATRASADO'));
+    END IF;
+END $$;

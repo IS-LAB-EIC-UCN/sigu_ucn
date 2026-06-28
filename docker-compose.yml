@@ -1,4 +1,3 @@
-
 services:
   postgres:
     image: postgres:16
@@ -13,6 +12,30 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d
+
+  migrate:
+    image: postgres:16
+    depends_on:
+      - postgres
+    environment:
+      PGPASSWORD: postgres
+    volumes:
+      - ./db/migrations:/migrations:ro
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        until pg_isready -h postgres -U postgres -d sigu_ucn; do
+          echo "[migrate] Esperando a Postgres..."
+          sleep 1
+        done
+        for f in /migrations/V*.sql; do
+          echo "[migrate] Aplicando $$f"
+          psql -h postgres -U postgres -d sigu_ucn -v ON_ERROR_STOP=1 -f "$$f"
+        done
+        echo "[migrate] Listo"
+    restart: "no"
 
 volumes:
   postgres_data:

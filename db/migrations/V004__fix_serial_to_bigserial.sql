@@ -1,11 +1,9 @@
--- Corregir SERIAL (INTEGER) a BIGINT para que coincida con el mapeo JPA (Long)
 ALTER TABLE lector ALTER COLUMN id TYPE BIGINT;
 ALTER TABLE libro ALTER COLUMN id TYPE BIGINT;
 ALTER TABLE ejemplar ALTER COLUMN id TYPE BIGINT;
 ALTER TABLE prestamo ALTER COLUMN id TYPE BIGINT;
 ALTER TABLE multa ALTER COLUMN id TYPE BIGINT;
 
--- También las claves foráneas deben coincidir en tipo
 ALTER TABLE ejemplar ALTER COLUMN libro_id TYPE BIGINT;
 ALTER TABLE prestamo ALTER COLUMN lector_id TYPE BIGINT;
 ALTER TABLE prestamo ALTER COLUMN ejemplar_id TYPE BIGINT;
