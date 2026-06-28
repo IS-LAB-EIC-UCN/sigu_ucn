@@ -50,6 +50,9 @@ public class Evento {
     )
     private List<Expositor> expositores = new ArrayList<>();
 
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Inscripcion> inscripciones = new ArrayList<>();
+
     public Evento() {}
 
     public Evento(String titulo, String descripcion, LocalDate fecha, LocalTime horaInicio,
@@ -96,4 +99,7 @@ public class Evento {
 
     public List<Expositor> getExpositores() { return expositores; }
     public void setExpositores(List<Expositor> expositores) { this.expositores = expositores; }
+
+    public List<Inscripcion> getInscripciones() { return inscripciones; }
+    public void setInscripciones(List<Inscripcion> inscripciones) { this.inscripciones = inscripciones; }
 }

@@ -15,5 +15,7 @@ public final class EventoRoutes {
         config.routes.post("/eventos/registrar", eventoController::registrar);
         config.routes.post("/eventos/cancelar", eventoController::cancelar);
         config.routes.post("/eventos/eliminar", eventoController::eliminar);
+        config.routes.post("/eventos/inscribir", eventoController::inscribir);
+        config.routes.post("/eventos/cancelar-inscripcion", eventoController::cancelarInscripcion);
     }
 }

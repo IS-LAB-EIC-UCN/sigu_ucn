@@ -1,10 +1,12 @@
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
 @param String error
 
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
+usuarioRol = usuarioRol,
 content = @`
     <section class="page-section">
         <div class="page-header">

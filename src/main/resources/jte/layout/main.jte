@@ -2,6 +2,7 @@
 
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
 @param Content content
 
 <!DOCTYPE html>
@@ -19,7 +20,7 @@
     <div class="brand">SIGU-UCN</div>
     <div class="topbar-right">
         @if(usuarioNombre != null)
-            <span class="user-label">Bienvenido, ${usuarioNombre}</span>
+            <span class="user-label">Bienvenido, ${usuarioNombre} @if(usuarioRol != null)(${usuarioRol})@endif</span>
             <a class="logout-btn" href="/logout">Cerrar sesión</a>
         @endif
     </div>
