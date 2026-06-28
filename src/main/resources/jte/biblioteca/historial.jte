@@ -48,10 +48,14 @@ content = @`
                         <td>${p.getFechaVencimiento().toString()}</td>
                         <td>${p.getFechaDevolucion() != null ? p.getFechaDevolucion().toString() : "No devuelto"}</td>
                         <td>
-                            @if("ACTIVO".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-activo">Activo</span>
+                            @if("SOLICITADO".equals(p.getEstado()))
+                                <span class="bib-badge bib-badge-pendiente" style="background:#fff3cd;color:#856404;border:1px solid #ffeeba;padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">Reservado</span>
+                            @elseif("ACTIVO".equals(p.getEstado()))
+                                <span class="bib-badge bib-badge-activo" style="padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">Activo</span>
+                            @elseif("PENDIENTE_DEVOLUCION".equals(p.getEstado()))
+                                <span class="bib-badge bib-badge-pendiente" style="background:#ffe8d6;color:#a04000;border:1px solid #ffd8b3;padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">P. Recepción</span>
                             @else
-                                <span class="bib-badge bib-badge-finalizado">Devuelto</span>
+                                <span class="bib-badge bib-badge-finalizado" style="padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">Devuelto</span>
                             @endif
                         </td>
                         @if(p.getMontoMulta() != null)
@@ -70,20 +74,29 @@ content = @`
                             <td>-</td>
                         @endif
                         <td>
-                            @if("ACTIVO".equals(p.getEstado()))
-                                @if(esAdmin)
+                            @if(esAdmin)
+                                @if("SOLICITADO".equals(p.getEstado()))
+                                    <form method="post" action="/biblioteca/prestamo/confirmar" style="display:inline;">
+                                        <input type="hidden" name="prestamoId" value="${p.getId()}"/>
+                                        <button type="submit" class="bib-btn bib-btn-accent" style="padding:6px 12px;font-size:0.9em;">Confirmar Entrega</button>
+                                    </form>
+                                @elseif("ACTIVO".equals(p.getEstado()) || "PENDIENTE_DEVOLUCION".equals(p.getEstado()))
                                     <form method="post" action="/biblioteca/devolucion" style="display:inline;">
                                         <input type="hidden" name="prestamoId" value="${p.getId()}"/>
                                         <button type="submit" class="bib-btn bib-btn-accent" style="padding:6px 12px;font-size:0.9em;">Registrar Devolución</button>
                                     </form>
                                 @else
+                                    <span style="color:#999;">-</span>
+                                @endif
+                            @else
+                                @if("ACTIVO".equals(p.getEstado()))
                                     <form method="post" action="/biblioteca/prestamo/devolver" style="display:inline;">
                                         <input type="hidden" name="prestamoId" value="${p.getId()}"/>
                                         <button type="submit" class="bib-btn bib-btn-accent" style="padding:6px 12px;font-size:0.9em;">Devolver</button>
                                     </form>
+                                @else
+                                    <span style="color:#999;">-</span>
                                 @endif
-                            @else
-                                <span style="color:#999;">-</span>
                             @endif
                         </td>
                     </tr>

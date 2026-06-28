@@ -6,6 +6,7 @@
 @param String correo = null
 @param String rut = null
 @param cl.ucn.app.model.biblioteca.Lector lector = null
+@param boolean guardado = false
 
 @template.layout.main(
 title = "Mis Datos - SIGU-UCN",
@@ -18,11 +19,19 @@ content = @`
         <h1>Mis Datos de Lector</h1>
         <p>Tus datos registrados en el sistema de biblioteca.</p>
 
+        @if(lector == null && returnTo != null && !returnTo.isBlank() && !"/biblioteca/historial".equals(returnTo))
+            <div class="bib-alert bib-alert-error" style="margin-bottom:20px;">
+                <strong>Perfil incompleto:</strong> Debes registrar tus datos de lector (Nombre completo, Correo electrónico y RUT) antes de poder realizar solicitudes de libros y acceder a tu historial.
+            </div>
+        @endif
+
         @if(lector != null)
             <div class="bib-card">
-                <div class="bib-alert bib-alert-success" style="margin-bottom:20px;">
-                    Tus datos de lector ya se encuentran registrados correctamente.
-                </div>
+                @if(guardado)
+                    <div class="bib-alert bib-alert-success" style="margin-bottom:20px;">
+                        Tus datos de lector han sido registrados correctamente.
+                    </div>
+                @endif
                 <div style="margin-bottom:15px;">
                     <span style="display:block;font-size:0.9em;color:#666;text-transform:uppercase;font-weight:600;">Nombre completo</span>
                     <div style="font-size:1.15em;font-weight:600;color:var(--bib-text);margin-top:2px;">${lector.getNombre()}</div>

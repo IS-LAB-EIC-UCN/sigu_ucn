@@ -59,6 +59,8 @@ public class BibliotecaIntegrationTest {
                 || response.body().toLowerCase().contains("login"));
     }
 
+
+
     @Test
     public void testBibliotecaLibros_sinSesion_redirigeALogin() throws Exception {
         HttpResponse<String> response = get("/biblioteca/libros");
@@ -186,7 +188,7 @@ public class BibliotecaIntegrationTest {
         cl.ucn.app.model.biblioteca.Libro libro = new cl.ucn.app.model.biblioteca.Libro();
         libro.setTitulo("Libro Test Prestamo");
         libro.setAutor("Autor Test");
-        libro.setCategoria("Informatica");
+        libro.setCategoria("Ciencias");
         libro.setIsbn("978-0-12-345678-9");
         libroRepo.save(libro);
 
@@ -195,53 +197,86 @@ public class BibliotecaIntegrationTest {
         ejemplar.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
         ejemplarRepo.save(ejemplar);
 
+        // Crear lector directamente en la BD para el test
+        cl.ucn.app.repository.biblioteca.LectorRepository lectorRepo = new cl.ucn.app.repository.biblioteca.LectorRepository();
+        cl.ucn.app.model.biblioteca.Lector lector = new cl.ucn.app.model.biblioteca.Lector();
+        lector.setNombre("Docente Demo");
+        lector.setCorreo("docente@sigu.cl");
+        lector.setRut("12345678-5");
+        lector.setBloqueado(false);
+        lectorRepo.save(lector);
+
         // 1. Iniciar sesion como lector
         login("docente@sigu.cl", "docente123");
 
-        // Completar datos de lector si no están
-        String misDatos = "nombre=Docente%20Demo&correo=docente@sigu.cl&rut=12345678-5&returnTo=/biblioteca/libros";
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/biblioteca/mis-datos"))
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(misDatos))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertEquals(302, response.statusCode());
-
-        // Solicitar préstamo
+        // Solicitar préstamo (Reserva)
         String prestamoData = "libroId=" + libro.getId() + "&fechaVencimiento=" + LocalDate.now().plusDays(5).toString();
-        request = HttpRequest.newBuilder()
+        HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/biblioteca/prestamo/nuevo"))
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(prestamoData))
                 .build();
-        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertEquals(302, response.statusCode());
 
-        // Verificar que el ejemplar quede PRESTADO
+        // Verificar que el ejemplar quede PRESTADO (reservado)
         cl.ucn.app.model.biblioteca.Ejemplar updatedEjemplar = ejemplarRepo.findById(ejemplar.getId());
         assertEquals(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO, updatedEjemplar.getEstado());
 
-        // Buscar el prestamo creado
+        // Buscar el prestamo creado y verificar que esté en SOLICITADO
         cl.ucn.app.repository.biblioteca.PrestamoLibroRepository prestamoRepo = new cl.ucn.app.repository.biblioteca.PrestamoLibroRepository();
         cl.ucn.app.model.biblioteca.PrestamoLibro prestamo = prestamoRepo.findAll().stream()
-                .filter(p -> p.getEjemplar().getId().equals(ejemplar.getId()) && p.getEstado() == cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO)
+                .filter(p -> p.getEjemplar().getId().equals(ejemplar.getId()) && p.getEstado() == cl.ucn.app.model.biblioteca.EstadoPrestamo.SOLICITADO)
                 .findFirst()
                 .orElse(null);
         assertNotNull(prestamo);
 
-        // 2. Iniciar sesion como admin para registrar la devolucion
+        // 2. Iniciar sesion como admin para confirmar la entrega (retiro físico)
         logout();
         login("admin@sigu.cl", "admin123");
 
-        String devolucionData = "prestamoId=" + prestamo.getId();
+        String confirmarEntregaData = "prestamoId=" + prestamo.getId();
         request = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/biblioteca/devolucion"))
+                .uri(URI.create(BASE_URL + "/biblioteca/prestamo/confirmar"))
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(devolucionData))
+                .POST(HttpRequest.BodyPublishers.ofString(confirmarEntregaData))
                 .build();
         response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        assertTrue(response.statusCode() == 302 || response.statusCode() == 200);
+        assertEquals(302, response.statusCode());
+
+        // Verificar que el préstamo pase a ACTIVO
+        cl.ucn.app.model.biblioteca.PrestamoLibro activePrestamo = prestamoRepo.findById(prestamo.getId());
+        assertEquals(cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO, activePrestamo.getEstado());
+
+        // 3. Iniciar sesión como lector para solicitar devolución
+        logout();
+        login("docente@sigu.cl", "docente123");
+
+        String devolverData = "prestamoId=" + prestamo.getId();
+        request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/biblioteca/prestamo/devolver"))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(devolverData))
+                .build();
+        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(302, response.statusCode());
+
+        // Verificar que el préstamo pase a PENDIENTE_DEVOLUCION
+        cl.ucn.app.model.biblioteca.PrestamoLibro pendingReturnPrestamo = prestamoRepo.findById(prestamo.getId());
+        assertEquals(cl.ucn.app.model.biblioteca.EstadoPrestamo.PENDIENTE_DEVOLUCION, pendingReturnPrestamo.getEstado());
+
+        // 4. Iniciar sesión como admin para confirmar devolución (recepción física)
+        logout();
+        login("admin@sigu.cl", "admin123");
+
+        String finalizarData = "prestamoId=" + prestamo.getId();
+        request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/biblioteca/prestamo/finalizar"))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(finalizarData))
+                .build();
+        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(302, response.statusCode());
 
         // Verificar que el ejemplar vuelva a estar DISPONIBLE y el prestamo FINALIZADO
         updatedEjemplar = ejemplarRepo.findById(ejemplar.getId());
@@ -257,6 +292,7 @@ public class BibliotecaIntegrationTest {
         em.createNativeQuery("DELETE FROM prestamo WHERE id = ?").setParameter(1, prestamo.getId()).executeUpdate();
         em.createNativeQuery("DELETE FROM ejemplar WHERE id = ?").setParameter(1, ejemplar.getId()).executeUpdate();
         em.createNativeQuery("DELETE FROM libro WHERE id = ?").setParameter(1, libro.getId()).executeUpdate();
+        em.createNativeQuery("DELETE FROM lector WHERE id = ?").setParameter(1, lector.getId()).executeUpdate();
         em.getTransaction().commit();
         em.close();
         logout();

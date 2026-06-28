@@ -43,22 +43,30 @@ public class PrestamoController {
 
     public void formularioPrestamo(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
-        if (lector == null) {
-            ctx.redirect("/biblioteca/mis-datos?returnTo=/biblioteca/prestamo/nuevo");
-            return;
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+            if (lector == null) {
+                String returnTo = "/biblioteca/prestamo/nuevo";
+                String libroIdQuery = ctx.queryParam("libroId");
+                if (libroIdQuery != null && !libroIdQuery.isBlank()) {
+                    returnTo += "?libroId=" + libroIdQuery;
+                }
+                try {
+                    ctx.redirect("/biblioteca/mis-datos?returnTo=" + java.net.URLEncoder.encode(returnTo, "UTF-8"));
+                } catch (java.io.UnsupportedEncodingException e) {
+                    ctx.redirect("/biblioteca/mis-datos?returnTo=" + returnTo);
+                }
+                return;
+            }
         }
-        reRenderFormularioPrestamo(ctx, usuarioNombre, null, "", "");
+        String libroIdQuery = ctx.queryParam("libroId");
+        reRenderFormularioPrestamo(ctx, usuarioNombre, null, libroIdQuery != null ? libroIdQuery : "", "");
     }
 
     public void solicitarPrestamo(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-
-        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
-        if (lector == null) {
-            ctx.redirect("/biblioteca/mis-datos");
-            return;
-        }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
 
         String libroIdStr = ctx.formParam("libroId");
         String fechaVencimientoStr = ctx.formParam("fechaVencimiento");
@@ -71,20 +79,41 @@ public class PrestamoController {
             return;
         }
 
-        if (lector.isBloqueado()) {
-            reRenderFormularioPrestamo(ctx, usuarioNombre,
-                "Su cuenta esta bloqueada por deudas pendientes. Contacte al administrador.",
-                "", "");
-            return;
-        }
-
         Long libroId = Long.parseLong(libroIdStr);
         LocalDate fechaVencimiento = LocalDate.parse(fechaVencimientoStr);
 
         try {
-            prestamoService.solicitarPrestamo(lector.getId(), libroId, fechaVencimiento);
-            ctx.redirect("/biblioteca/historial");
+            if ("ADMIN".equals(usuarioRol)) {
+                String lectorIdStr = ctx.formParam("lectorId");
+                if (lectorIdStr == null || lectorIdStr.isBlank()) {
+                    reRenderFormularioPrestamo(ctx, usuarioNombre, "Debe seleccionar un lector", libroIdStr, fechaVencimientoStr);
+                    return;
+                }
+                Long lectorId = Long.parseLong(lectorIdStr);
+                prestamoService.solicitarPrestamoActivo(lectorId, libroId, fechaVencimiento);
+            } else {
+                Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+                if (lector == null) {
+                    ctx.redirect("/biblioteca/mis-datos");
+                    return;
+                }
+                if (lector.isBloqueado()) {
+                    reRenderFormularioPrestamo(ctx, usuarioNombre,
+                        "Su cuenta está bloqueada por deudas pendientes. Debe acercarse a la administración de la biblioteca a regularizar su situación.",
+                        libroIdStr, fechaVencimientoStr);
+                    return;
+                }
+                prestamoService.solicitarPrestamo(lector.getId(), libroId, fechaVencimiento);
+            }
+            if ("ADMIN".equals(usuarioRol)) {
+                ctx.redirect("/biblioteca/libros?asignado=1");
+            } else {
+                ctx.redirect("/biblioteca/historial");
+            }
         } catch (ValidacionException e) {
+            reRenderFormularioPrestamo(ctx, usuarioNombre, e.getMessage(),
+                libroIdStr, fechaVencimientoStr);
+        } catch (Exception e) {
             reRenderFormularioPrestamo(ctx, usuarioNombre, e.getMessage(),
                 libroIdStr, fechaVencimientoStr);
         }
@@ -105,10 +134,16 @@ public class PrestamoController {
         }
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", ctx.sessionAttribute("usuarioRol"));
         model.put("librosDisponibles", librosDisponibles);
         model.put("error", errorMsg);
         model.put("libroId", libroId != null ? libroId : "");
         model.put("fechaVencimiento", fechaVencimiento != null ? fechaVencimiento : "");
+
+        if ("ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) {
+            model.put("lectores", new cl.ucn.app.repository.biblioteca.LectorRepository().findAll());
+        }
+
         ctx.render("biblioteca/prestamo-form.jte", model);
     }
 
@@ -133,6 +168,39 @@ public class PrestamoController {
     public void registrarDevolucion(Context ctx) {
         Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
         devolucionService.registrarDevolucion(prestamoId);
+        ctx.redirect("/biblioteca/historial");
+    }
+
+    public void confirmarEntrega(Context ctx) {
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403);
+            return;
+        }
+        Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
+        prestamoService.confirmarEntrega(prestamoId);
+        ctx.redirect("/biblioteca/historial");
+    }
+
+    public void solicitarDevolucion(Context ctx) {
+        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+        if (lector == null) {
+            ctx.redirect("/biblioteca/historial");
+            return;
+        }
+        Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
+        prestamoService.solicitarDevolucion(prestamoId);
+        ctx.redirect("/biblioteca/historial");
+    }
+
+    public void confirmarDevolucion(Context ctx) {
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        if (!"ADMIN".equals(usuarioRol)) {
+            ctx.status(403);
+            return;
+        }
+        Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
+        prestamoService.confirmarDevolucion(prestamoId);
         ctx.redirect("/biblioteca/historial");
     }
 
@@ -172,31 +240,5 @@ public class PrestamoController {
         }
 
         ctx.render("biblioteca/historial.jte", model);
-    }
-
-    public void devolverMiPrestamo(Context ctx) {
-        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-
-        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
-        if (lector == null) {
-            ctx.redirect("/biblioteca/historial");
-            return;
-        }
-
-        String prestamoIdStr = ctx.formParam("prestamoId");
-        if (prestamoIdStr == null || prestamoIdStr.isBlank()) {
-            ctx.redirect("/biblioteca/historial");
-            return;
-        }
-
-        Long prestamoId = Long.parseLong(prestamoIdStr);
-        PrestamoLibro prestamo = prestamoLibroRepository.findById(prestamoId);
-        if (prestamo == null || !prestamo.getLector().getId().equals(lector.getId())
-                || cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO != prestamo.getEstado()) {
-            ctx.redirect("/biblioteca/historial");
-            return;
-        }
-        devolucionService.registrarDevolucion(prestamoId);
-        ctx.redirect("/biblioteca/historial");
     }
 }

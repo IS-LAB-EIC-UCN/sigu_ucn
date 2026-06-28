@@ -116,12 +116,12 @@ public class LectorService implements ILectorService {
         try {
             em.getTransaction().begin();
             Long count = (Long) em.createQuery(
-                "SELECT COUNT(p) FROM PrestamoLibro p WHERE p.lector.id = :id AND p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO")
+                "SELECT COUNT(p) FROM PrestamoLibro p WHERE p.lector.id = :id AND (p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO OR p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.SOLICITADO OR p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.PENDIENTE_DEVOLUCION)")
                 .setParameter("id", id)
                 .getSingleResult();
             if (count > 0) {
                 em.getTransaction().rollback();
-                throw new ConflictoEstadoException("No se puede eliminar el lector porque tiene prestamos activos. Primero devuelve los prestamos.");
+                throw new ConflictoEstadoException("No se puede eliminar el lector porque tiene préstamos o reservas activas.");
             }
             em.createNativeQuery("DELETE FROM multa WHERE prestamo_id IN (SELECT id FROM prestamo WHERE lector_id = ?)")
                 .setParameter(1, id)

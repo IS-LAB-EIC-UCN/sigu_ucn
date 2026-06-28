@@ -27,6 +27,7 @@ public class MisDatosController {
             model.put("usuarioNombre", usuarioNombre);
             model.put("usuarioRol", ctx.sessionAttribute("usuarioRol"));
             model.put("lector", existente);
+            model.put("guardado", ctx.queryParam("guardado") != null);
             ctx.render("biblioteca/mis-datos.jte", model);
             return;
         }

@@ -33,7 +33,6 @@ public class BibliotecaRoutes {
 
         // Catalogo (lectura para todos)
         config.routes.get("/biblioteca/libros", conPermiso(catalogoController::listar, TODOS));
-        config.routes.get("/biblioteca/buscar", conPermiso(catalogoController::buscar, TODOS));
 
         // Crear libros y ejemplares (solo ADMIN)
         config.routes.get("/biblioteca/libros/nuevo", conPermiso(catalogoController::formularioRegistrarLibro, ADMIN));
@@ -49,14 +48,16 @@ public class BibliotecaRoutes {
         config.routes.post("/biblioteca/ejemplares/editar", conPermiso(registroController::editarEjemplar, ADMIN));
         config.routes.get("/biblioteca/ejemplares/eliminar", conPermiso(registroController::eliminarEjemplar, ADMIN));
 
-        // Prestamos (DOCENTE y ESTUDIANTE pueden solicitar; ADMIN registra devoluciones)
-        config.routes.get("/biblioteca/prestamo/nuevo", conPermiso(prestamoController::formularioPrestamo, LECTORES));
-        config.routes.post("/biblioteca/prestamo/nuevo", conPermiso(prestamoController::solicitarPrestamo, LECTORES));
+        // Prestamos
+        config.routes.get("/biblioteca/prestamo/nuevo", conPermiso(prestamoController::formularioPrestamo, TODOS));
+        config.routes.post("/biblioteca/prestamo/nuevo", conPermiso(prestamoController::solicitarPrestamo, TODOS));
         config.routes.post("/biblioteca/devolucion", conPermiso(prestamoController::registrarDevolucion, ADMIN));
+        config.routes.post("/biblioteca/prestamo/confirmar", conPermiso(prestamoController::confirmarEntrega, ADMIN));
+        config.routes.post("/biblioteca/prestamo/finalizar", conPermiso(prestamoController::confirmarDevolucion, ADMIN));
 
         // Historial (todos pueden ver)
         config.routes.get("/biblioteca/historial", conPermiso(prestamoController::historial, TODOS));
-        config.routes.post("/biblioteca/prestamo/devolver", conPermiso(prestamoController::devolverMiPrestamo, LECTORES));
+        config.routes.post("/biblioteca/prestamo/devolver", conPermiso(prestamoController::solicitarDevolucion, LECTORES));
 
         // Mis datos (LECTORES completan su perfil de lector)
         MisDatosController misDatosController = new MisDatosController();

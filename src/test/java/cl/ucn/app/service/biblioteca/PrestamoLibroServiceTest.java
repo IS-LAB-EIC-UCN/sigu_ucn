@@ -66,7 +66,7 @@ public class PrestamoLibroServiceTest{
 
         assertNotNull(resultado);
         assertEquals(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO, ejemplarTest.getEstado());
-        assertEquals(cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO, resultado.getEstado());
+        assertEquals(cl.ucn.app.model.biblioteca.EstadoPrestamo.SOLICITADO, resultado.getEstado());
         assertEquals(lectorTest, resultado.getLector());
     }
 

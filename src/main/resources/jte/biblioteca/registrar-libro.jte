@@ -33,7 +33,15 @@ content = @`
                 </div>
                 <div class="bib-form-group">
                     <label>Categoría</label>
-                    <input type="text" name="categoria" class="bib-form-input" placeholder="Ej: Programacion" value="${categoria != null ? categoria : ""}" required/>
+                    <select name="categoria" class="bib-form-input" required>
+                        <option value="">Seleccione una categoría</option>
+                        <option value="CIENCIAS" selected="${"CIENCIAS".equals(categoria)}">Ciencias</option>
+                        <option value="ECONOMIA" selected="${"ECONOMIA".equals(categoria)}">Economía</option>
+                        <option value="HISTORIA" selected="${"HISTORIA".equals(categoria)}">Historia</option>
+                        <option value="PROGRAMACION" selected="${"PROGRAMACION".equals(categoria)}">Programación</option>
+                        <option value="HUMANIDADES" selected="${"HUMANIDADES".equals(categoria)}">Humanidades</option>
+                        <option value="OTRO" selected="${"OTRO".equals(categoria)}">Otro</option>
+                    </select>
                 </div>
                 <div class="bib-form-group">
                     <label>ISBN</label>
