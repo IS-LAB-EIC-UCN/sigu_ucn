@@ -18,6 +18,10 @@ public class LibroService {
         this.libroRepository = new LibroRepository();
     }
 
+    LibroService(LibroRepository libroRepository) {
+        this.libroRepository = libroRepository;
+    }
+
     public Libro registrarLibro(String titulo, String autor, String categoria, String isbn) {
 
         if (isbn == null || isbn.isBlank()) {

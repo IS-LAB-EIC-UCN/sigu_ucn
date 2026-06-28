@@ -26,6 +26,12 @@ public class MultaService {
         this.lectorService = new LectorService();
     }
 
+    MultaService(MultaRepository multaRepository, LectorRepository lectorRepository) {
+        this.multaRepository = multaRepository;
+        this.lectorRepository = lectorRepository;
+        this.lectorService = new LectorService();
+    }
+
     public Multa generarMulta(PrestamoLibro prestamo, int diasAtraso) {
         if (prestamo == null || diasAtraso <= 0){return null;}
 

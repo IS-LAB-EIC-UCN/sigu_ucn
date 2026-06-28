@@ -24,6 +24,14 @@ public class DevolucionService {
         this.multaService = new MultaService();
     }
 
+    DevolucionService(EjemplarRepository ejemplarRepository,
+                      PrestamoLibroRepository prestamoLibroRepository,
+                      MultaService multaService) {
+        this.ejemplarRepository = ejemplarRepository;
+        this.prestamoLibroRepository = prestamoLibroRepository;
+        this.multaService = multaService;
+    }
+
     public void registrarDevolucion(long prestamoId){
         PrestamoLibro prestamo = prestamoLibroRepository.findById(prestamoId);
         if (prestamo == null){throw new RecursoNoEncontradoException("Prestamo no existe");}

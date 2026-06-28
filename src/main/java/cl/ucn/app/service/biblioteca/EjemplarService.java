@@ -23,6 +23,11 @@ public class EjemplarService {
         this.libroRepository = new LibroRepository();
     }
 
+    EjemplarService(EjemplarRepository ejemplarRepository, LibroRepository libroRepository) {
+        this.ejemplarRepository = ejemplarRepository;
+        this.libroRepository = libroRepository;
+    }
+
     public Ejemplar agregarEjemplar(Long libroId) {
         Libro libro = libroRepository.findById(libroId);
 

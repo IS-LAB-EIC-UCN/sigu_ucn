@@ -10,7 +10,6 @@ import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -46,30 +45,29 @@ public class PrestamoLibroServiceTest{
     }
 
     @Test
-    @Disabled("Requiere mockear JPAUtil.getEntityManager() estatico. " +
-              "Se reescribira en C2 con mock estatico o extrayendo un EntityManagerProvider.")
-    public void testPrestamoLibroExitoso(){
+    public void testSolicitar_ok_cambiaEstadoEjemplar(){
         LocalDate fechaVencimiento = LocalDate.now().plusDays(7);
         Lector lectorTest = new Lector();
         lectorTest.setBloqueado(false);
 
+        Libro libroTest = new Libro();
+        libroTest.setId(10L);
         Ejemplar ejemplarTest = new Ejemplar();
+        ejemplarTest.setId(100L);
+        ejemplarTest.setLibro(libroTest);
         ejemplarTest.setEstado("DISPONIBLE");
 
-        Long idLector = 1L;
-        Long idEjemplar = 2L;
+        Mockito.when(lectorRepository.findById(1L)).thenReturn(lectorTest);
+        Mockito.when(libroRepository.findById(10L)).thenReturn(libroTest);
+        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libroTest))
+                .thenReturn(List.of(ejemplarTest));
 
-        Mockito.when(lectorRepository.findById(Mockito.anyLong())).thenReturn(lectorTest);
-        Mockito.when(ejemplarRepository.findById(Mockito.anyLong())).thenReturn(ejemplarTest);
+        PrestamoLibro resultado = prestamoLibroService.solicitarPrestamo(1L, 10L, fechaVencimiento);
 
-        PrestamoLibro resultado = prestamoLibroService.solicitarPrestamo(idLector,idEjemplar,fechaVencimiento);
         assertNotNull(resultado);
-        assertEquals("PRESTADO", ejemplarTest.getEstado(), "El ejemplar debió cambiar su estado a PRESTADO");
+        assertEquals("PRESTADO", ejemplarTest.getEstado());
         assertEquals("ACTIVO", resultado.getEstado());
         assertEquals(lectorTest, resultado.getLector());
-
-        Mockito.verify(ejemplarRepository, Mockito.times(1)).save(ejemplarTest);
-        Mockito.verify(prestamoLibroRepository, Mockito.times(1)).save(resultado);
     }
 
     @Test

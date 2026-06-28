@@ -17,6 +17,11 @@ public class BusquedaService {
         this.ejemplarRepository = new EjemplarRepository();
     }
 
+    BusquedaService(LibroRepository libroRepository, EjemplarRepository ejemplarRepository) {
+        this.libroRepository = libroRepository;
+        this.ejemplarRepository = ejemplarRepository;
+    }
+
     public List<Libro> buscar(String termino){
         if (termino == null){return new ArrayList<>();}
 

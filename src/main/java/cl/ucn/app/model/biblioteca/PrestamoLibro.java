@@ -35,6 +35,7 @@ public class PrestamoLibro {
 
     // Getters y Setters
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public LocalDate getFechaInicio() { return fechaInicio; }
     public void setFechaInicio(LocalDate fechaInicio) { this.fechaInicio = fechaInicio; }

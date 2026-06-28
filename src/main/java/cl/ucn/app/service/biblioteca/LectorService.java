@@ -24,6 +24,12 @@ public class LectorService {
         this.prestamoLibroRepository = new PrestamoLibroRepository();
     }
 
+    LectorService(LectorRepository lectorRepository) {
+        this.lectorRepository = lectorRepository;
+        this.multaRepository = new MultaRepository();
+        this.prestamoLibroRepository = new PrestamoLibroRepository();
+    }
+
     public Lector registrarLector(String nombre, String correo, String rut) {
         validarDatosLector(nombre, correo, rut);
         if (buscarPorRut(rut) != null || lectorRepository.findByCorreo(correo) != null) {
