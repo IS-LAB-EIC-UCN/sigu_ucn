@@ -9,7 +9,6 @@ import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,11 +46,11 @@ public class PrestamoLibroServiceTest{
         Ejemplar ejemplarTest = new Ejemplar();
         ejemplarTest.setEstado("DISPONIBLE");
 
-        Long idLector = lectorTest.getId();
-        Long idEjemplar = ejemplarTest.getId();
+        Long idLector = 1L;
+        Long idEjemplar = 2L;
 
-        Mockito.when(lectorRepository.findById(idLector)).thenReturn(lectorTest);
-        Mockito.when(ejemplarRepository.findById(idEjemplar)).thenReturn(ejemplarTest);
+        Mockito.when(lectorRepository.findById(Mockito.anyLong())).thenReturn(lectorTest);
+        Mockito.when(ejemplarRepository.findById(Mockito.anyLong())).thenReturn(ejemplarTest);
 
         PrestamoLibro resultado = prestamoLibroService.solicitarPrestamo(idLector,idEjemplar,fechaVencimiento);
         assertNotNull(resultado);
@@ -72,11 +71,11 @@ public class PrestamoLibroServiceTest{
         Ejemplar ejemplarTest = new Ejemplar();
         ejemplarTest.setEstado("PRESTADO");
 
-        Long idLector = lectorTest.getId();
-        Long idEjemplar = ejemplarTest.getId();
+        Long idLector = 1L;
+        Long idEjemplar = 2L;
 
-        Mockito.when(lectorRepository.findById(lectorTest.getId())).thenReturn(lectorTest);
-        Mockito.when(ejemplarRepository.findById(ejemplarTest.getId())).thenReturn(ejemplarTest);
+        Mockito.when(lectorRepository.findById(Mockito.anyLong())).thenReturn(lectorTest);
+        Mockito.when(ejemplarRepository.findById(Mockito.anyLong())).thenReturn(ejemplarTest);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
         {prestamoLibroService.solicitarPrestamo(idLector,idEjemplar,fechaVencimiento);});
@@ -94,11 +93,11 @@ public class PrestamoLibroServiceTest{
         Ejemplar ejemplarTest = new Ejemplar();
         ejemplarTest.setEstado("DISPONIBLE");
 
-        Long idLector = lectorTest.getId();
-        Long idEjemplar = ejemplarTest.getId();
+        Long idLector = 1L;
+        Long idEjemplar = 2L;
 
-        Mockito.when(lectorRepository.findById(lectorTest.getId())).thenReturn(lectorTest);
-        Mockito.when(ejemplarRepository.findById(ejemplarTest.getId())).thenReturn(ejemplarTest);
+        Mockito.when(lectorRepository.findById(Mockito.anyLong())).thenReturn(lectorTest);
+        Mockito.when(ejemplarRepository.findById(Mockito.anyLong())).thenReturn(ejemplarTest);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
         {prestamoLibroService.solicitarPrestamo(idLector,idEjemplar,fechaVencimiento);});
