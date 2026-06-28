@@ -1,0 +1,9 @@
+package cl.ucn.app.service.Interfaces;
+
+import cl.ucn.app.model.Producto;
+import java.util.List;
+
+public interface IInventario {
+    List<Producto> obtenerInventarioCompleto();
+    List<Producto> filtrarProductosPorCategoria(String categoria);
+}
