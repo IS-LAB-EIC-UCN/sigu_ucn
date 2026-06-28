@@ -41,6 +41,26 @@ public class Main {
             HomeRoutes.register(config);
             TallerRoutes.register(config);
 
+            // Interceptor para Error 404 (Página no encontrada)
+            config.routes.error(404, ctx -> {
+                String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+                ctx.render("404.jte", java.util.Map.of(
+                        "title", "Página No Encontrada",
+                        "usuarioNombre", usuarioNombre != null ? usuarioNombre : "Invitado"
+                ));
+            });
+
+            // Interceptor Global para Error 500 (Cualquier Excepción No Capturada)
+            config.routes.exception(Exception.class, (e, ctx) -> {
+                e.printStackTrace(); // Para logs del servidor
+                ctx.status(500);
+                String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+                ctx.render("500.jte", java.util.Map.of(
+                        "title", "Error Interno",
+                        "usuarioNombre", usuarioNombre != null ? usuarioNombre : "Invitado"
+                ));
+            });
+
         });
 
         app.start(7000);
