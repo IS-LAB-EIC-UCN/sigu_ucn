@@ -28,7 +28,6 @@ public class CatalogoController {
 
     public void listar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         List<Libro> libros = libroService.listarTodos();
         Map<Long, Integer> totalEjemplares = new HashMap<>();
@@ -38,7 +37,7 @@ public class CatalogoController {
             totalEjemplares.put(libro.getId(), ejemplares.size());
             int disp = 0;
             for (Ejemplar e : ejemplares) {
-                if ("DISPONIBLE".equalsIgnoreCase(e.getEstado())) {
+                if (cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE == e.getEstado()) {
                     disp++;
                 }
             }
@@ -47,6 +46,7 @@ public class CatalogoController {
 
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", ctx.sessionAttribute("usuarioRol"));
         model.put("libros", libros);
         model.put("totalEjemplares", totalEjemplares);
         model.put("disponibles", disponibles);
@@ -55,7 +55,6 @@ public class CatalogoController {
 
     public void buscar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         String termino = ctx.queryParam("termino");
         List<Libro> resultados = new java.util.ArrayList<>();
@@ -72,7 +71,6 @@ public class CatalogoController {
 
     public void formularioRegistrarLibro(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
@@ -86,7 +84,6 @@ public class CatalogoController {
 
     public void registrarLibro(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         String titulo = ctx.formParam("titulo");
         String autor = ctx.formParam("autor");
@@ -125,7 +122,6 @@ public class CatalogoController {
 
     public void formularioRegistrarEjemplar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         List<Libro> libros = libroService.listarTodos();
         Map<String, Object> model = new HashMap<>();
@@ -139,7 +135,6 @@ public class CatalogoController {
 
     public void registrarEjemplar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         String libroIdStr = ctx.formParam("libroId");
         String cantidadStr = ctx.formParam("cantidad");

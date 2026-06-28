@@ -100,12 +100,12 @@ public class LibroService implements ILibroService {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            List<String> estados = em.createQuery(
-                "SELECT e.estado FROM Ejemplar e WHERE e.libro.id = :id", String.class)
+            List<cl.ucn.app.model.biblioteca.EstadoEjemplar> estados = em.createQuery(
+                "SELECT e.estado FROM Ejemplar e WHERE e.libro.id = :id", cl.ucn.app.model.biblioteca.EstadoEjemplar.class)
                 .setParameter("id", id)
                 .getResultList();
-            for (String estado : estados) {
-                if ("PRESTADO".equalsIgnoreCase(estado)) {
+            for (cl.ucn.app.model.biblioteca.EstadoEjemplar estado : estados) {
+                if (cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO == estado) {
                     em.getTransaction().rollback();
                     throw new ConflictoEstadoException("No se puede eliminar el libro porque tiene ejemplares prestados. Primero devuelve los prestamos.");
                 }

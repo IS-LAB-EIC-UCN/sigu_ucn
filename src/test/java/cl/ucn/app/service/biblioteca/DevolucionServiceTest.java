@@ -3,7 +3,8 @@ package cl.ucn.app.service.biblioteca;
 import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.model.biblioteca.Ejemplar;
-import cl.ucn.app.model.biblioteca.Libro;
+import cl.ucn.app.model.biblioteca.EstadoEjemplar;
+import cl.ucn.app.model.biblioteca.EstadoPrestamo;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
@@ -46,7 +47,7 @@ public class DevolucionServiceTest {
     public void testRegistrar_prestamoYaFinalizado_lanzaConflictoEstado() {
         PrestamoLibro prestamo = new PrestamoLibro();
         prestamo.setId(1L);
-        prestamo.setEstado("FINALIZADO");
+        prestamo.setEstado(EstadoPrestamo.FINALIZADO);
         Mockito.when(prestamoLibroRepository.findById(1L)).thenReturn(prestamo);
         assertThrows(ConflictoEstadoException.class, () ->
                 devolucionService.registrarDevolucion(1L));
@@ -56,14 +57,33 @@ public class DevolucionServiceTest {
     public void testRegistrar_sinAtraso_noGeneraMulta() {
         PrestamoLibro prestamo = new PrestamoLibro();
         prestamo.setId(1L);
-        prestamo.setEstado("ACTIVO");
+        prestamo.setEstado(EstadoPrestamo.ACTIVO);
         prestamo.setFechaVencimiento(LocalDate.now().plusDays(7));
         Ejemplar ejemplar = new Ejemplar();
         ejemplar.setId(10L);
         prestamo.setEjemplar(ejemplar);
         Mockito.when(prestamoLibroRepository.findById(1L)).thenReturn(prestamo);
         devolucionService.registrarDevolucion(1L);
-        assertEquals("FINALIZADO", prestamo.getEstado());
-        assertEquals("DISPONIBLE", ejemplar.getEstado());
+        assertEquals(EstadoPrestamo.FINALIZADO, prestamo.getEstado());
+        assertEquals(EstadoEjemplar.DISPONIBLE, ejemplar.getEstado());
+    }
+
+    @Test
+    public void testRegistrar_conAtraso_generaMulta() {
+        PrestamoLibro prestamo = new PrestamoLibro();
+        prestamo.setId(1L);
+        prestamo.setEstado(EstadoPrestamo.ACTIVO);
+        // Vencido hace 3 dias
+        prestamo.setFechaVencimiento(LocalDate.now().minusDays(3));
+        Ejemplar ejemplar = new Ejemplar();
+        ejemplar.setId(10L);
+        prestamo.setEjemplar(ejemplar);
+        Mockito.when(prestamoLibroRepository.findById(1L)).thenReturn(prestamo);
+        
+        devolucionService.registrarDevolucion(1L);
+        
+        Mockito.verify(multaService).generarMulta(prestamo, 3);
+        assertEquals(EstadoPrestamo.FINALIZADO, prestamo.getEstado());
+        assertEquals(EstadoEjemplar.DISPONIBLE, ejemplar.getEstado());
     }
 }

@@ -38,7 +38,7 @@ public class DevolucionService implements IDevolucionService {
     public void registrarDevolucion(long prestamoId){
         PrestamoLibro prestamo = prestamoLibroRepository.findById(prestamoId);
         if (prestamo == null){throw new RecursoNoEncontradoException("Prestamo no existe");}
-        if (prestamo.getEstado().equalsIgnoreCase("FINALIZADO")){throw new ConflictoEstadoException("Este prestamo ya fue finalizado");}
+        if (prestamo.getEstado() == cl.ucn.app.model.biblioteca.EstadoPrestamo.FINALIZADO){throw new ConflictoEstadoException("Este prestamo ya fue finalizado");}
 
         LocalDate hoy = LocalDate.now();
         LocalDate vencimiento = prestamo.getFechaVencimiento();
@@ -48,44 +48,18 @@ public class DevolucionService implements IDevolucionService {
             int diasAtraso = (int) atraso;
 
             if (diasAtraso > 0){
-                try (EntityManager em = JPAUtil.getEntityManager()) {
-                    try {
-                        em.getTransaction().begin();
-                        multaService.generarMulta(prestamo, diasAtraso);
-                        em.getTransaction().commit();
-                    } catch (Exception e) {
-                        if (em.getTransaction().isActive()) {
-                            em.getTransaction().rollback();
-                        }
-                        throw e;
-                    }
-                }
+                multaService.generarMulta(prestamo, diasAtraso);
             }
         }
 
         Ejemplar ejemplar = prestamo.getEjemplar();
         if (ejemplar != null){
-            ejemplar.setEstado("DISPONIBLE");
+            ejemplar.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
+            ejemplarRepository.save(ejemplar);
         }
 
-        prestamo.setEstado("FINALIZADO");
+        prestamo.setEstado(cl.ucn.app.model.biblioteca.EstadoPrestamo.FINALIZADO);
         prestamo.setFechaDevolucion(LocalDate.now());
-
-        try (EntityManager em = JPAUtil.getEntityManager()) {
-            try {
-                em.getTransaction().begin();
-                if (ejemplar != null) {
-                    ejemplarRepository.save(ejemplar, em);
-                }
-                prestamoLibroRepository.save(prestamo, em);
-                em.getTransaction().commit();
-            } catch (Exception e) {
-                if (em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
-                }
-                throw e;
-            }
-        }
-
+        prestamoLibroRepository.save(prestamo);
     }
 }

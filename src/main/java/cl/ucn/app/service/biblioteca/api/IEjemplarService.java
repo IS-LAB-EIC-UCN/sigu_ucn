@@ -7,7 +7,7 @@ import java.util.List;
 public interface IEjemplarService {
     Ejemplar agregarEjemplar(Long libroId);
     int agregarEjemplares(Long libroId, int cantidad);
-    Ejemplar actualizarEjemplar(Long id, String estado);
+    Ejemplar actualizarEjemplar(Long id, cl.ucn.app.model.biblioteca.EstadoEjemplar estado);
     void eliminarEjemplar(Long id);
     List<Ejemplar> listarPorLibro(Long libroId);
 }

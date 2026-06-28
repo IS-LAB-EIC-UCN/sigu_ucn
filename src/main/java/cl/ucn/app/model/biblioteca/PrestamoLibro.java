@@ -20,14 +20,15 @@ public class PrestamoLibro {
     @Column(name = "fecha_devolucion")
     private LocalDate fechaDevolucion;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
-    private String estado = "ACTIVO";
+    private EstadoPrestamo estado = EstadoPrestamo.ACTIVO;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lector_id", nullable = false)
     private Lector lector;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ejemplar_id", nullable = false)
     private Ejemplar ejemplar;
 
@@ -46,8 +47,8 @@ public class PrestamoLibro {
     public LocalDate getFechaDevolucion() { return fechaDevolucion; }
     public void setFechaDevolucion(LocalDate fechaDevolucion) { this.fechaDevolucion = fechaDevolucion; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public EstadoPrestamo getEstado() { return estado; }
+    public void setEstado(EstadoPrestamo estado) { this.estado = estado; }
 
     public Lector getLector() { return lector; }
     public void setLector(Lector lector) { this.lector = lector; }

@@ -64,11 +64,11 @@ public class PrestamoLibroService implements IPrestamoService {
 
         if (lector.isBloqueado()){throw new ConflictoEstadoException("Lector bloqueado");}
 
-        ejemplar.setEstado("PRESTADO");
+        ejemplar.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO);
         PrestamoLibro ejemplarPrestado = new PrestamoLibro();
         ejemplarPrestado.setFechaInicio(LocalDate.now());
         ejemplarPrestado.setFechaVencimiento(fechaVencimiento);
-        ejemplarPrestado.setEstado("ACTIVO");
+        ejemplarPrestado.setEstado(cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO);
         ejemplarPrestado.setLector(lector);
         ejemplarPrestado.setEjemplar(ejemplar);
 

@@ -43,7 +43,7 @@ public class EjemplarServiceTest {
         e.setId(1L);
         Mockito.when(ejemplarRepository.findById(1L)).thenReturn(e);
         assertThrows(ConflictoEstadoException.class, () ->
-                ejemplarService.actualizarEjemplar(1L, "INVALIDO"));
+                ejemplarService.actualizarEjemplar(1L, null));
     }
 
     @Test

@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IHistorialService {
     List<PrestamoLibro> obtenerHistorial(Long lectorId);
+    List<PrestamoLibro> obtenerTodosLosPrestamos();
 }

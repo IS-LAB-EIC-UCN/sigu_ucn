@@ -29,8 +29,12 @@ public class HistorialService implements IHistorialService {
         if (lectorId == null){return new ArrayList<>();}
 
         Lector lector = lectorRepository.findById(lectorId);
-        if (lector == null){throw new IllegalArgumentException("ID de lector no existe");}
+        if (lector == null){throw new cl.ucn.app.exceptions.RecursoNoEncontradoException("ID de lector no existe");}
 
         return prestamoLibroRepository.findByLector(lector);
+    }
+
+    public List<PrestamoLibro> obtenerTodosLosPrestamos() {
+        return prestamoLibroRepository.findAll();
     }
 }

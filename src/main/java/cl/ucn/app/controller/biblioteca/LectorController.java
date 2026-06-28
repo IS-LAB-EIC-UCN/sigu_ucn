@@ -15,11 +15,11 @@ public class LectorController {
 
     public void listar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         List<Lector> lectores = lectorService.listarTodos();
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", ctx.sessionAttribute("usuarioRol"));
         model.put("lectores", lectores);
         model.put("error", null);
         ctx.render("biblioteca/lectores.jte", model);
@@ -31,7 +31,6 @@ public class LectorController {
 
     public void registrar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         String nombre = ctx.formParam("nombre");
         String correo = ctx.formParam("correo");
@@ -74,7 +73,6 @@ public class LectorController {
 
     public void formularioEditar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         Lector lector = lectorService.buscarPorId(id);
@@ -92,7 +90,6 @@ public class LectorController {
 
     public void editar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.formParam("id"));
         String nombre = ctx.formParam("nombre");
@@ -131,7 +128,6 @@ public class LectorController {
 
     public void eliminar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         lectorService.eliminarLector(id);

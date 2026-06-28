@@ -38,6 +38,13 @@ public class MultaService implements IMultaService {
         this.calculador = new MultaLinealPorDias();
     }
 
+    public MultaService(IMultaRepository multaRepository, ILectorRepository lectorRepository, ILectorService lectorService) {
+        this.multaRepository = multaRepository;
+        this.lectorRepository = lectorRepository;
+        this.lectorService = lectorService;
+        this.calculador = new MultaLinealPorDias();
+    }
+
     public MultaService(IMultaRepository multaRepository, ILectorRepository lectorRepository, ICalculadorMulta calculador) {
         this.multaRepository = multaRepository;
         this.lectorRepository = lectorRepository;
@@ -45,7 +52,14 @@ public class MultaService implements IMultaService {
         this.calculador = calculador;
     }
 
-    public Multa generarMulta(PrestamoLibro prestamo, int diasAtraso) {
+    public MultaService(IMultaRepository multaRepository, ILectorRepository lectorRepository, ILectorService lectorService, ICalculadorMulta calculador) {
+        this.multaRepository = multaRepository;
+        this.lectorRepository = lectorRepository;
+        this.lectorService = lectorService;
+        this.calculador = calculador;
+    }
+
+    public Multa generarMulta(PrestamoLibro prestamo, int diasAtraso, EntityManager em) {
         if (prestamo == null || diasAtraso <= 0){return null;}
 
         BigDecimal montoAtrasado = calculador.calcular(diasAtraso);
@@ -61,14 +75,23 @@ public class MultaService implements IMultaService {
             lector.setBloqueado(true);
         }
 
+        multaRepository.save(multa, em);
+        if (lector != null) {
+            lectorRepository.save(lector, em);
+        }
+
+        return multa;
+    }
+
+    public Multa generarMulta(PrestamoLibro prestamo, int diasAtraso) {
+        if (prestamo == null || diasAtraso <= 0){return null;}
+
         try (EntityManager em = JPAUtil.getEntityManager()) {
             try {
                 em.getTransaction().begin();
-                multaRepository.save(multa, em);
-                if (lector != null) {
-                    lectorRepository.save(lector, em);
-                }
+                Multa m = generarMulta(prestamo, diasAtraso, em);
                 em.getTransaction().commit();
+                return m;
             } catch (Exception e) {
                 if (em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
@@ -76,8 +99,6 @@ public class MultaService implements IMultaService {
                 throw e;
             }
         }
-
-        return multa;
     }
 
     public void registrarPago(Long multaId){

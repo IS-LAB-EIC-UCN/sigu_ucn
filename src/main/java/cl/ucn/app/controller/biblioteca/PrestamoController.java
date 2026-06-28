@@ -1,11 +1,17 @@
 package cl.ucn.app.controller.biblioteca;
 
+import cl.ucn.app.auth.LectorSessionHelper;
+import cl.ucn.app.controller.biblioteca.PrestamoConMulta;
+import cl.ucn.app.exceptions.ConflictoEstadoException;
+import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.exceptions.ValidacionException;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.Libro;
+import cl.ucn.app.model.biblioteca.Multa;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
+import cl.ucn.app.repository.biblioteca.MultaRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
 import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
 import cl.ucn.app.repository.biblioteca.api.IPrestamoLibroRepository;
@@ -33,50 +39,63 @@ public class PrestamoController {
     private final IDevolucionService devolucionService = new DevolucionService();
     private final IEjemplarRepository ejemplarRepository = new EjemplarRepository();
     private final IPrestamoLibroRepository prestamoLibroRepository = new PrestamoLibroRepository();
+    private final MultaRepository multaRepository = new MultaRepository();
 
     public void formularioPrestamo(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
-        reRenderFormularioPrestamo(ctx, usuarioNombre, null, "", "", "");
+        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+        if (lector == null) {
+            ctx.redirect("/biblioteca/mis-datos?returnTo=/biblioteca/prestamo/nuevo");
+            return;
+        }
+        reRenderFormularioPrestamo(ctx, usuarioNombre, null, "", "");
     }
 
     public void solicitarPrestamo(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
-        String lectorIdStr = ctx.formParam("lectorId");
-        String libroIdStr = ctx.formParam("libroId");
-        String fechaVencimientoStr = ctx.formParam("fechaVencimiento");
-
-        if (lectorIdStr == null || lectorIdStr.isBlank()
-                || libroIdStr == null || libroIdStr.isBlank()
-                || fechaVencimientoStr == null || fechaVencimientoStr.isBlank()) {
-            reRenderFormularioPrestamo(ctx, usuarioNombre,
-                "Debe completar todos los campos del formulario",
-                "", "", "");
+        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+        if (lector == null) {
+            ctx.redirect("/biblioteca/mis-datos");
             return;
         }
 
-        Long lectorId = Long.parseLong(lectorIdStr);
+        String libroIdStr = ctx.formParam("libroId");
+        String fechaVencimientoStr = ctx.formParam("fechaVencimiento");
+
+        if (libroIdStr == null || libroIdStr.isBlank()
+                || fechaVencimientoStr == null || fechaVencimientoStr.isBlank()) {
+            reRenderFormularioPrestamo(ctx, usuarioNombre,
+                "Debe completar todos los campos del formulario",
+                "", "");
+            return;
+        }
+
+        if (lector.isBloqueado()) {
+            reRenderFormularioPrestamo(ctx, usuarioNombre,
+                "Su cuenta esta bloqueada por deudas pendientes. Contacte al administrador.",
+                "", "");
+            return;
+        }
+
         Long libroId = Long.parseLong(libroIdStr);
         LocalDate fechaVencimiento = LocalDate.parse(fechaVencimientoStr);
 
         try {
-            prestamoService.solicitarPrestamo(lectorId, libroId, fechaVencimiento);
+            prestamoService.solicitarPrestamo(lector.getId(), libroId, fechaVencimiento);
             ctx.redirect("/biblioteca/historial");
         } catch (ValidacionException e) {
             reRenderFormularioPrestamo(ctx, usuarioNombre, e.getMessage(),
-                lectorIdStr, libroIdStr, fechaVencimientoStr);
+                libroIdStr, fechaVencimientoStr);
         }
     }
 
     private void reRenderFormularioPrestamo(Context ctx, String usuarioNombre,
-                                           String errorMsg, String lectorId,
-                                           String libroId, String fechaVencimiento) {
-        List<Lector> lectores = lectorService.listarTodos();
+                                           String errorMsg, String libroId,
+                                           String fechaVencimiento) {
         Map<Libro, Integer> disponiblesPorLibro = new HashMap<>();
         for (Ejemplar ej : ejemplarRepository.findAll()) {
-            if ("DISPONIBLE".equalsIgnoreCase(ej.getEstado())) {
+            if (cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE == ej.getEstado()) {
                 disponiblesPorLibro.merge(ej.getLibro(), 1, Integer::sum);
             }
         }
@@ -86,10 +105,8 @@ public class PrestamoController {
         }
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
-        model.put("lectores", lectores);
         model.put("librosDisponibles", librosDisponibles);
         model.put("error", errorMsg);
-        model.put("lectorId", lectorId != null ? lectorId : "");
         model.put("libroId", libroId != null ? libroId : "");
         model.put("fechaVencimiento", fechaVencimiento != null ? fechaVencimiento : "");
         ctx.render("biblioteca/prestamo-form.jte", model);
@@ -97,11 +114,10 @@ public class PrestamoController {
 
     public void formularioDevolucion(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         List<PrestamoLibro> activos = new ArrayList<>();
         for (PrestamoLibro p : prestamoLibroRepository.findAll()) {
-            if ("ACTIVO".equalsIgnoreCase(p.getEstado())) {
+            if (cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO == p.getEstado()) {
                 activos.add(p);
             }
         }
@@ -115,55 +131,72 @@ public class PrestamoController {
     }
 
     public void registrarDevolucion(Context ctx) {
-        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
-
         Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
         devolucionService.registrarDevolucion(prestamoId);
-
-        List<PrestamoLibro> activos = new ArrayList<>();
-        for (PrestamoLibro p : prestamoLibroRepository.findAll()) {
-            if ("ACTIVO".equalsIgnoreCase(p.getEstado())) {
-                activos.add(p);
-            }
-        }
-        Map<String, Object> model = new HashMap<>();
-        model.put("usuarioNombre", usuarioNombre);
-        model.put("prestamos", activos);
-        model.put("error", null);
-        model.put("mensaje", "Devolucion registrada exitosamente");
-        ctx.render("biblioteca/devolucion-form.jte", model);
+        ctx.redirect("/biblioteca/historial");
     }
 
     public void historial(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
-        List<Lector> lectores = lectorService.listarTodos();
-        List<PrestamoLibro> historialLista = new ArrayList<>();
-        String lectorNombre = "";
-
-        String lectorIdParam = ctx.queryParam("lectorId");
-        if (lectorIdParam != null && !lectorIdParam.isBlank()) {
-            try {
-                Long lectorId = Long.parseLong(lectorIdParam);
-                historialLista = historialService.obtenerHistorial(lectorId);
-                for (Lector l : lectores) {
-                    if (l.getId().equals(lectorId)) {
-                        lectorNombre = l.getNombre();
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-                // historial vacío
-            }
-        }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        boolean esAdmin = "ADMIN".equals(usuarioRol);
 
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
-        model.put("lectores", lectores);
-        model.put("historial", historialLista);
-        model.put("lectorNombre", lectorNombre);
+        model.put("usuarioRol", usuarioRol);
+
+        if (esAdmin) {
+            List<PrestamoLibro> prestamos = historialService.obtenerTodosLosPrestamos();
+            List<PrestamoConMulta> prestamosConMulta = new ArrayList<>();
+            for (PrestamoLibro p : prestamos) {
+                Multa multa = multaRepository.findByPrestamo(p);
+                prestamosConMulta.add(new PrestamoConMulta(p, multa));
+            }
+            model.put("historial", prestamosConMulta);
+            model.put("esAdmin", true);
+        } else {
+            Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+            if (lector == null) {
+                ctx.redirect("/biblioteca/mis-datos?returnTo=/biblioteca/historial");
+                return;
+            }
+            List<PrestamoLibro> historialLista = historialService.obtenerHistorial(lector.getId());
+            List<PrestamoConMulta> prestamosConMulta = new ArrayList<>();
+            for (PrestamoLibro p : historialLista) {
+                Multa multa = multaRepository.findByPrestamo(p);
+                prestamosConMulta.add(new PrestamoConMulta(p, multa));
+            }
+            model.put("historial", prestamosConMulta);
+            model.put("esAdmin", false);
+        }
+
         ctx.render("biblioteca/historial.jte", model);
+    }
+
+    public void devolverMiPrestamo(Context ctx) {
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+
+        Lector lector = LectorSessionHelper.obtenerExistente(ctx);
+        if (lector == null) {
+            ctx.redirect("/biblioteca/historial");
+            return;
+        }
+
+        String prestamoIdStr = ctx.formParam("prestamoId");
+        if (prestamoIdStr == null || prestamoIdStr.isBlank()) {
+            ctx.redirect("/biblioteca/historial");
+            return;
+        }
+
+        Long prestamoId = Long.parseLong(prestamoIdStr);
+        PrestamoLibro prestamo = prestamoLibroRepository.findById(prestamoId);
+        if (prestamo == null || !prestamo.getLector().getId().equals(lector.getId())
+                || cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO != prestamo.getEstado()) {
+            ctx.redirect("/biblioteca/historial");
+            return;
+        }
+        devolucionService.registrarDevolucion(prestamoId);
+        ctx.redirect("/biblioteca/historial");
     }
 }

@@ -29,9 +29,13 @@ public class LectorService implements ILectorService {
     }
 
     public LectorService(ILectorRepository lectorRepository) {
+        this(lectorRepository, new MultaRepository(), new PrestamoLibroRepository());
+    }
+
+    public LectorService(ILectorRepository lectorRepository, IMultaRepository multaRepository, IPrestamoLibroRepository prestamoLibroRepository) {
         this.lectorRepository = lectorRepository;
-        this.multaRepository = new MultaRepository();
-        this.prestamoLibroRepository = new PrestamoLibroRepository();
+        this.multaRepository = multaRepository;
+        this.prestamoLibroRepository = prestamoLibroRepository;
     }
 
     public Lector registrarLector(String nombre, String correo, String rut) {
@@ -112,7 +116,7 @@ public class LectorService implements ILectorService {
         try {
             em.getTransaction().begin();
             Long count = (Long) em.createQuery(
-                "SELECT COUNT(p) FROM PrestamoLibro p WHERE p.lector.id = :id AND p.estado = 'ACTIVO'")
+                "SELECT COUNT(p) FROM PrestamoLibro p WHERE p.lector.id = :id AND p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO")
                 .setParameter("id", id)
                 .getSingleResult();
             if (count > 0) {
@@ -148,6 +152,12 @@ public class LectorService implements ILectorService {
         return !multasPendientes.isEmpty();
     }
 
+    public List<Multa> obtenerMultas(Long lectorId) {
+        Lector lector = lectorRepository.findById(lectorId);
+        if (lector == null) {return new java.util.ArrayList<>();}
+        return multaRepository.findPendientesByLector(lector);
+    }
+
     private void validarDatosLector(String nombre, String correo, String rut) {
         if (nombre == null || nombre.trim().length() < 3) {
             throw new ValidacionException("El nombre debe tener al menos 3 caracteres");
@@ -179,5 +189,22 @@ public class LectorService implements ILectorService {
         int resto = suma % 11;
         String dvCalculado = resto == 0 ? "0" : resto == 1 ? "K" : String.valueOf(11 - resto);
         return dv.equals(dvCalculado);
+    }
+
+    public Lector crearDesdeUsuario(String nombre, String correo, String rut) {
+        validarDatosLector(nombre, correo, rut);
+        if (lectorRepository.findByCorreo(correo) != null) {
+            throw new ValidacionException("El correo " + correo + " ya esta registrado");
+        }
+        if (buscarPorRut(rut) != null) {
+            throw new ValidacionException("El RUT " + rut + " ya esta registrado");
+        }
+        Lector nuevo = new Lector();
+        nuevo.setNombre(nombre);
+        nuevo.setCorreo(correo);
+        nuevo.setRut(rut);
+        nuevo.setBloqueado(false);
+        lectorRepository.save(nuevo);
+        return nuevo;
     }
 }

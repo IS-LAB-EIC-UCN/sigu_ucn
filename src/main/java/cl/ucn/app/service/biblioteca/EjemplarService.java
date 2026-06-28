@@ -40,7 +40,7 @@ public class EjemplarService implements IEjemplarService {
 
         Ejemplar nuevoEjemplar = new Ejemplar();
         nuevoEjemplar.setLibro(libro);
-        nuevoEjemplar.setEstado("DISPONIBLE");
+        nuevoEjemplar.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
 
         ejemplarRepository.save(nuevoEjemplar);
 
@@ -58,7 +58,7 @@ public class EjemplarService implements IEjemplarService {
             for (int i = 0; i < cantidad; i++) {
                 Ejemplar e = new Ejemplar();
                 e.setLibro(libro);
-                e.setEstado("DISPONIBLE");
+                e.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
                 em.persist(e);
             }
             em.getTransaction().commit();
@@ -73,13 +73,13 @@ public class EjemplarService implements IEjemplarService {
         return cantidad;
     }
 
-    public Ejemplar actualizarEjemplar(Long id, String estado) {
+    public Ejemplar actualizarEjemplar(Long id, cl.ucn.app.model.biblioteca.EstadoEjemplar estado) {
         Ejemplar ejemplar = ejemplarRepository.findById(id);
         if (ejemplar == null) {
             throw new RecursoNoEncontradoException("No existe un ejemplar con ID " + id);
         }
-        if (!"DISPONIBLE".equalsIgnoreCase(estado) && !"PRESTADO".equalsIgnoreCase(estado)) {
-            throw new ConflictoEstadoException("Estado invalido. Use DISPONIBLE o PRESTADO");
+        if (estado == null) {
+            throw new ConflictoEstadoException("Estado invalido.");
         }
         ejemplar.setEstado(estado);
         ejemplarRepository.save(ejemplar);
@@ -90,11 +90,11 @@ public class EjemplarService implements IEjemplarService {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            String estado = (String) em.createQuery(
+            cl.ucn.app.model.biblioteca.EstadoEjemplar estado = (cl.ucn.app.model.biblioteca.EstadoEjemplar) em.createQuery(
                 "SELECT e.estado FROM Ejemplar e WHERE e.id = :id")
                 .setParameter("id", id)
                 .getSingleResult();
-            if ("PRESTADO".equalsIgnoreCase(estado)) {
+            if (cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO == estado) {
                 em.getTransaction().rollback();
                 throw new ConflictoEstadoException("No se puede eliminar un ejemplar que esta prestado");
             }

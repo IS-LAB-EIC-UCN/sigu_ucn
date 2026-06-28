@@ -1,6 +1,7 @@
 @import java.util.List
 @import cl.ucn.app.model.biblioteca.Lector
 @param String usuarioNombre
+@param String usuarioRol
 @param List<Lector> lectores
 @param String error
 @param String nombre
@@ -12,70 +13,85 @@ title = "Gestión de Lectores - SIGU-UCN",
 usuarioNombre = usuarioNombre,
 content = @`
     <link rel="stylesheet" href="/css/biblioteca.css">
+    <script src="/js/biblioteca.js"></script>
 
-    <p><a href="/biblioteca/libros">Volver al catálogo</a></p>
+    <div class="bib-container">
+        <p><a href="/biblioteca/libros" class="bib-action-link">&larr; Volver al catálogo</a></p>
 
-    <h1>Gestión de Lectores</h1>
+        <h1>Gestión de Lectores</h1>
 
-    @if(error != null)
-        <div class="alert-error">${error}</div>
-    @endif
+        @if(error != null)
+            <div class="bib-alert bib-alert-error">${error}</div>
+        @endif
 
-    <div class="info-card">
-        <h2>Registrar nuevo lector</h2>
-        <form method="post" action="/biblioteca/lectores/nuevo">
-            <div class="form-group">
-                <label>Nombre completo</label>
-                <input type="text" name="nombre" placeholder="Ej: Juan Perez" value="${nombre != null ? nombre : ""}" required/>
+        @if(usuarioRol != null && usuarioRol.equals("ADMIN"))
+            <div class="bib-card">
+                <h2>Registrar nuevo lector</h2>
+                <form method="post" action="/biblioteca/lectores/nuevo">
+                    <div class="bib-form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" name="nombre" class="bib-form-input" placeholder="Ej: Juan Perez" value="${nombre != null ? nombre : ""}" required/>
+                    </div>
+                    <div class="bib-form-group">
+                        <label>Correo electrónico</label>
+                        <input type="text" name="correo" class="bib-form-input" placeholder="juan.perez@ucn.cl" value="${correo != null ? correo : ""}" required/>
+                    </div>
+                    <div class="bib-form-group">
+                        <label>RUT</label>
+                        <input type="text" name="rut" id="rutInput" class="bib-form-input" placeholder="12345678-5" value="${rut != null ? rut : ""}" maxlength="10" required oninput="formatRut(this)"/>
+                    </div>
+                    <script>
+                        function formatRut(input) {
+                            let v = input.value.replace(/[^0-9kK]/g, '');
+                            if (v.length > 1) v = v.slice(0,-1) + '-' + v.slice(-1);
+                            input.value = v;
+                        }
+                    </script>
+                    <button type="submit" class="bib-btn bib-btn-primary">Registrar lector</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label>Correo electronico</label>
-                <input type="text" name="correo" placeholder="juan.perez@ucn.cl" value="${correo != null ? correo : ""}" required/>
-            </div>
-            <div class="form-group">
-                <label>RUT</label>
-                <input type="text" name="rut" id="rutInput" placeholder="12345678-5" value="${rut != null ? rut : ""}" maxlength="10" required oninput="formatRut(this)"/>
-            </div>
-            <script>
-                function formatRut(input) {
-                    let v = input.value.replace(/[^0-9kK]/g, '');
-                    if (v.length > 1) v = v.slice(0,-1) + '-' + v.slice(-1);
-                    input.value = v;
-                }
-            </script>
-            <button type="submit" class="primary-btn">Registrar lector</button>
-        </form>
+        @endif
+
+        <h2>Lectores registrados</h2>
+        @if(lectores != null && !lectores.isEmpty())
+            <table class="bib-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>RUT</th>
+                        <th>Estado</th>
+                        @if(usuarioRol != null && usuarioRol.equals("ADMIN"))
+                            <th>Acciones</th>
+                        @endif
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(Lector l : lectores)
+                    <tr>
+                        <td style="font-weight:600;color:var(--bib-primary);">${l.getNombre()}</td>
+                        <td>${l.getCorreo()}</td>
+                        <td>${l.getRut()}</td>
+                        <td>
+                            @if(l.isBloqueado())
+                                <span class="bib-badge bib-badge-bloqueado">Bloqueado</span>
+                            @else
+                                <span class="bib-badge bib-badge-disponible">Activo</span>
+                            @endif
+                        </td>
+                        @if(usuarioRol != null && usuarioRol.equals("ADMIN"))
+                            <td>
+                                <a href="/biblioteca/lectores/editar?id=${l.getId()}" class="bib-action-link">Editar</a>
+                                <a href="/biblioteca/lectores/eliminar?id=${l.getId()}" class="bib-action-link-danger bib-confirm-delete" data-message="¿Está seguro de que desea eliminar al lector '${l.getNombre()}'?" style="margin-left:12px;">Eliminar</a>
+                            </td>
+                        @endif
+                    </tr>
+                    @endfor
+                </tbody>
+            </table>
+        @else
+            <p>No hay lectores registrados.</p>
+        @endif
     </div>
-
-    <h2>Lectores registrados</h2>
-    @if(lectores != null && !lectores.isEmpty())
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo</th>
-                    <th>RUT</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for(Lector l : lectores)
-                <tr>
-                    <td>${l.getNombre()}</td>
-                    <td>${l.getCorreo()}</td>
-                    <td>${l.getRut()}</td>
-                    <td>${l.isBloqueado() ? "BLOQUEADO" : "ACTIVO"}</td>
-                    <td>
-                        <a href="/biblioteca/lectores/editar?id=${l.getId()}">Editar</a>
-                        <a href="/biblioteca/lectores/eliminar?id=${l.getId()}" style="color:#a83232;margin-left:8px;">Eliminar</a>
-                    </td>
-                </tr>
-                @endfor
-            </tbody>
-        </table>
-    @else
-        <p>No hay lectores registrados.</p>
-    @endif
 `
 )

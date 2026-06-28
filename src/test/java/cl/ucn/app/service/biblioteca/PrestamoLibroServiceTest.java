@@ -55,7 +55,7 @@ public class PrestamoLibroServiceTest{
         Ejemplar ejemplarTest = new Ejemplar();
         ejemplarTest.setId(100L);
         ejemplarTest.setLibro(libroTest);
-        ejemplarTest.setEstado("DISPONIBLE");
+        ejemplarTest.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
 
         Mockito.when(lectorRepository.findById(1L)).thenReturn(lectorTest);
         Mockito.when(libroRepository.findById(10L)).thenReturn(libroTest);
@@ -65,8 +65,8 @@ public class PrestamoLibroServiceTest{
         PrestamoLibro resultado = prestamoLibroService.solicitarPrestamo(1L, 10L, fechaVencimiento);
 
         assertNotNull(resultado);
-        assertEquals("PRESTADO", ejemplarTest.getEstado());
-        assertEquals("ACTIVO", resultado.getEstado());
+        assertEquals(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO, ejemplarTest.getEstado());
+        assertEquals(cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO, resultado.getEstado());
         assertEquals(lectorTest, resultado.getLector());
     }
 
@@ -78,7 +78,7 @@ public class PrestamoLibroServiceTest{
 
         Libro libroTest = new Libro();
         Ejemplar ejemplarTest = new Ejemplar();
-        ejemplarTest.setEstado("PRESTADO");
+        ejemplarTest.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO);
         ejemplarTest.setLibro(libroTest);
 
         Long idLector = 1L;
@@ -104,7 +104,7 @@ public class PrestamoLibroServiceTest{
 
         Libro libroTest = new Libro();
         Ejemplar ejemplarTest = new Ejemplar();
-        ejemplarTest.setEstado("DISPONIBLE");
+        ejemplarTest.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
         ejemplarTest.setLibro(libroTest);
 
         Long idLector = 1L;

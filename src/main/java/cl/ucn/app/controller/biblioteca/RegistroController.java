@@ -23,7 +23,6 @@ public class RegistroController {
 
     public void formularioEditarLibro(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         Libro libro = libroRepository.findById(id);
@@ -46,7 +45,6 @@ public class RegistroController {
 
     public void editarLibro(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.formParam("id"));
         String titulo = ctx.formParam("titulo");
@@ -75,7 +73,6 @@ public class RegistroController {
 
     public void eliminarLibro(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         libroService.eliminarLibro(id);
@@ -84,7 +81,6 @@ public class RegistroController {
 
     public void formularioEditarEjemplar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         Ejemplar ejemplar = ejemplarRepository.findById(id);
@@ -96,19 +92,26 @@ public class RegistroController {
         model.put("usuarioNombre", usuarioNombre);
         model.put("ejemplar", ejemplar);
         model.put("error", null);
-        model.put("estado", ejemplar.getEstado());
+        model.put("estado", ejemplar.getEstado() != null ? ejemplar.getEstado().name() : "");
         ctx.render("biblioteca/editar-ejemplar.jte", model);
     }
 
     public void editarEjemplar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.formParam("id"));
         String estado = ctx.formParam("estado");
 
         try {
-            ejemplarService.actualizarEjemplar(id, estado);
+            cl.ucn.app.model.biblioteca.EstadoEjemplar estadoEnum = null;
+            if (estado != null) {
+                try {
+                    estadoEnum = cl.ucn.app.model.biblioteca.EstadoEjemplar.valueOf(estado.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ValidacionException("Estado invalido. Use DISPONIBLE o PRESTADO");
+                }
+            }
+            ejemplarService.actualizarEjemplar(id, estadoEnum);
             ctx.redirect("/biblioteca/libros");
         } catch (ValidacionException e) {
             Ejemplar ejemplar = ejemplarRepository.findById(id);
@@ -123,7 +126,6 @@ public class RegistroController {
 
     public void eliminarEjemplar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-        if (usuarioNombre == null) { ctx.redirect("/login"); return; }
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         ejemplarService.eliminarEjemplar(id);

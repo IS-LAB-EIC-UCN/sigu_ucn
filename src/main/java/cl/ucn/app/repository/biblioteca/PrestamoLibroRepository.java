@@ -39,7 +39,13 @@ public class PrestamoLibroRepository implements IPrestamoLibroRepository {
     public PrestamoLibro findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(PrestamoLibro.class, id);
+            TypedQuery<PrestamoLibro> query = em.createQuery(
+                    "SELECT p FROM PrestamoLibro p LEFT JOIN FETCH p.ejemplar e LEFT JOIN FETCH e.libro l LEFT JOIN FETCH p.lector WHERE p.id = :id",
+                    PrestamoLibro.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
@@ -49,7 +55,7 @@ public class PrestamoLibroRepository implements IPrestamoLibroRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<PrestamoLibro> query = em.createQuery(
-                    "SELECT p FROM PrestamoLibro p WHERE p.lector = :lector ORDER BY p.fechaInicio DESC",
+                    "SELECT p FROM PrestamoLibro p LEFT JOIN FETCH p.ejemplar e LEFT JOIN FETCH e.libro l LEFT JOIN FETCH p.lector WHERE p.lector = :lector ORDER BY p.fechaInicio DESC",
                     PrestamoLibro.class);
             query.setParameter("lector", lector);
             return query.getResultList();
@@ -62,7 +68,7 @@ public class PrestamoLibroRepository implements IPrestamoLibroRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<PrestamoLibro> query = em.createQuery(
-                    "SELECT p FROM PrestamoLibro p WHERE p.ejemplar = :ejemplar AND p.estado = 'ACTIVO'",
+                    "SELECT p FROM PrestamoLibro p WHERE p.ejemplar = :ejemplar AND p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO",
                     PrestamoLibro.class);
             query.setParameter("ejemplar", ejemplar);
             return query.getSingleResult();
@@ -77,7 +83,7 @@ public class PrestamoLibroRepository implements IPrestamoLibroRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<PrestamoLibro> query = em.createQuery(
-                    "SELECT p FROM PrestamoLibro p", PrestamoLibro.class);
+                    "SELECT p FROM PrestamoLibro p LEFT JOIN FETCH p.ejemplar e LEFT JOIN FETCH e.libro l LEFT JOIN FETCH p.lector", PrestamoLibro.class);
             return query.getResultList();
         } finally {
             em.close();

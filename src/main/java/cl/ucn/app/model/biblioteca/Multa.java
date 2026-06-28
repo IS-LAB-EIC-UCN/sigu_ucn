@@ -24,7 +24,7 @@ public class Multa {
     @Column(name = "fecha_generacion", nullable = false)
     private LocalDate fechaGeneracion;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prestamo_id", nullable = false, unique = true)
     private PrestamoLibro prestamo;
 

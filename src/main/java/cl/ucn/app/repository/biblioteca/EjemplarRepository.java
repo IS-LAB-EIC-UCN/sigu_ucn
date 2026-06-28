@@ -5,6 +5,7 @@ import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -56,7 +57,12 @@ public class EjemplarRepository implements IEjemplarRepository {
     public Ejemplar findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return em.find(Ejemplar.class, id);
+            TypedQuery<Ejemplar> query = em.createQuery(
+                    "SELECT e FROM Ejemplar e LEFT JOIN FETCH e.libro WHERE e.id = :id", Ejemplar.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
@@ -66,7 +72,7 @@ public class EjemplarRepository implements IEjemplarRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Ejemplar> query = em.createQuery(
-                    "SELECT e FROM Ejemplar e WHERE e.libro = :libro", Ejemplar.class);
+                    "SELECT e FROM Ejemplar e LEFT JOIN FETCH e.libro WHERE e.libro = :libro", Ejemplar.class);
             query.setParameter("libro", libro);
             return query.getResultList();
         } finally {
@@ -78,7 +84,7 @@ public class EjemplarRepository implements IEjemplarRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Ejemplar> query = em.createQuery(
-                    "SELECT e FROM Ejemplar e WHERE e.libro = :libro AND e.estado = 'DISPONIBLE'",
+                    "SELECT e FROM Ejemplar e LEFT JOIN FETCH e.libro WHERE e.libro = :libro AND e.estado = cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE",
                     Ejemplar.class);
             query.setParameter("libro", libro);
             return query.getResultList();
@@ -91,7 +97,7 @@ public class EjemplarRepository implements IEjemplarRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Ejemplar> query = em.createQuery(
-                    "SELECT e FROM Ejemplar e", Ejemplar.class);
+                    "SELECT e FROM Ejemplar e LEFT JOIN FETCH e.libro", Ejemplar.class);
             return query.getResultList();
         } finally {
             em.close();
