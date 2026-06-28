@@ -7,5 +7,4 @@ public interface IAdmin {
     public void registrarUsuario();
     public void registrarProveedor();
     public void registrarMovimiento();
-    public void actualizarStock(Salida salida);
 }

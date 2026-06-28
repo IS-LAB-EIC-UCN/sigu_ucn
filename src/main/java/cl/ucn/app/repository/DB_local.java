@@ -13,6 +13,10 @@ import cl.ucn.app.service.ConsoleService;
 import cl.ucn.app.service.MovimientoFactoryService;
 import cl.ucn.app.service.RecursoFactoryService;
 
+
+/**
+ * En proceso de descartarse (...)
+ */
 public class DB_local {
     public static ArrayList<Recurso> Recursos = new ArrayList<Recurso>();
     public static ArrayList<MovimientoInventario> Movimientos = new ArrayList<MovimientoInventario>();
@@ -67,36 +71,6 @@ public class DB_local {
 
         Proveedores.add(proveedor);
         proveedorRepository.save(proveedor);
-    }
-
-    public static void addMovimiento(String tipo, Long id_recurso, int cantidad, LocalDate fecha,
-        LocalTime hora, Long id_proveedor, Long id_usuario, String estado) {
-        
-        if (id_recurso < 0 || cantidad < 0 || fecha == null || hora == null) {
-            console.log("Error, los datos ingresados son incorrectos, reintentar");
-            return;
-        }
-        
-        Recurso recurso = recursoRepository.findById(id_recurso);
-
-        if (recurso.getStock() - cantidad < 0 &&
-        (tipo.toUpperCase().equals("PRESTAMO") || tipo.toUpperCase().equals("DEVOLUCION"))) {
-            console.log("No queda suficiente stock, reintentar");
-            return;
-        }
-
-        Proveedor proveedor = proveedorRepository.findById(id_proveedor);
-        Usuario usuario = usuarioRepository.findById(id_usuario);
-        MovimientoInventario movimiento = null;
-
-        if(tipo.toUpperCase().equals("ENTRADA")) movimiento = movFactory.crearEntrada(recurso, cantidad, fecha, hora, proveedor);
-        if(tipo.toUpperCase().equals("SALIDA")) movimiento = movFactory.crearSalida(recurso, cantidad, fecha, hora);
-        if(tipo.toUpperCase().equals("PRESTAMO")||tipo.toUpperCase().equals("DEVOLUCION")) {
-            movimiento = movFactory.crearPrestamo(recurso, cantidad, fecha, hora, usuario, estado);
-        }
-        
-        Movimientos.add(movimiento);
-        movimientoRepository.save(movimiento);
     }
 
     public static void addUsuario(String nombre, String correo, String password, Boolean activo, Rol rol) {
