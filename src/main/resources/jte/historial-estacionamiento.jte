@@ -107,16 +107,26 @@ content = @`
                         <td>${registro.getEstado()}</td>
 
                         <td>
-                            @if(registro.getEstado().equals("EN_USO"))
+                            @if(usuarioRol.equals("ADMIN") && registro.getEstado().equals("EN_USO"))
+
                                 <form method="post"
                                       action="/estacionamientos/salida/${registro.getId()}"
                                       style="display:inline;">
+
                                     <button type="submit">
                                         Registrar salida
                                     </button>
+
                                 </form>
-                            @else
+
+                            @elseif(registro.getEstado().equals("FINALIZADO"))
+
                                 Finalizado
+
+                            @else
+
+                                En uso
+
                             @endif
                         </td>
                     </tr>

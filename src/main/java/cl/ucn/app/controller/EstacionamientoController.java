@@ -285,11 +285,15 @@ public class EstacionamientoController {
                 return;
             }
 
+            if (bloquearSiNoEsAdmin(ctx)) {
+                return;
+            }
+
             Long reservaId = Long.parseLong(ctx.pathParam("id"));
 
             registroEstacionamientoService.registrarIngreso(reservaId);
 
-            ctx.redirect("/mis-reservas/estacionamientos");
+            ctx.redirect("/estacionamientos/historial");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -314,6 +318,10 @@ public class EstacionamientoController {
                 return;
             }
 
+            if (bloquearSiNoEsAdmin(ctx)) {
+                return;
+            }
+
             Long registroId = Long.parseLong(ctx.pathParam("id"));
 
             registroEstacionamientoService.registrarSalida(registroId);
@@ -322,8 +330,14 @@ public class EstacionamientoController {
 
         } catch (Exception e) {
             e.printStackTrace();
+
+            Throwable causa = e;
+            while (causa.getCause() != null) {
+                causa = causa.getCause();
+            }
+
             ctx.status(500);
-            ctx.result("Error al registrar salida: " + e.getMessage());
+            ctx.result("Error al registrar salida: " + causa.getMessage());
         }
     }
 

@@ -17,7 +17,9 @@ content = @`
         </p>
 
         @if(reservas.isEmpty())
+
             <p>No tienes reservas registradas.</p>
+
         @else
 
             <table class="table">
@@ -64,21 +66,7 @@ content = @`
 
                         <td>
 
-                            @if(reserva.getEstado().equals("APROBADA"))
-
-                                <form method="post"
-                                      action="/mis-reservas/estacionamientos/ingreso/${reserva.getId()}"
-                                      style="display:inline;">
-                                    <button type="submit">
-                                        Registrar ingreso
-                                    </button>
-                                </form>
-
-                                <a href="/mis-reservas/estacionamientos/cancelar/${reserva.getId()}">
-                                    Cancelar
-                                </a>
-
-                            @elseif(reserva.getEstado().equals("PENDIENTE"))
+                            @if(reserva.getEstado().equals("PENDIENTE") || reserva.getEstado().equals("APROBADA"))
 
                                 <a href="/mis-reservas/estacionamientos/cancelar/${reserva.getId()}">
                                     Cancelar

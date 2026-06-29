@@ -223,7 +223,7 @@ public class EstacionamientoService {
                                     "JOIN FETCH r.usuario " +
                                     "JOIN FETCH r.espacio e " +
                                     "LEFT JOIN FETCH r.vehiculo " +
-                                    "WHERE r.estado = 'PENDIENTE' " +
+                                    "WHERE r.estado IN ('PENDIENTE', 'APROBADA') " +
                                     "AND e.tipo LIKE 'ESTACIONAMIENTO%' " +
                                     "ORDER BY r.fechaReserva ASC, r.horaInicio ASC",
                             Reserva.class

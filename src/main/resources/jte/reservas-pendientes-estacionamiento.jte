@@ -10,7 +10,7 @@ content = @`
 
     <section class="dashboard">
 
-        <h1>Reservas Pendientes de Estacionamiento</h1>
+        <h1>Reservas de Estacionamiento</h1>
 
         <p>
             <a href="/estacionamientos">Volver a estacionamientos</a>
@@ -18,7 +18,7 @@ content = @`
 
         @if(reservas.isEmpty())
 
-            <p>No existen reservas pendientes.</p>
+            <p>No existen reservas pendientes o aprobadas.</p>
 
         @else
 
@@ -46,11 +46,8 @@ content = @`
                     <tr>
 
                         <td>${reserva.getId()}</td>
-
                         <td>${reserva.getUsuario().getNombre()}</td>
-
                         <td>${reserva.getEspacio().getNombre()}</td>
-
                         <td>${reserva.getPuestoNumero()}</td>
 
                         <td>
@@ -64,21 +61,48 @@ content = @`
                         <td>${reserva.getFechaReserva().toString()}</td>
                         <td>${reserva.getHoraInicio().toString()}</td>
                         <td>${reserva.getHoraFin().toString()}</td>
-
                         <td>${reserva.getEstado()}</td>
 
                         <td>
-                            <form method="post"
-                                  action="/estacionamientos/reservas-pendientes/aprobar/${reserva.getId()}"
-                                  style="display:inline;">
-                                <button type="submit">Aprobar</button>
-                            </form>
 
-                            <form method="post"
-                                  action="/estacionamientos/reservas-pendientes/rechazar/${reserva.getId()}"
-                                  style="display:inline;">
-                                <button type="submit">Rechazar</button>
-                            </form>
+                            @if(reserva.getEstado().equals("PENDIENTE"))
+
+                                <form method="post"
+                                      action="/estacionamientos/reservas-pendientes/aprobar/${reserva.getId()}"
+                                      style="display:inline;">
+                                    <button type="submit">
+                                        Aprobar
+                                    </button>
+                                </form>
+
+                                <form method="post"
+                                      action="/estacionamientos/reservas-pendientes/rechazar/${reserva.getId()}"
+                                      style="display:inline;">
+                                    <button type="submit">
+                                        Rechazar
+                                    </button>
+                                </form>
+
+                            @elseif(reserva.getEstado().equals("APROBADA"))
+
+                                <form method="post"
+                                      action="/mis-reservas/estacionamientos/ingreso/${reserva.getId()}"
+                                      style="display:inline;">
+                                    <button type="submit">
+                                        Registrar ingreso
+                                    </button>
+                                </form>
+
+                            @elseif(reserva.getEstado().equals("ACTIVA"))
+
+                                En uso
+
+                            @else
+
+                                Sin acción
+
+                            @endif
+
                         </td>
 
                     </tr>
