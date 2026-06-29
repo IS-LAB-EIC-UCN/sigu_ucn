@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests de integracion que validan la interaccion entre las 3 capas
  * (presentacion, servicio, persistencia) via HTTP.
  *
- * Requiere que la aplicacion este levantada en localhost:7002.
+ * Requiere que la aplicacion este levantada (URL por defecto localhost:7000,
  * Si no esta, el setUp() falla con un mensaje claro.
  *
  * Para correr la app: mvn exec:java -Dexec.mainClass="cl.ucn.app.main.Main"
