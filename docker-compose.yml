@@ -30,9 +30,26 @@ services:
           echo "[migrate] Esperando a Postgres..."
           sleep 1
         done
+        
+        # Crear tabla para rastrear migraciones si no existe
+        psql -h postgres -U postgres -d sigu_ucn -v ON_ERROR_STOP=1 -c "
+        CREATE TABLE IF NOT EXISTS schema_version (
+            version VARCHAR(255) PRIMARY KEY,
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );"
+        
+        # Aplicar solo las migraciones que no han sido ejecutadas
         for f in /migrations/V*.sql; do
-          echo "[migrate] Aplicando $$f"
-          psql -h postgres -U postgres -d sigu_ucn -v ON_ERROR_STOP=1 -f "$$f"
+          filename=$$(basename "$$f")
+          already_applied=$$(psql -h postgres -U postgres -d sigu_ucn -tAc "SELECT 1 FROM schema_version WHERE version = '$$filename'")
+          
+          if [ "$$already_applied" = "1" ]; then
+            echo "[migrate] Saltando $$filename (ya aplicada)"
+          else
+            echo "[migrate] Aplicando $$filename"
+            psql -h postgres -U postgres -d sigu_ucn -v ON_ERROR_STOP=1 -f "$$f"
+            psql -h postgres -U postgres -d sigu_ucn -v ON_ERROR_STOP=1 -c "INSERT INTO schema_version (version) VALUES ('$$filename')"
+          fi
         done
         echo "[migrate] Listo"
     restart: "no"
