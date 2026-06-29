@@ -10,7 +10,7 @@ import jakarta.persistence.Persistence;
 public class PedidoCafeteriaRepository {
 
     private final EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("sigu_ucn");
+            Persistence.createEntityManagerFactory("siguPU");
 
     public void guardar(PedidoCafeteria pedido) {
         EntityManager em = emf.createEntityManager();

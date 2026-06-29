@@ -1,12 +1,12 @@
 package cl.ucn.app.repository;
 
+import java.util.List;
+
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-
-import java.util.List;
 
 public class UsuarioRepository {
 

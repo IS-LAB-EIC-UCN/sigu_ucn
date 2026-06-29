@@ -1,0 +1,14 @@
+package cl.ucn.app.routes;
+
+import cl.ucn.app.controller.CafeteriaController;
+import io.javalin.config.JavalinConfig;
+
+public class CafeteriaRoutes {
+
+    public static void register(JavalinConfig config) {
+        CafeteriaController controller = new CafeteriaController();
+
+        config.routes.get("/cafeteria", ctx -> controller.mostrarCafeteria(ctx));
+        config.routes.post("/cafeteria/pedidos", ctx -> controller.crearPedido(ctx));
+    }
+}
