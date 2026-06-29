@@ -18,15 +18,3 @@ INSERT INTO reservas (fecha_reserva, hora_inicio, hora_fin, estado, usuario_id, 
                                                                                                 ('2026-04-15', '09:00:00', '11:00:00', 'APROBADA', 2, 1),
                                                                                                 ('2026-04-16', '14:00:00', '15:30:00', 'PENDIENTE', 3, 2),
                                                                                                 ('2026-04-17', '10:00:00', '12:00:00', 'CANCELADA', 3, 3);
-
-
-INSERT INTO categorias_cafeteria (nombre) VALUES
-('Bebidas'),
-('Comida'),
-('Postres');
-
-INSERT INTO productos_cafeteria (nombre, precio, stock, categoria_id) VALUES
-('Café ', 1200, 20, 1),
-('Té', 1000, 15, 1),
-('Pan con palta', 2500, 10, 2),
-('Galleta', 1500, 8, 3);s

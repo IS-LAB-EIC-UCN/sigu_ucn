@@ -1,7 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence"
-             version="3.0">
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="3.0"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+             https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
 
-    <persistence-unit name="sigu_ucn">
+    <persistence-unit name="siguPU" transaction-type="RESOURCE_LOCAL">
+
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>cl.ucn.app.model.Usuario</class>
+        <class>cl.ucn.app.model.Rol</class>
+        <class>cl.ucn.app.model.Espacio</class>
+        <class>cl.ucn.app.model.Reserva</class>
+
+
         <class>cl.ucn.app.model.CategoriaCafeteria</class>
         <class>cl.ucn.app.model.ProductoCafeteria</class>
         <class>cl.ucn.app.model.PedidoCafeteria</class>
@@ -19,6 +32,6 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>
-    </persistence-unit>
 
+    </persistence-unit>
 </persistence>
