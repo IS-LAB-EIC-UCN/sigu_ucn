@@ -6,6 +6,7 @@ import cl.ucn.app.model.PedidoCafeteria;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import java.time.LocalDateTime;
 
 public class PedidoCafeteriaRepository {
 
@@ -48,6 +49,47 @@ public class PedidoCafeteriaRepository {
         } finally {
             em.close();
         }}
+
+    public List<PedidoCafeteria> listarPorFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT p FROM PedidoCafeteria p WHERE p.fechaPedido BETWEEN :fechaInicio AND :fechaFin ORDER BY p.fechaPedido DESC",
+                    PedidoCafeteria.class
+            )
+            .setParameter("fechaInicio", fechaInicio)
+            .setParameter("fechaFin", fechaFin)
+            .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public void eliminar(Long pedidoId) {
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            PedidoCafeteria pedido = em.find(PedidoCafeteria.class, pedidoId);
+
+            if (pedido != null) {
+                em.remove(pedido);
+            }
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 
     public void actualizar(PedidoCafeteria pedido) {
         EntityManager em = emf.createEntityManager();

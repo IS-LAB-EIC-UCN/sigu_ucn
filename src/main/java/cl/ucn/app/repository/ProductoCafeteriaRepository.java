@@ -39,6 +39,22 @@ public class ProductoCafeteriaRepository {
         } finally {
             em.close();
         }}
+
+    public void guardar(ProductoCafeteria producto) {
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            em.persist(producto);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }}
         
     public ProductoCafeteria buscarPorId(Long id) {
         EntityManager em = emf.createEntityManager();

@@ -24,6 +24,22 @@ public class CategoriaCafeteriaRepository {
             em.close();
         }}
 
+    public void guardar(CategoriaCafeteria categoria) {
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            em.persist(categoria);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }}
+
     public CategoriaCafeteria buscarPorId(Long id) {
         EntityManager em = emf.createEntityManager();
 
