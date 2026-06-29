@@ -68,6 +68,7 @@ public class MultaServiceTest {
     @Test
     public void testRegistrarPago_desbloqueaLector_siSinDeudas() {
         Multa multa = new Multa();
+        multa.setId(1L);
         multa.setPagada(false);
         PrestamoLibro prestamo = new PrestamoLibro();
         Lector lector = new Lector();
@@ -75,7 +76,7 @@ public class MultaServiceTest {
         prestamo.setLector(lector);
         multa.setPrestamo(prestamo);
 
-        Mockito.when(lectorService.tieneDeudaPendiente(lector.getId())).thenReturn(false);
+        Mockito.when(multaRepository.countPendientesByLectorExcluding(lector, 1L, em)).thenReturn(0L);
 
         multaService.registrarPago(multa, em);
 

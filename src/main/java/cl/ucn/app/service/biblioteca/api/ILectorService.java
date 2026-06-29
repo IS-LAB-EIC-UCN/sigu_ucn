@@ -14,4 +14,6 @@ public interface ILectorService {
     void desbloquearLector(Long id);
     void eliminarLector(Long id);
     boolean tieneDeudaPendiente(Long lectorId);
+    java.util.List<cl.ucn.app.model.biblioteca.Multa> obtenerMultas(Long lectorId);
+    Lector crearDesdeUsuario(String nombre, String correo, String rut);
 }

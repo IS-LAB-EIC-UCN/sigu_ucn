@@ -9,9 +9,19 @@ import io.javalin.http.Context;
 import java.util.HashMap;
 import java.util.Map;
 
+import cl.ucn.app.service.biblioteca.api.ILectorService;
+
 public class MisDatosController {
 
-    private final LectorService lectorService = new LectorService();
+    private final ILectorService lectorService;
+
+    public MisDatosController() {
+        this(new LectorService());
+    }
+
+    public MisDatosController(ILectorService lectorService) {
+        this.lectorService = lectorService;
+    }
 
     public void formulario(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");

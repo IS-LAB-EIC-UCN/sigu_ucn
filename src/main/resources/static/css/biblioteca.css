@@ -247,6 +247,12 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
 }
+.bib-kpi-card-clickable {
+    cursor: pointer;
+}
+.bib-kpi-card-clickable:hover {
+    border-color: var(--bib-accent);
+}
 .kpi-title {
     font-size: 0.85em;
     color: #666666;

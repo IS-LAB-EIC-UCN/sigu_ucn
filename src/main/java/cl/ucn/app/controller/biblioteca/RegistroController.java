@@ -15,12 +15,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cl.ucn.app.service.biblioteca.api.ILibroService;
+import cl.ucn.app.service.biblioteca.api.IEjemplarService;
+import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
+import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
+
 public class RegistroController {
 
-    private final LibroService libroService = new LibroService();
-    private final EjemplarService ejemplarService = new EjemplarService();
-    private final LibroRepository libroRepository = new LibroRepository();
-    private final EjemplarRepository ejemplarRepository = new EjemplarRepository();
+    private final ILibroService libroService;
+    private final IEjemplarService ejemplarService;
+    private final ILibroRepository libroRepository;
+    private final IEjemplarRepository ejemplarRepository;
+
+    public RegistroController() {
+        this(new LibroService(),
+             new EjemplarService(),
+             new LibroRepository(),
+             new EjemplarRepository());
+    }
+
+    public RegistroController(ILibroService libroService,
+                              IEjemplarService ejemplarService,
+                              ILibroRepository libroRepository,
+                              IEjemplarRepository ejemplarRepository) {
+        this.libroService = libroService;
+        this.ejemplarService = ejemplarService;
+        this.libroRepository = libroRepository;
+        this.ejemplarRepository = ejemplarRepository;
+    }
 
     public void formularioEditarLibro(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");

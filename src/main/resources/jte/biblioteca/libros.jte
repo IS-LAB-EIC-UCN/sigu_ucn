@@ -51,17 +51,17 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                     <span class="kpi-title">Ejemplares</span>
                     <span class="kpi-value">${kpiTotalEjemplares}</span>
                 </div>
-                <div class="bib-kpi-card">
+                <a href="/biblioteca/historial" class="bib-kpi-card bib-kpi-card-clickable" style="text-decoration: none; color: inherit;">
                     <span class="kpi-title">Préstamos activos</span>
                     <span class="kpi-value">${kpiPrestamosActivos}</span>
                     @if(kpiPrestamosAtrasados > 0)
                         <span class="kpi-sub kpi-sub-danger">${kpiPrestamosAtrasados} atrasados</span>
                     @endif
-                </div>
-                <div class="bib-kpi-card">
+                </a>
+                <a href="/biblioteca/historial" class="bib-kpi-card bib-kpi-card-clickable" style="text-decoration: none; color: inherit;">
                     <span class="kpi-title">Multas por recaudar</span>
                     <span class="kpi-value">$${kpiTotalMultas != null ? kpiTotalMultas.intValue() : 0}</span>
-                </div>
+                </a>
             </div>
  
             @if((entregasPendientes != null && !entregasPendientes.isEmpty()) || (devolucionesPendientes != null && !devolucionesPendientes.isEmpty()))

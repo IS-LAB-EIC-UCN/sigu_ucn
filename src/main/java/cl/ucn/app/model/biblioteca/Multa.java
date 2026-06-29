@@ -32,6 +32,7 @@ public class Multa {
 
     // Getters y Setters
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public Integer getDiasAtraso() { return diasAtraso; }
     public void setDiasAtraso(Integer diasAtraso) { this.diasAtraso = diasAtraso; }

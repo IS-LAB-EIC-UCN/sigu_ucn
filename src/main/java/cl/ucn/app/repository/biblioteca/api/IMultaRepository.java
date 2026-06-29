@@ -13,4 +13,5 @@ public interface IMultaRepository {
     Multa findByPrestamo(cl.ucn.app.model.biblioteca.PrestamoLibro prestamo, jakarta.persistence.EntityManager em);
     List<Multa> findPendientesByLector(Lector lector);
     List<Multa> findAll();
+    long countPendientesByLectorExcluding(Lector lector, Long multaId, jakarta.persistence.EntityManager em);
 }

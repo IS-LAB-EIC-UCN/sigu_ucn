@@ -96,4 +96,14 @@ public class MultaRepository implements IMultaRepository {
             em.close();
         }
     }
+
+    @Override
+    public long countPendientesByLectorExcluding(Lector lector, Long multaId, EntityManager em) {
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(m) FROM Multa m WHERE m.prestamo.lector = :lector AND m.pagada = false AND m.id != :multaId",
+            Long.class);
+        query.setParameter("lector", lector);
+        query.setParameter("multaId", multaId);
+        return query.getSingleResult();
+    }
 }

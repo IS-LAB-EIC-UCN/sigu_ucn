@@ -28,12 +28,35 @@ import java.util.Map;
 
 public class CatalogoController {
 
-    private final ILibroService libroService = new LibroService();
-    private final IEjemplarService ejemplarService = new EjemplarService();
-    private final ILibroRepository libroRepository = new LibroRepository();
-    private final IEjemplarRepository ejemplarRepository = new EjemplarRepository();
-    private final IPrestamoLibroRepository prestamoRepository = new PrestamoLibroRepository();
-    private final DashboardService dashboardService = new DashboardService();
+    private final ILibroService libroService;
+    private final IEjemplarService ejemplarService;
+    private final ILibroRepository libroRepository;
+    private final IEjemplarRepository ejemplarRepository;
+    private final IPrestamoLibroRepository prestamoRepository;
+    private final DashboardService dashboardService;
+
+    public CatalogoController() {
+        this(new LibroService(),
+             new EjemplarService(),
+             new LibroRepository(),
+             new EjemplarRepository(),
+             new PrestamoLibroRepository(),
+             new DashboardService());
+    }
+
+    public CatalogoController(ILibroService libroService,
+                              IEjemplarService ejemplarService,
+                              ILibroRepository libroRepository,
+                              IEjemplarRepository ejemplarRepository,
+                              IPrestamoLibroRepository prestamoRepository,
+                              DashboardService dashboardService) {
+        this.libroService = libroService;
+        this.ejemplarService = ejemplarService;
+        this.libroRepository = libroRepository;
+        this.ejemplarRepository = ejemplarRepository;
+        this.prestamoRepository = prestamoRepository;
+        this.dashboardService = dashboardService;
+    }
 
     public void listar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");

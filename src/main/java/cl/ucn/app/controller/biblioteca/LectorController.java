@@ -9,9 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cl.ucn.app.service.biblioteca.api.ILectorService;
+
 public class LectorController {
 
-    private final LectorService lectorService = new LectorService();
+    private final ILectorService lectorService;
+
+    public LectorController() {
+        this(new LectorService());
+    }
+
+    public LectorController(ILectorService lectorService) {
+        this.lectorService = lectorService;
+    }
 
     public void listar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");

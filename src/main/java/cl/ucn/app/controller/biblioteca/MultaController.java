@@ -5,10 +5,23 @@ import cl.ucn.app.repository.biblioteca.MultaRepository;
 import cl.ucn.app.service.biblioteca.MultaService;
 import io.javalin.http.Context;
 
+import cl.ucn.app.service.biblioteca.api.IMultaService;
+import cl.ucn.app.repository.biblioteca.api.IMultaRepository;
+
 public class MultaController {
 
-    private final MultaService multaService = new MultaService();
-    private final MultaRepository multaRepository = new MultaRepository();
+    private final IMultaService multaService;
+    private final IMultaRepository multaRepository;
+
+    public MultaController() {
+        this(new MultaService(), new MultaRepository());
+    }
+
+    public MultaController(IMultaService multaService,
+                           IMultaRepository multaRepository) {
+        this.multaService = multaService;
+        this.multaRepository = multaRepository;
+    }
 
     public void registrarPago(Context ctx) {
         String multaIdStr = ctx.formParam("multaId");

@@ -33,15 +33,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cl.ucn.app.repository.biblioteca.api.IMultaRepository;
+
 public class PrestamoController {
 
-    private final IPrestamoService prestamoService = new PrestamoLibroService();
-    private final ILectorService lectorService = new LectorService();
-    private final IHistorialService historialService = new HistorialService();
-    private final IDevolucionService devolucionService = new DevolucionService();
-    private final IEjemplarRepository ejemplarRepository = new EjemplarRepository();
-    private final IPrestamoLibroRepository prestamoLibroRepository = new PrestamoLibroRepository();
-    private final MultaRepository multaRepository = new MultaRepository();
+    private final IPrestamoService prestamoService;
+    private final ILectorService lectorService;
+    private final IHistorialService historialService;
+    private final IDevolucionService devolucionService;
+    private final IEjemplarRepository ejemplarRepository;
+    private final IPrestamoLibroRepository prestamoLibroRepository;
+    private final IMultaRepository multaRepository;
+
+    public PrestamoController() {
+        this(new PrestamoLibroService(),
+             new LectorService(),
+             new HistorialService(),
+             new DevolucionService(),
+             new EjemplarRepository(),
+             new PrestamoLibroRepository(),
+             new MultaRepository());
+    }
+
+    public PrestamoController(IPrestamoService prestamoService,
+                              ILectorService lectorService,
+                              IHistorialService historialService,
+                              IDevolucionService devolucionService,
+                              IEjemplarRepository ejemplarRepository,
+                              IPrestamoLibroRepository prestamoLibroRepository,
+                              IMultaRepository multaRepository) {
+        this.prestamoService = prestamoService;
+        this.lectorService = lectorService;
+        this.historialService = historialService;
+        this.devolucionService = devolucionService;
+        this.ejemplarRepository = ejemplarRepository;
+        this.prestamoLibroRepository = prestamoLibroRepository;
+        this.multaRepository = multaRepository;
+    }
 
     public void formularioPrestamo(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
@@ -143,7 +171,7 @@ public class PrestamoController {
         model.put("fechaVencimiento", fechaVencimiento != null ? fechaVencimiento : "");
 
         if ("ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) {
-            model.put("lectores", new LectorRepository().findAll());
+            model.put("lectores", lectorService.listarTodos());
         }
 
         ctx.render("biblioteca/prestamo-form.jte", model);

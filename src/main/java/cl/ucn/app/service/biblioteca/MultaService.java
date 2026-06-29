@@ -120,8 +120,8 @@ public class MultaService implements IMultaService {
 
         Lector lector = multa.getPrestamo() != null ? multa.getPrestamo().getLector() : null;
         if (lector != null) {
-            boolean tieneDeudas = lectorService.tieneDeudaPendiente(lector.getId());
-            if (!tieneDeudas) {
+            long tieneDeudas = multaRepository.countPendientesByLectorExcluding(lector, multa.getId(), em);
+            if (tieneDeudas == 0) {
                 lector.setBloqueado(false);
             }
         }
