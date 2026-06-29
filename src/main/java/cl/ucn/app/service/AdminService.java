@@ -5,7 +5,6 @@ import java.time.LocalTime;
 import java.util.Scanner;
 
 import cl.ucn.app.model.Rol;
-import cl.ucn.app.repository.DB_local;
 import cl.ucn.app.service.Interfaces.IAdmin;
 
 public class AdminService implements IAdmin {
@@ -13,6 +12,9 @@ public class AdminService implements IAdmin {
     private final ConsoleService console;
     private final CheckerService checker;
     private final Scanner scanner;
+    private final RecursoService recursoService;
+    private final ProveedorService proveedorService;
+    private final UsuarioAdderService usuarioAdderService;
     private final PrestamoService prestamoService;
     private final StockService stockService;
 
@@ -20,6 +22,9 @@ public class AdminService implements IAdmin {
         this.console = new ConsoleService();
         this.checker = new CheckerService();
         this.scanner = new Scanner(System.in);
+        this.recursoService = new RecursoService();
+        this.proveedorService = new ProveedorService();
+        this.usuarioAdderService = new UsuarioAdderService();
         this.prestamoService = new PrestamoService();
         this.stockService = new StockService();
     }
@@ -47,8 +52,7 @@ public class AdminService implements IAdmin {
         if(!checker.validar_string(tipo)) return;
         tipo = tipo.toUpperCase();
 
-        DB_local.addRecurso(nombre, stock, tipo);
-        return;
+        recursoService.crearRecurso(nombre, stock, tipo);
     }
 
     @Override
@@ -74,17 +78,16 @@ public class AdminService implements IAdmin {
         String activo_str = scanner.nextLine();
 
         //->...
-        Boolean activo;
+        boolean activo;
         if (activo_str.equalsIgnoreCase("TRUE")) activo = true;
-        if (activo_str.equalsIgnoreCase("FALSE")) activo = false;
+        else if (activo_str.equalsIgnoreCase("FALSE")) activo = false;
         else return;
 
         console.log("Rol");
         String nombre_rol = scanner.nextLine();
 
-        Rol roltemp = new Rol(nombre_rol);
-        DB_local.addUsuario(nombre, correo, password, activo, roltemp);
-        roltemp = null;
+        Rol rol = new Rol(nombre_rol);
+        usuarioAdderService.crearUsuario(nombre, correo, password, activo, rol);
     }
 
     @Override
@@ -109,7 +112,7 @@ public class AdminService implements IAdmin {
 
         if(!checker.validar_telefono(telefono)) return;
 
-        DB_local.addProveedor(nombre, correo, telefono);
+        proveedorService.crearProveedor(nombre, correo, telefono);
     }
 
     @Override
