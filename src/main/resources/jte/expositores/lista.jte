@@ -19,6 +19,7 @@ content = @`
         <nav class="tab-nav">
             <a href="/eventos" class="tab">Eventos</a>
             <a href="/expositores" class="tab tab-active">Expositores</a>
+            <a href="/espacios" class="tab">Ubicaciones</a>
         </nav>
 
         @if(error != null && !error.isBlank())

@@ -17,6 +17,7 @@ public class ExpositorService {
         if (expositor.getNombre() == null || expositor.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del expositor es obligatorio.");
         }
+
         if (expositor.getEmail() != null && !expositor.getEmail().isBlank()) {
             Expositor existente = expositorRepository.findByEmail(expositor.getEmail());
             if (existente != null) {
@@ -24,6 +25,13 @@ public class ExpositorService {
                         "Ya existe un expositor registrado con el email: " + expositor.getEmail());
             }
         }
+
+        if (expositor.getTelefono() != null && !expositor.getTelefono().isBlank()) {
+            if (!expositor.getTelefono().matches("^\\+56 9 \\d{4} \\d{4}$")) {
+                throw new IllegalArgumentException("El teléfono debe tener el formato +56 9 1234 5678.");
+            }
+        }
+
         return expositorRepository.save(expositor);
     }
 

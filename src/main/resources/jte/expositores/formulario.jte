@@ -31,7 +31,14 @@ content = @`
                 </div>
                 <div class="form-group">
                     <label for="telefono">Teléfono</label>
-                    <input type="text" id="telefono" name="telefono" placeholder="Ej: +56 9 1234 5678">
+                    <input
+                            type="tel"
+                            id="telefono"
+                            name="telefono"
+                            placeholder="Ej: +56 9 1234 5678"
+                            pattern="^\+56 9 [0-9]{4} [0-9]{4}$"
+                            maxlength="16"
+                            title="El teléfono debe tener el formato +56 9 1234 5678">
                 </div>
             </div>
 
