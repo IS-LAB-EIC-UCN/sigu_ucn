@@ -212,9 +212,9 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                     @for(Libro libro : libros)
                         <div class="bib-book-card ${disponibles.getOrDefault(libro.getId(), 0) == 0 ? "bib-book-card-exhausted" : ""}">
                             <div class="bib-book-cover category-${libro.getCategoria().toLowerCase()}">
+                                <div class="bib-cover-pattern"></div>
                                 <span class="cover-category">${libro.getCategoria()}</span>
-                                <h3 class="cover-title">${libro.getTitulo()}</h3>
-                                <span class="cover-author">${libro.getAutor()}</span>
+                                <div class="cover-initials">${libro.getTitulo() != null && libro.getTitulo().trim().length() > 0 ? libro.getTitulo().trim().substring(0, Math.min(2, libro.getTitulo().trim().length())).toUpperCase() : "??"}</div>
                             </div>
                             <div class="bib-book-info">
                                 <h4 class="book-card-title">${libro.getTitulo()}</h4>

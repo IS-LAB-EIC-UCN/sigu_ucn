@@ -2,17 +2,17 @@
     --bib-primary: #1f3b73;
     --bib-accent: #b8743a;
     --bib-bg: #ffffff;
-    --bib-border: #e2e7ef;
-    --bib-success: #2f7d3a;
-    --bib-warning: #c98a14;
-    --bib-danger: #a83232;
-    --bib-light: #f5f7fb;
-    --bib-dark: #222222;
-    --bib-text: #222222;
+    --bib-border: #e2e8f0;
+    --bib-success: #1e6b36;
+    --bib-warning: #b45309;
+    --bib-danger: #9e2a2b;
+    --bib-light: #f8fafc;
+    --bib-dark: #0f172a;
+    --bib-text: #334155;
     --bib-font: 'Outfit', 'Inter', 'Segoe UI', sans-serif;
-    --bib-radius: 12px;
-    --bib-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    --bib-transition: all 0.3s ease;
+    --bib-radius: 16px;
+    --bib-shadow: 0 4px 20px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
+    --bib-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Contenedor principal */
@@ -96,22 +96,30 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 20px;
+    padding: 10px 22px;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: var(--bib-transition);
     text-decoration: none;
     font-family: var(--bib-font);
     gap: 8px;
     border: none;
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+}
+.bib-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+.bib-btn:active {
+    transform: translateY(0);
 }
 .bib-btn-primary {
     background: var(--bib-primary);
     color: white;
 }
 .bib-btn-primary:hover {
-    background: #152952;
+    background: #152c56;
 }
 .bib-btn-accent {
     background: var(--bib-accent);
@@ -125,7 +133,7 @@
     color: white;
 }
 .bib-btn-danger:hover {
-    background: #872828;
+    background: #832021;
 }
 
 /* Tablas */
@@ -155,8 +163,11 @@
 .bib-table tbody tr:last-child td {
     border-bottom: none;
 }
+.bib-table tbody tr:nth-child(even) td {
+    background-color: var(--bib-light);
+}
 .bib-table tbody tr:hover td {
-    background: #f0f4ff;
+    background: #edf2f7;
 }
 
 /* Grilla */
@@ -230,6 +241,11 @@
     box-shadow: var(--bib-shadow);
     display: flex;
     flex-direction: column;
+    transition: var(--bib-transition);
+}
+.bib-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
 }
 .kpi-title {
     font-size: 0.85em;
@@ -265,19 +281,30 @@
     transition: var(--bib-transition);
 }
 .bib-book-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 .bib-book-cover {
-    height: 180px;
+    height: 190px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16px;
+    padding: 18px;
     color: #ffffff;
     text-align: center;
     position: relative;
     user-select: none;
+    overflow: hidden;
+}
+.bib-cover-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.35;
+    z-index: 1;
+    pointer-events: none;
 }
 .cover-category {
     font-size: 0.7em;
@@ -285,68 +312,94 @@
     font-weight: 700;
     letter-spacing: 1px;
     align-self: flex-start;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 4px 10px;
     border-radius: 12px;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.cover-title {
-    font-size: 1.1em;
-    font-weight: 700;
+.cover-initials {
+    font-size: 3.5rem;
+    font-weight: 800;
+    opacity: 0.3;
     margin: auto 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-.cover-author {
-    font-size: 0.8em;
-    font-weight: 500;
-    opacity: 0.9;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: -2px;
+    z-index: 2;
+    text-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+    font-family: var(--bib-font);
 }
 
 .category-ciencias {
-    background-color: #2e4a62;
+    background: #2F855A;
 }
+.category-ciencias .bib-cover-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Cpath d='M25 5 L42 15 L42 35 L25 45 L8 35 L8 15 Z' stroke='%23ffffff' stroke-width='1.2' stroke-opacity='0.4' fill='none'/%3E%3Ccircle cx='25' cy='5' r='3.5' fill='%23ffffff' fill-opacity='0.55'/%3E%3Ccircle cx='42' cy='15' r='3.5' fill='%23ffffff' fill-opacity='0.55'/%3E%3Ccircle cx='25' cy='25' r='4.5' fill='%23ffffff' fill-opacity='0.4'/%3E%3Cline x1='25' y1='5' x2='25' y2='25' stroke='%23ffffff' stroke-width='1.2' stroke-opacity='0.35'/%3E%3Cline x1='42' y1='15' x2='25' y2='25' stroke='%23ffffff' stroke-width='1.2' stroke-opacity='0.35'/%3E%3C/svg%3E");
+    background-size: 50px 50px;
+}
+
 .category-economia {
-    background-color: #3b6e6f;
+    background: #2B6CB0;
 }
+.category-economia .bib-cover-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M5 50 Q 20 35, 35 38 T 55 15' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.4' fill='none'/%3E%3Cpath d='M55 15 L45 15 M55 15 L55 25' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.4' fill='none'/%3E%3Ctext x='15' y='28' fill='%23ffffff' fill-opacity='0.35' font-family='sans-serif' font-size='14' font-weight='bold'%3E%24%3C/text%3E%3Ctext x='42' y='48' fill='%23ffffff' fill-opacity='0.35' font-family='sans-serif' font-size='14' font-weight='bold'%3E%24%3C/text%3E%3C/svg%3E");
+    background-size: 60px 60px;
+}
+
 .category-historia {
-    background-color: #8c6d58;
+    background: #8B5E3C;
 }
+.category-historia .bib-cover-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='18' stroke='%23ffffff' stroke-width='1.2' stroke-opacity='0.3' fill='none'/%3E%3Cpath d='M25 5 L28 22 L45 25 L28 28 L25 45 L22 28 L5 25 L22 22 Z' fill='%23ffffff' fill-opacity='0.35'/%3E%3C/svg%3E");
+    background-size: 50px 50px;
+}
+
 .category-programacion {
-    background-color: #1e2d4a;
+    background: #553C9A;
 }
+.category-programacion .bib-cover-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Ctext x='5' y='22' fill='%23ffffff' fill-opacity='0.45' font-family='monospace' font-size='13' font-weight='bold'%3E%26lt;/%26gt;%3C/text%3E%3Ctext x='28' y='42' fill='%23ffffff' fill-opacity='0.45' font-family='monospace' font-size='13' font-weight='bold'%3E%7B%7D%3C/text%3E%3C/svg%3E");
+    background-size: 50px 50px;
+}
+
 .category-humanidades {
-    background-color: #704f50;
+    background: #C05621;
 }
+.category-humanidades .bib-cover-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M10 20 C20 15, 30 15, 30 20 C30 15, 40 15, 50 20 L50 45 C40 40, 30 40, 30 45 C30 40, 20 40, 10 45 Z' stroke='%23ffffff' stroke-width='1.8' stroke-opacity='0.35' fill='none'/%3E%3Cline x1='30' y1='20' x2='30' y2='45' stroke='%23ffffff' stroke-width='1.8' stroke-opacity='0.35'/%3E%3C/svg%3E");
+    background-size: 60px 60px;
+}
+
 .category-otro {
-    background-color: #4a5568;
+    background: #9B2C2C;
+}
+.category-otro .bib-cover-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Ccircle cx='15' cy='15' r='2' fill='%23ffffff' fill-opacity='0.4'/%3E%3C/svg%3E");
+    background-size: 30px 30px;
 }
 
 .bib-book-info {
-    padding: 16px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    border-top: 1px solid var(--bib-border);
 }
 .book-card-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0 0 4px 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
     color: var(--bib-dark);
     display: -webkit-box;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    line-height: 1.35;
 }
 .book-card-author {
-    font-size: 0.85rem;
-    color: #666666;
+    font-size: 0.88rem;
+    color: #64748b;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
@@ -355,14 +408,15 @@
 .bib-book-actions {
     display: flex;
     gap: 8px;
-    margin-top: auto;
+    margin-top: 16px;
 }
 
 .bib-book-card-exhausted {
-    opacity: 0.65;
+    opacity: 0.55;
+    background: #f8fafc;
 }
 .bib-book-card-exhausted .bib-book-cover {
-    filter: grayscale(1) opacity(0.7);
+    filter: grayscale(0.8) opacity(0.5);
 }
 .bib-book-card-exhausted:hover {
     transform: none !important;
