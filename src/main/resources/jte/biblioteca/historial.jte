@@ -50,11 +50,11 @@ content = @`
                         <td>${p.getFechaDevolucion() != null ? p.getFechaDevolucion().toString() : "No devuelto"}</td>
                         <td>
                             @if("SOLICITADO".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-pendiente">Reservado</span>
+                                <span class="bib-badge bib-badge-pendiente">Solicitado</span>
                             @elseif("ACTIVO".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-activo">Activo</span>
+                                <span class="bib-badge bib-badge-activo">En préstamo</span>
                             @elseif("PENDIENTE_DEVOLUCION".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-pendiente">P. Recepción</span>
+                                <span class="bib-badge bib-badge-pendiente">En devolución</span>
                             @else
                                 <span class="bib-badge bib-badge-finalizado">Devuelto</span>
                             @endif
@@ -97,7 +97,7 @@ content = @`
                                     <form method="post" action="/biblioteca/prestamo/devolver" class="bib-form-inline">
                                         <input type="hidden" name="prestamoId" value="${p.getId()}"/>
                                         <input type="hidden" name="returnTo" value="/biblioteca/historial"/>
-                                        <button type="submit" class="bib-btn bib-btn-accent bib-btn-sm">Devolver</button>
+                                        <button type="submit" class="bib-btn bib-btn-accent bib-btn-sm">Devolver libro</button>
                                     </form>
                                 @else
                                     <span class="bib-cell-muted">-</span>

@@ -44,11 +44,11 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
         @if(usuarioRol != null && usuarioRol.equals("ADMIN"))
             <div class="bib-kpi-grid">
                 <div class="bib-kpi-card">
-                    <span class="kpi-title">Títulos registrados</span>
+                    <span class="kpi-title">Libros</span>
                     <span class="kpi-value">${kpiTotalLibros}</span>
                 </div>
                 <div class="bib-kpi-card">
-                    <span class="kpi-title">Ejemplares totales</span>
+                    <span class="kpi-title">Ejemplares</span>
                     <span class="kpi-value">${kpiTotalEjemplares}</span>
                 </div>
                 <div class="bib-kpi-card">
@@ -56,8 +56,6 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                     <span class="kpi-value">${kpiPrestamosActivos}</span>
                     @if(kpiPrestamosAtrasados > 0)
                         <span class="kpi-sub kpi-sub-danger">${kpiPrestamosAtrasados} atrasados</span>
-                    @else
-                        <span class="kpi-sub kpi-sub-success">Al día</span>
                     @endif
                 </div>
                 <div class="bib-kpi-card">
@@ -71,7 +69,7 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                     <h2 class="bib-pending-title">Pendientes de Aprobación</h2>
                     
                     @if(entregasPendientes != null && !entregasPendientes.isEmpty())
-                        <h3 class="bib-pending-subtitle">Entregas Pendientes (Retiro en Biblioteca)</h3>
+                        <h3 class="bib-pending-subtitle">Entregas Pendientes</h3>
                         <table class="bib-table bib-mb-3">
                             <thead>
                                 <tr>
@@ -101,7 +99,7 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                     @endif
  
                     @if(devolucionesPendientes != null && !devolucionesPendientes.isEmpty())
-                        <h3 class="bib-pending-subtitle">Devoluciones Pendientes (Recepción Física)</h3>
+                        <h3 class="bib-pending-subtitle">Devoluciones Pendientes</h3>
                         <table class="bib-table">
                             <thead>
                                 <tr>
@@ -194,7 +192,7 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                             <td>${totalEjemplares.getOrDefault(libro.getId(), 0)}</td>
                             <td>
                                 @if(disponibles.getOrDefault(libro.getId(), 0) > 0)
-                                    <span class="bib-badge bib-badge-disponible">${disponibles.getOrDefault(libro.getId(), 0)} disp.</span>
+                                    <span class="bib-badge bib-badge-disponible">${disponibles.getOrDefault(libro.getId(), 0)}</span>
                                 @else
                                     <span class="bib-badge bib-badge-bloqueado">Agotado</span>
                                 @endif
@@ -202,7 +200,7 @@ content = @`    <link rel="stylesheet" href="/css/biblioteca.css">
                             <td>
                                 <a href="/biblioteca/libros/editar?id=${libro.getId()}" class="bib-action-link">Editar</a>
                                 @if(disponibles.getOrDefault(libro.getId(), 0) > 0)
-                                    <a href="/biblioteca/prestamo/nuevo?libroId=${libro.getId()}" class="bib-action-link bib-ml-12">Asignar</a>
+                                    <a href="/biblioteca/prestamo/nuevo?libroId=${libro.getId()}" class="bib-action-link bib-ml-12">Prestar</a>
                                 @endif
                             </td>
                         </tr>

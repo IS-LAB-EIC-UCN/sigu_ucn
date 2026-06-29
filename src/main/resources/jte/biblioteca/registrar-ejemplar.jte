@@ -26,25 +26,32 @@ content = @`
         @endif
 
         <div class="bib-card">
-            <form method="post" action="/biblioteca/ejemplares/nuevo">
-                <div class="bib-form-group">
-                    <label>Libro</label>
-                    <select name="libroId" class="bib-form-select">
-                        @for(Libro libro : libros)
-                        @if(libroId != null && libroId.equals(String.valueOf(libro.getId())))
-                            <option value="${libro.getId()}" selected>${libro.getTitulo()} - ${libro.getAutor()} (${libro.getIsbn()})</option>
-                        @else
-                            <option value="${libro.getId()}">${libro.getTitulo()} - ${libro.getAutor()} (${libro.getIsbn()})</option>
-                        @endif
-                        @endfor
-                    </select>
+            @if(libros == null || libros.isEmpty())
+                <div class="bib-alert bib-alert-error" style="margin-bottom: 20px;">
+                    <strong>No hay libros en el catálogo:</strong> Debes registrar al menos un libro antes de poder agregar ejemplares físicos.
                 </div>
-                <div class="bib-form-group">
-                    <label>Cantidad de ejemplares a registrar</label>
-                    <input type="number" name="cantidad" class="bib-form-input" min="1" max="100" value="1" required/>
-                </div>
-                <button type="submit" class="bib-btn bib-btn-primary">Registrar ejemplares</button>
-            </form>
+                <p><a href="/biblioteca/libros/nuevo" class="bib-btn bib-btn-primary">Registrar libro</a></p>
+            @else
+                <form method="post" action="/biblioteca/ejemplares/nuevo">
+                    <div class="bib-form-group">
+                        <label>Libro</label>
+                        <select name="libroId" class="bib-form-select">
+                            @for(Libro libro : libros)
+                                @if(libroId != null && libroId.equals(String.valueOf(libro.getId())))
+                                    <option value="${libro.getId()}" selected>${libro.getTitulo()} - ${libro.getAutor()} (${libro.getIsbn()})</option>
+                                @else
+                                    <option value="${libro.getId()}">${libro.getTitulo()} - ${libro.getAutor()} (${libro.getIsbn()})</option>
+                                @endif
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="bib-form-group">
+                        <label>Cantidad de ejemplares a registrar</label>
+                        <input type="number" name="cantidad" class="bib-form-input" min="1" max="100" value="1" required/>
+                    </div>
+                    <button type="submit" class="bib-btn bib-btn-primary">Registrar ejemplares</button>
+                </form>
+            @endif
         </div>
     </div>
 `

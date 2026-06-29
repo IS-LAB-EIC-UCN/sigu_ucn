@@ -56,12 +56,22 @@ public class MultaService implements IMultaService {
 
         BigDecimal montoAtrasado = calculador.calcular(diasAtraso);
 
-        Multa multa = new Multa();
+        Multa multa = null;
+        if (em != null) {
+            multa = multaRepository.findByPrestamo(prestamo, em);
+        } else {
+            multa = multaRepository.findByPrestamo(prestamo);
+        }
+
+        if (multa == null) {
+            multa = new Multa();
+            multa.setPrestamo(prestamo);
+            multa.setFechaGeneracion(LocalDate.now());
+            multa.setPagada(false);
+        }
+
         multa.setDiasAtraso(diasAtraso);
         multa.setMonto(montoAtrasado);
-        multa.setFechaGeneracion(LocalDate.now());
-        multa.setPagada(false);
-        multa.setPrestamo(prestamo);
 
         Lector lector = prestamo.getLector();
         if (lector != null) {

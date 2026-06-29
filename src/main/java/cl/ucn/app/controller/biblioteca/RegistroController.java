@@ -112,8 +112,14 @@ public class RegistroController {
                     throw new ValidacionException("Estado invalido. Use DISPONIBLE o PRESTADO");
                 }
             }
+            Ejemplar ejemplar = ejemplarRepository.findById(id);
+            Long libroId = (ejemplar != null && ejemplar.getLibro() != null) ? ejemplar.getLibro().getId() : null;
             ejemplarService.actualizarEjemplar(id, estadoEnum);
-            ctx.redirect("/biblioteca/libros");
+            if (libroId != null) {
+                ctx.redirect("/biblioteca/libros/editar?id=" + libroId);
+            } else {
+                ctx.redirect("/biblioteca/libros");
+            }
         } catch (ValidacionException e) {
             Ejemplar ejemplar = ejemplarRepository.findById(id);
             Map<String, Object> model = new HashMap<>();
@@ -129,7 +135,13 @@ public class RegistroController {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
 
         Long id = Long.parseLong(ctx.queryParam("id"));
+        Ejemplar ejemplar = ejemplarRepository.findById(id);
+        Long libroId = (ejemplar != null && ejemplar.getLibro() != null) ? ejemplar.getLibro().getId() : null;
         ejemplarService.eliminarEjemplar(id);
-        ctx.redirect("/biblioteca/libros");
+        if (libroId != null) {
+            ctx.redirect("/biblioteca/libros/editar?id=" + libroId);
+        } else {
+            ctx.redirect("/biblioteca/libros");
+        }
     }
 }

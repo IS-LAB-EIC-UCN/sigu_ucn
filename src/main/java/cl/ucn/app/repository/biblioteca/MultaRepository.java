@@ -62,6 +62,17 @@ public class MultaRepository implements IMultaRepository {
         }
     }
 
+    public Multa findByPrestamo(cl.ucn.app.model.biblioteca.PrestamoLibro prestamo, EntityManager em) {
+        try {
+            TypedQuery<Multa> query = em.createQuery(
+                "SELECT m FROM Multa m WHERE m.prestamo = :prestamo", Multa.class);
+            query.setParameter("prestamo", prestamo);
+            return query.getSingleResult();
+        } catch (jakarta.persistence.NoResultException ex) {
+            return null;
+        }
+    }
+
     public List<Multa> findPendientesByLector(Lector lector) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

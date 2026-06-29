@@ -44,9 +44,6 @@ content = @`
                     <span class="bib-profile-label">RUT</span>
                     <div class="bib-profile-value">${lector.getRut()}</div>
                 </div>
-                <div class="bib-profile-field">
-                    <span class="bib-badge bib-badge-activo">Perfil Activo</span>
-                </div>
                 <div class="bib-mt-2">
                     <a href="/biblioteca/libros" class="bib-btn bib-btn-primary">Volver al catálogo</a>
                 </div>
