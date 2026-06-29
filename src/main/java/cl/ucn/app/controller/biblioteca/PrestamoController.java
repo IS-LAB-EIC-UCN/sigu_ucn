@@ -1,16 +1,18 @@
 package cl.ucn.app.controller.biblioteca;
 
 import cl.ucn.app.auth.LectorSessionHelper;
-import cl.ucn.app.controller.biblioteca.PrestamoConMulta;
 import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.exceptions.ValidacionException;
+import cl.ucn.app.model.biblioteca.EstadoEjemplar;
+import cl.ucn.app.model.biblioteca.EstadoPrestamo;
 import cl.ucn.app.model.biblioteca.Ejemplar;
 import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.model.biblioteca.Multa;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
+import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.MultaRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
 import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
@@ -108,7 +110,7 @@ public class PrestamoController {
             if ("ADMIN".equals(usuarioRol)) {
                 ctx.redirect("/biblioteca/libros?asignado=1");
             } else {
-                ctx.redirect("/biblioteca/historial");
+                ctx.redirect(returnTo(ctx));
             }
         } catch (ValidacionException e) {
             reRenderFormularioPrestamo(ctx, usuarioNombre, e.getMessage(),
@@ -124,7 +126,7 @@ public class PrestamoController {
                                            String fechaVencimiento) {
         Map<Libro, Integer> disponiblesPorLibro = new HashMap<>();
         for (Ejemplar ej : ejemplarRepository.findAll()) {
-            if (cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE == ej.getEstado()) {
+            if (EstadoEjemplar.DISPONIBLE == ej.getEstado()) {
                 disponiblesPorLibro.merge(ej.getLibro(), 1, Integer::sum);
             }
         }
@@ -141,7 +143,7 @@ public class PrestamoController {
         model.put("fechaVencimiento", fechaVencimiento != null ? fechaVencimiento : "");
 
         if ("ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) {
-            model.put("lectores", new cl.ucn.app.repository.biblioteca.LectorRepository().findAll());
+            model.put("lectores", new LectorRepository().findAll());
         }
 
         ctx.render("biblioteca/prestamo-form.jte", model);
@@ -152,7 +154,7 @@ public class PrestamoController {
 
         List<PrestamoLibro> activos = new ArrayList<>();
         for (PrestamoLibro p : prestamoLibroRepository.findAll()) {
-            if (cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO == p.getEstado()) {
+            if (EstadoPrestamo.ACTIVO == p.getEstado()) {
                 activos.add(p);
             }
         }
@@ -168,7 +170,7 @@ public class PrestamoController {
     public void registrarDevolucion(Context ctx) {
         Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
         devolucionService.registrarDevolucion(prestamoId);
-        ctx.redirect("/biblioteca/historial");
+        ctx.redirect(returnTo(ctx));
     }
 
     public void confirmarEntrega(Context ctx) {
@@ -179,7 +181,7 @@ public class PrestamoController {
         }
         Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
         prestamoService.confirmarEntrega(prestamoId);
-        ctx.redirect("/biblioteca/historial");
+        ctx.redirect(returnTo(ctx));
     }
 
     public void solicitarDevolucion(Context ctx) {
@@ -190,7 +192,7 @@ public class PrestamoController {
         }
         Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
         prestamoService.solicitarDevolucion(prestamoId);
-        ctx.redirect("/biblioteca/historial");
+        ctx.redirect(returnTo(ctx));
     }
 
     public void confirmarDevolucion(Context ctx) {
@@ -201,7 +203,15 @@ public class PrestamoController {
         }
         Long prestamoId = Long.parseLong(ctx.formParam("prestamoId"));
         prestamoService.confirmarDevolucion(prestamoId);
-        ctx.redirect("/biblioteca/historial");
+        ctx.redirect(returnTo(ctx));
+    }
+
+    private String returnTo(Context ctx) {
+        String returnTo = ctx.formParam("returnTo");
+        if (returnTo == null || returnTo.isBlank() || !returnTo.startsWith("/biblioteca/")) {
+            return "/biblioteca/historial";
+        }
+        return returnTo;
     }
 
     public void historial(Context ctx) {

@@ -8,6 +8,7 @@
     --bib-danger: #a83232;
     --bib-light: #f5f7fb;
     --bib-dark: #222222;
+    --bib-text: #222222;
     --bib-font: 'Outfit', 'Inter', 'Segoe UI', sans-serif;
     --bib-radius: 12px;
     --bib-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
@@ -367,3 +368,427 @@
     transform: none !important;
     box-shadow: var(--bib-shadow) !important;
 }
+
+/* Badge pendiente (reservas) */
+.bib-badge-pendiente {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+/* Contenedor de error */
+.error-container {
+    max-width: 560px;
+    margin: 60px auto;
+    padding: 40px;
+    background: var(--bib-bg);
+    border: 1px solid var(--bib-border);
+    border-radius: var(--bib-radius);
+    box-shadow: var(--bib-shadow);
+    text-align: center;
+}
+.error-container h1 {
+    color: var(--bib-danger);
+    font-size: 3rem;
+    margin: 0 0 16px 0;
+    font-weight: 800;
+}
+.error-container p {
+    color: var(--bib-dark);
+    font-size: 1.05rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+.error-container a {
+    margin-top: 8px;
+}
+
+/* Utilidades para historial y tablas */
+.bib-cell-lector strong {
+    font-weight: 600;
+}
+.bib-cell-sub {
+    color: #555;
+}
+.bib-cell-libro {
+    font-weight: 600;
+    color: var(--bib-primary);
+}
+.bib-cell-muted {
+    color: #999;
+}
+.bib-monto-multa {
+    color: var(--bib-danger);
+}
+.bib-form-inline {
+    display: inline;
+}
+.bib-btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+.bib-badge-sm {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    margin-top: 4px;
+}
+.bib-badge-finalizado {
+    background: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+}
+.bib-badge-activo {
+    background: #e6ffe6;
+    color: var(--bib-success);
+    border: 1px solid #b7efb7;
+}
+
+/* Clases de perfil del lector */
+.bib-profile-field {
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--bib-border);
+    padding-bottom: 12px;
+}
+.bib-profile-field:last-of-type {
+    border-bottom: none;
+}
+.bib-profile-label {
+    display: block;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.bib-profile-value {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: var(--bib-dark);
+}
+
+/* Espaciados y utilidades minimalistas */
+.bib-mb-3 {
+    margin-bottom: 20px;
+}
+.bib-mt-2 {
+    margin-top: 16px;
+}
+.bib-mt-10 {
+    margin-top: 10px;
+}
+.bib-mt-25 {
+    margin-top: 25px;
+}
+.bib-mb-2 {
+    margin-bottom: 16px;
+}
+.bib-mb-20 {
+    margin-bottom: 20px;
+}
+.bib-ml-12 {
+    margin-left: 12px;
+}
+.bib-w-200 {
+    width: 200px;
+}
+.bib-flex-1 {
+    flex: 1;
+}
+
+/* Toolbar y barra de búsqueda */
+.bib-toolbar-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+.bib-form-input-search {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+}
+.bib-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+.bib-checkbox-input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--bib-primary);
+}
+
+/* Barra de acciones */
+.bib-actions-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--bib-border);
+}
+
+/* Tarjeta de aprobaciones pendientes */
+.bib-pending-card {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-color: var(--bib-accent);
+}
+.bib-pending-title {
+    margin-top: 0;
+    color: var(--bib-accent);
+    font-size: 1.4em;
+}
+.bib-pending-subtitle {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+.bib-btn-sm-action {
+    padding: 6px 12px;
+    font-size: 0.85em;
+}
+
+/* Tabla del catálogo */
+.bib-table-catalog tbody tr td.bib-table-cell-bold {
+    font-weight: 600;
+    color: var(--bib-primary);
+}
+
+/* Botones de acción del libro */
+.bib-book-meta-spacing {
+    margin-top: 10px;
+    margin-bottom: 12px;
+}
+.bib-book-actions-flex {
+    display: flex;
+    width: 100%;
+}
+.bib-btn-assign {
+    background: #4a6c8c;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+.bib-btn-assign:hover {
+    background: #3c5873;
+}
+.bib-book-exhausted-label {
+    font-size: 0.8em;
+    color: #888;
+    text-align: center;
+    width: 100%;
+}
+.bib-badge-blocked-label {
+    text-align: center;
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9em;
+    display: block;
+}
+.bib-btn-request {
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+.bib-form-inline {
+    display: inline;
+}
+.bib-flex-wrap-center {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+
+/* Toolbar y búsqueda */
+.bib-toolbar {
+    margin-bottom: 20px;
+}
+.bib-search-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+.bib-search-form .bib-form-input {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+}
+.bib-search-form .bib-form-input[type="text"],
+.bib-search-form .bib-form-input:not([type="checkbox"]) {
+    flex: 1;
+    min-width: 200px;
+    margin: 0;
+}
+.bib-search-form .bib-form-select,
+.bib-search-form select.bib-form-input {
+    width: 200px;
+    margin: 0;
+}
+.bib-search-form .bib-form-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+.bib-search-form .bib-form-check input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--bib-primary);
+}
+.bib-search-form .bib-btn,
+.bib-search-form a.bib-btn {
+    margin: 0;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Live search */
+.bib-live-search {
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 20px;
+}
+
+/* Alertas adicionales */
+.bib-alert-info {
+    background: #e8f0fe;
+    color: #2d4a6e;
+    border: 1px solid #c5d8f5;
+    border-left: 4px solid #4a6c8c;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Utilidades de texto */
+.bib-text-primary {
+    font-weight: 600;
+    color: var(--bib-primary);
+}
+.bib-text-danger {
+    color: var(--bib-danger);
+}
+.bib-text-success {
+    color: var(--bib-success);
+}
+
+/* Zona peligrosa */
+.bib-danger-zone {
+    margin-top: 20px;
+    border-color: var(--bib-danger) !important;
+}
+.bib-danger-zone h3 {
+    color: var(--bib-danger);
+}
+
+/* Perfil de lector (mis-datos) */
+.bib-profile-field {
+    margin-bottom: 15px;
+}
+.bib-profile-label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.bib-profile-value {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: var(--bib-text);
+    margin-top: 2px;
+}
+
+/* Estado vacío / placeholder */
+.bib-empty-state {
+    font-size: 0.8em;
+    color: #888;
+    text-align: center;
+    width: 100%;
+}
+
+/* Responsive básico */
+@media (max-width: 768px) {
+    .bib-search-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .bib-search-form .bib-form-input,
+    .bib-search-form .bib-form-select {
+        width: 100%;
+    }
+    .bib-table {
+        display: block;
+        overflow-x: auto;
+    }
+    .bib-book-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .bib-actions-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+}
+
+/* Acciones en cards */
+.bib-book-actions .bib-btn {
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+.bib-book-actions .bib-btn-admin {
+    background: #4a6c8c;
+    color: #fff;
+}
+.bib-book-actions .bib-badge-blocked {
+    text-align: center;
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9em;
+    display: block;
+}
+
+/* KPIs */
+.kpi-sub-danger {
+    color: var(--bib-danger);
+    font-weight: 600;
+}
+.kpi-sub-success {
+    color: var(--bib-success);
+}
+
+/* Margen utilitario */
+.bib-mt-0 { margin-top: 0; }
+.bib-mb-1 { margin-bottom: 8px; }
+.bib-mb-2 { margin-bottom: 16px; }
+.bib-mb-3 { margin-bottom: 20px; }
+.bib-mt-2 { margin-top: 20px; }
+.bib-ml-1 { margin-left: 12px; }

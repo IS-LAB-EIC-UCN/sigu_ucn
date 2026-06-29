@@ -28,32 +28,32 @@ content = @`
         @if(lector != null)
             <div class="bib-card">
                 @if(guardado)
-                    <div class="bib-alert bib-alert-success" style="margin-bottom:20px;">
+                    <div class="bib-alert bib-alert-success bib-mb-3">
                         Tus datos de lector han sido registrados correctamente.
                     </div>
                 @endif
-                <div style="margin-bottom:15px;">
-                    <span style="display:block;font-size:0.9em;color:#666;text-transform:uppercase;font-weight:600;">Nombre completo</span>
-                    <div style="font-size:1.15em;font-weight:600;color:var(--bib-text);margin-top:2px;">${lector.getNombre()}</div>
+                <div class="bib-profile-field">
+                    <span class="bib-profile-label">Nombre completo</span>
+                    <div class="bib-profile-value">${lector.getNombre()}</div>
                 </div>
-                <div style="margin-bottom:15px;">
-                    <span style="display:block;font-size:0.9em;color:#666;text-transform:uppercase;font-weight:600;">Correo electrónico</span>
-                    <div style="font-size:1.15em;font-weight:600;color:var(--bib-text);margin-top:2px;">${lector.getCorreo()}</div>
+                <div class="bib-profile-field">
+                    <span class="bib-profile-label">Correo electrónico</span>
+                    <div class="bib-profile-value">${lector.getCorreo()}</div>
                 </div>
-                <div style="margin-bottom:20px;">
-                    <span style="display:block;font-size:0.9em;color:#666;text-transform:uppercase;font-weight:600;">RUT</span>
-                    <div style="font-size:1.15em;font-weight:600;color:var(--bib-text);margin-top:2px;">${lector.getRut()}</div>
+                <div class="bib-profile-field">
+                    <span class="bib-profile-label">RUT</span>
+                    <div class="bib-profile-value">${lector.getRut()}</div>
                 </div>
-                <div style="margin-bottom:20px;">
-                    <span class="bib-badge bib-badge-activo" style="display:inline-block;padding:6px 12px;font-size:0.85em;">Perfil Activo</span>
+                <div class="bib-profile-field">
+                    <span class="bib-badge bib-badge-activo">Perfil Activo</span>
                 </div>
-                <div style="margin-top:10px;">
+                <div class="bib-mt-2">
                     <a href="/biblioteca/libros" class="bib-btn bib-btn-primary">Volver al catálogo</a>
                 </div>
             </div>
         @else
             @if(error != null)
-                <div class="bib-alert bib-alert-error">${error}</div>
+                <div class="bib-alert bib-alert-error bib-mb-3">${error}</div>
             @endif
 
             <div class="bib-card">

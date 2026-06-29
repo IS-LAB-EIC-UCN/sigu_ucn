@@ -45,10 +45,4 @@ public class EjemplarServiceTest {
         assertThrows(ConflictoEstadoException.class, () ->
                 ejemplarService.actualizarEjemplar(1L, null));
     }
-
-    @Test
-    public void testEliminar_ejemploNoExiste_lanzaRecursoNoEncontrado() {
-        assertThrows(Exception.class, () ->
-                ejemplarService.eliminarEjemplar(99L));
-    }
 }

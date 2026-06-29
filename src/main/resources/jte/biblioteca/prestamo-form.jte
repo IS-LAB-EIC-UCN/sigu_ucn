@@ -21,7 +21,7 @@ content = @`
 
         @if(usuarioRol != null && usuarioRol.equals("ADMIN"))
             <h1>Asignar Libro a Lector</h1>
-            <div class="bib-alert" style="background:#e8f0fe;border-left:4px solid #4a6c8c;color:#2d4a6e;margin-bottom:20px;padding:12px 16px;border-radius:4px;">
+            <div class="bib-alert bib-alert-info">
                 Esta asignación es manual y queda directamente en estado <strong>Activo</strong>. Úsela cuando el lector esté presente en la biblioteca y retire el libro en ese momento.
             </div>
         @else

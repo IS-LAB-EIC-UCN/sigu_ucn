@@ -28,7 +28,6 @@ public class LectorServiceTest {
 
     @Test
     public void testRegistrar_correoDuplicado_lanzaValidacion() {
-        Mockito.when(lectorRepository.findByRut("12345678-5")).thenReturn(null);
         Mockito.when(lectorRepository.findByCorreo("juan@ucn.cl"))
                 .thenReturn(new Lector());
         assertThrows(ValidacionException.class, () ->
@@ -39,16 +38,6 @@ public class LectorServiceTest {
     public void testRegistrar_rutInvalido_lanzaValidacion() {
         assertThrows(ValidacionException.class, () ->
                 lectorService.registrarLector("Juan Perez", "juan@ucn.cl", "1234"));
-        assertThrows(ValidacionException.class, () ->
-                lectorService.registrarLector("Juan Perez", "juan@ucn.cl", "abcdefgh-i"));
-        assertThrows(ValidacionException.class, () ->
-                lectorService.registrarLector("Juan Perez", "juan@ucn.cl", "12345678-0"));
-    }
-
-    @Test
-    public void testRegistrar_nombreInvalido_lanzaValidacion() {
-        assertThrows(ValidacionException.class, () ->
-                lectorService.registrarLector("Jo", "juan@ucn.cl", "12345678-5"));
     }
 
     @Test

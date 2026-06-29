@@ -2,8 +2,9 @@ package cl.ucn.app.controller.biblioteca;
 
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.exceptions.ValidacionException;
-import cl.ucn.app.model.biblioteca.Libro;
+import cl.ucn.app.model.biblioteca.EstadoEjemplar;
 import cl.ucn.app.model.biblioteca.Ejemplar;
+import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
 import cl.ucn.app.service.biblioteca.EjemplarService;
@@ -103,10 +104,10 @@ public class RegistroController {
         String estado = ctx.formParam("estado");
 
         try {
-            cl.ucn.app.model.biblioteca.EstadoEjemplar estadoEnum = null;
+            EstadoEjemplar estadoEnum = null;
             if (estado != null) {
                 try {
-                    estadoEnum = cl.ucn.app.model.biblioteca.EstadoEjemplar.valueOf(estado.toUpperCase());
+                    estadoEnum = EstadoEjemplar.valueOf(estado.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     throw new ValidacionException("Estado invalido. Use DISPONIBLE o PRESTADO");
                 }

@@ -4,13 +4,14 @@ import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.exceptions.BusinessException;
 import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
+import cl.ucn.app.model.biblioteca.Ejemplar;
+import cl.ucn.app.model.biblioteca.EstadoEjemplar;
+import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.repository.biblioteca.EjemplarRepository;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
 import cl.ucn.app.repository.biblioteca.api.IEjemplarRepository;
 import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
 import cl.ucn.app.service.biblioteca.api.IEjemplarService;
-import cl.ucn.app.model.biblioteca.Ejemplar;
-import cl.ucn.app.model.biblioteca.Libro;
 import jakarta.persistence.EntityManager;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class EjemplarService implements IEjemplarService {
 
         Ejemplar nuevoEjemplar = new Ejemplar();
         nuevoEjemplar.setLibro(libro);
-        nuevoEjemplar.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
+        nuevoEjemplar.setEstado(EstadoEjemplar.DISPONIBLE);
 
         ejemplarRepository.save(nuevoEjemplar);
 
@@ -58,7 +59,7 @@ public class EjemplarService implements IEjemplarService {
             for (int i = 0; i < cantidad; i++) {
                 Ejemplar e = new Ejemplar();
                 e.setLibro(libro);
-                e.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
+                e.setEstado(EstadoEjemplar.DISPONIBLE);
                 em.persist(e);
             }
             em.getTransaction().commit();
@@ -73,7 +74,7 @@ public class EjemplarService implements IEjemplarService {
         return cantidad;
     }
 
-    public Ejemplar actualizarEjemplar(Long id, cl.ucn.app.model.biblioteca.EstadoEjemplar estado) {
+    public Ejemplar actualizarEjemplar(Long id, EstadoEjemplar estado) {
         Ejemplar ejemplar = ejemplarRepository.findById(id);
         if (ejemplar == null) {
             throw new RecursoNoEncontradoException("No existe un ejemplar con ID " + id);
@@ -90,11 +91,11 @@ public class EjemplarService implements IEjemplarService {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            cl.ucn.app.model.biblioteca.EstadoEjemplar estado = (cl.ucn.app.model.biblioteca.EstadoEjemplar) em.createQuery(
+            EstadoEjemplar estado = (EstadoEjemplar) em.createQuery(
                 "SELECT e.estado FROM Ejemplar e WHERE e.id = :id")
                 .setParameter("id", id)
                 .getSingleResult();
-            if (cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO == estado) {
+            if (EstadoEjemplar.PRESTADO == estado) {
                 em.getTransaction().rollback();
                 throw new ConflictoEstadoException("No se puede eliminar un ejemplar que esta prestado");
             }

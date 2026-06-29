@@ -4,16 +4,19 @@ import cl.ucn.app.exceptions.BusinessException;
 import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.exceptions.ValidacionException;
+import cl.ucn.app.model.biblioteca.EstadoPrestamo;
+import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.Multa;
+import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.MultaRepository;
 import cl.ucn.app.repository.biblioteca.PrestamoLibroRepository;
-import cl.ucn.app.repository.biblioteca.LectorRepository;
 import cl.ucn.app.repository.biblioteca.api.ILectorRepository;
 import cl.ucn.app.repository.biblioteca.api.IMultaRepository;
 import cl.ucn.app.repository.biblioteca.api.IPrestamoLibroRepository;
 import cl.ucn.app.service.biblioteca.api.ILectorService;
-import cl.ucn.app.model.biblioteca.Lector;
 import jakarta.persistence.EntityManager;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class LectorService implements ILectorService {
@@ -116,8 +119,11 @@ public class LectorService implements ILectorService {
         try {
             em.getTransaction().begin();
             Long count = (Long) em.createQuery(
-                "SELECT COUNT(p) FROM PrestamoLibro p WHERE p.lector.id = :id AND (p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.ACTIVO OR p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.SOLICITADO OR p.estado = cl.ucn.app.model.biblioteca.EstadoPrestamo.PENDIENTE_DEVOLUCION)")
+                "SELECT COUNT(p) FROM PrestamoLibro p WHERE p.lector.id = :id AND (p.estado = :activo OR p.estado = :solicitado OR p.estado = :pendiente)")
                 .setParameter("id", id)
+                .setParameter("activo", EstadoPrestamo.ACTIVO)
+                .setParameter("solicitado", EstadoPrestamo.SOLICITADO)
+                .setParameter("pendiente", EstadoPrestamo.PENDIENTE_DEVOLUCION)
                 .getSingleResult();
             if (count > 0) {
                 em.getTransaction().rollback();
@@ -154,7 +160,7 @@ public class LectorService implements ILectorService {
 
     public List<Multa> obtenerMultas(Long lectorId) {
         Lector lector = lectorRepository.findById(lectorId);
-        if (lector == null) {return new java.util.ArrayList<>();}
+        if (lector == null) {return new ArrayList<>();}
         return multaRepository.findPendientesByLector(lector);
     }
 

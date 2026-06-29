@@ -1,5 +1,6 @@
 @import cl.ucn.app.model.biblioteca.Libro
 @import cl.ucn.app.model.biblioteca.Ejemplar
+@import cl.ucn.app.model.biblioteca.EstadoEjemplar
 @import java.util.List
 @param String usuarioNombre
 @param Libro libro
@@ -67,7 +68,7 @@ content = @`
             </form>
         </div>
 
-        <div class="bib-card" style="margin-top:20px;">
+        <div class="bib-card bib-mt-2">
             <h3>Ejemplares</h3>
             <p>Total: <strong>${ejemplares != null ? ejemplares.size() : 0}</strong></p>
             @if(ejemplares != null && !ejemplares.isEmpty())
@@ -84,7 +85,7 @@ content = @`
                         <tr>
                             <td>${e.getId()}</td>
                             <td>
-                                @if(e.getEstado() == cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE)
+                                @if(e.getEstado() == EstadoEjemplar.DISPONIBLE)
                                     <span class="bib-badge bib-badge-disponible">Disponible</span>
                                 @else
                                     <span class="bib-badge bib-badge-prestado">Prestado</span>
@@ -92,10 +93,10 @@ content = @`
                             </td>
                             <td>
                                 <a href="/biblioteca/ejemplares/editar?id=${e.getId()}" class="bib-action-link">Editar</a>
-                                @if(e.getEstado() == cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE)
-                                    <a href="/biblioteca/ejemplares/eliminar?id=${e.getId()}" class="bib-action-link-danger bib-confirm-delete" data-message="¿Está seguro de que desea eliminar el ejemplar con ID ${e.getId()}?" style="margin-left:12px;">Eliminar</a>
+                                @if(e.getEstado() == EstadoEjemplar.DISPONIBLE)
+                                    <a href="/biblioteca/ejemplares/eliminar?id=${e.getId()}" class="bib-action-link-danger bib-confirm-delete bib-ml-1" data-message="¿Está seguro de que desea eliminar el ejemplar con ID ${e.getId()}?">Eliminar</a>
                                 @else
-                                    <span style="color:#999;margin-left:12px;" title="No se puede eliminar un ejemplar prestado">(prestado)</span>
+                                    <span class="bib-cell-muted bib-ml-1" title="No se puede eliminar un ejemplar prestado">(prestado)</span>
                                 @endif
                             </td>
                         </tr>
@@ -107,9 +108,9 @@ content = @`
             @endif
         </div>
 
-        <div class="bib-card" style="margin-top:20px;border-color:var(--bib-danger);">
-            <h3 style="color:var(--bib-danger);">Zona peligrosa</h3>
-            <p style="margin-bottom:16px;">Esta acción eliminará el libro y todos sus ejemplares y registros asociados. No se puede deshacer.</p>
+        <div class="bib-card bib-danger-zone">
+            <h3 class="bib-mt-0">Zona peligrosa</h3>
+            <p class="bib-mb-2">Esta acción eliminará el libro y todos sus ejemplares y registros asociados. No se puede deshacer.</p>
             <a href="/biblioteca/libros/eliminar?id=${libro.getId()}" class="bib-btn bib-btn-danger bib-confirm-delete" data-message="¿Está seguro de que desea eliminar el libro '${libro.getTitulo()}' y todos sus ejemplares/préstamos?">Eliminar libro</a>
         </div>
     </div>

@@ -31,6 +31,7 @@ public class LectorController {
 
     public void registrar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
 
         String nombre = ctx.formParam("nombre");
         String correo = ctx.formParam("correo");
@@ -41,6 +42,7 @@ public class LectorController {
             List<Lector> lectores = lectorService.listarTodos();
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("lectores", lectores);
             model.put("error", "Todos los campos son obligatorios");
             model.put("nombre", nombre);
@@ -62,6 +64,7 @@ public class LectorController {
             List<Lector> lectores = lectorService.listarTodos();
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("lectores", lectores);
             model.put("error", e.getMessage());
             model.put("nombre", nombrePersistido);
@@ -73,6 +76,7 @@ public class LectorController {
 
     public void formularioEditar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
 
         Long id = Long.parseLong(ctx.queryParam("id"));
         Lector lector = lectorService.buscarPorId(id);
@@ -83,6 +87,7 @@ public class LectorController {
 
         Map<String, Object> model = new HashMap<>();
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", usuarioRol);
         model.put("lector", lector);
         model.put("error", null);
         ctx.render("biblioteca/editar-lector.jte", model);
@@ -90,6 +95,7 @@ public class LectorController {
 
     public void editar(Context ctx) {
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
 
         Long id = Long.parseLong(ctx.formParam("id"));
         String nombre = ctx.formParam("nombre");
@@ -101,6 +107,7 @@ public class LectorController {
             Lector lector = lectorService.buscarPorId(id);
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("lector", lector);
             model.put("error", "Todos los campos son obligatorios");
             ctx.render("biblioteca/editar-lector.jte", model);
@@ -120,6 +127,7 @@ public class LectorController {
             }
             Map<String, Object> model = new HashMap<>();
             model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
             model.put("lector", lector);
             model.put("error", e.getMessage());
             ctx.render("biblioteca/editar-lector.jte", model);

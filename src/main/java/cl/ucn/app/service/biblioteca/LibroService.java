@@ -5,11 +5,13 @@ import cl.ucn.app.exceptions.BusinessException;
 import cl.ucn.app.exceptions.ConflictoEstadoException;
 import cl.ucn.app.exceptions.RecursoNoEncontradoException;
 import cl.ucn.app.exceptions.ValidacionException;
+import cl.ucn.app.model.biblioteca.EstadoEjemplar;
+import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.repository.biblioteca.LibroRepository;
 import cl.ucn.app.repository.biblioteca.api.ILibroRepository;
 import cl.ucn.app.service.biblioteca.api.ILibroService;
-import cl.ucn.app.model.biblioteca.Libro;
 import jakarta.persistence.EntityManager;
+
 import java.util.List;
 
 public class LibroService implements ILibroService {
@@ -100,12 +102,12 @@ public class LibroService implements ILibroService {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            List<cl.ucn.app.model.biblioteca.EstadoEjemplar> estados = em.createQuery(
-                "SELECT e.estado FROM Ejemplar e WHERE e.libro.id = :id", cl.ucn.app.model.biblioteca.EstadoEjemplar.class)
+            List<EstadoEjemplar> estados = em.createQuery(
+                "SELECT e.estado FROM Ejemplar e WHERE e.libro.id = :id", EstadoEjemplar.class)
                 .setParameter("id", id)
                 .getResultList();
-            for (cl.ucn.app.model.biblioteca.EstadoEjemplar estado : estados) {
-                if (cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO == estado) {
+            for (EstadoEjemplar estado : estados) {
+                if (EstadoEjemplar.PRESTADO == estado) {
                     em.getTransaction().rollback();
                     throw new ConflictoEstadoException("No se puede eliminar el libro porque tiene ejemplares prestados. Primero devuelve los prestamos.");
                 }

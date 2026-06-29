@@ -69,7 +69,7 @@ content = @`
                 <tbody>
                     @for(Lector l : lectores)
                     <tr>
-                        <td style="font-weight:600;color:var(--bib-primary);">${l.getNombre()}</td>
+                        <td class="bib-text-primary">${l.getNombre()}</td>
                         <td>${l.getCorreo()}</td>
                         <td>${l.getRut()}</td>
                         <td>
@@ -82,7 +82,6 @@ content = @`
                         @if(usuarioRol != null && usuarioRol.equals("ADMIN"))
                             <td>
                                 <a href="/biblioteca/lectores/editar?id=${l.getId()}" class="bib-action-link">Editar</a>
-                                <a href="/biblioteca/lectores/eliminar?id=${l.getId()}" class="bib-action-link-danger bib-confirm-delete" data-message="¿Está seguro de que desea eliminar al lector '${l.getNombre()}'?" style="margin-left:12px;">Eliminar</a>
                             </td>
                         @endif
                     </tr>

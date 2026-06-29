@@ -27,9 +27,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Para correr la app: mvn exec:java -Dexec.mainClass="cl.ucn.app.main.Main"
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class BibliotecaIntegrationTest {
+public class BibliotecaIT {
 
-    private static final String BASE_URL = "http://localhost:7002";
+    private static final String BASE_URL =
+        System.getenv().getOrDefault("BIBLIOTECA_TEST_URL", "http://localhost:7000");
     private HttpClient client;
 
     @BeforeAll

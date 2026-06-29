@@ -9,7 +9,7 @@ content = @`
     <div class="error-container">
         <h1>Error ${status}</h1>
         <p>${error}</p>
-        <a href="/biblioteca/libros" class="primary-btn">Volver al catalogo</a>
+        <a href="/biblioteca/libros" class="bib-btn bib-btn-primary">Volver al catalogo</a>
     </div>
 `
 )

@@ -22,7 +22,8 @@ content = @`
         @endif
 
         @if(historial != null && !historial.isEmpty())
-            <table class="bib-table">
+            <input type="text" id="bib-live-search" class="bib-form-input bib-live-search" placeholder="🔍 Buscar en préstamos..."/>
+            <table class="bib-table" id="bib-live-search-table">
                 <thead>
                     <tr>
                         @if(esAdmin)
@@ -41,33 +42,34 @@ content = @`
                     @for(PrestamoConMulta p : historial)
                     <tr>
                         @if(esAdmin)
-                            <td style="font-weight:600;">${p.getLector().getNombre()} <br/><small style="color:#555;">RUT: ${p.getLector().getRut()}</small></td>
+                            <td class="bib-cell-lector"><strong>${p.getLectorNombre()}</strong><br/><small class="bib-cell-sub">RUT: ${p.getLectorRut()}</small></td>
                         @endif
-                        <td style="font-weight:600;color:var(--bib-primary);">${p.getLibroTitulo()}</td>
-                        <td>${p.getFechaInicio().toString()}</td>
-                        <td>${p.getFechaVencimiento().toString()}</td>
+                        <td class="bib-cell-libro">${p.getLibroTitulo()}</td>
+                        <td>${p.getFechaInicio() != null ? p.getFechaInicio().toString() : "N/A"}</td>
+                        <td>${p.getFechaVencimiento() != null ? p.getFechaVencimiento().toString() : "N/A"}</td>
                         <td>${p.getFechaDevolucion() != null ? p.getFechaDevolucion().toString() : "No devuelto"}</td>
                         <td>
                             @if("SOLICITADO".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-pendiente" style="background:#fff3cd;color:#856404;border:1px solid #ffeeba;padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">Reservado</span>
+                                <span class="bib-badge bib-badge-pendiente">Reservado</span>
                             @elseif("ACTIVO".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-activo" style="padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">Activo</span>
+                                <span class="bib-badge bib-badge-activo">Activo</span>
                             @elseif("PENDIENTE_DEVOLUCION".equals(p.getEstado()))
-                                <span class="bib-badge bib-badge-pendiente" style="background:#ffe8d6;color:#a04000;border:1px solid #ffd8b3;padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">P. Recepción</span>
+                                <span class="bib-badge bib-badge-pendiente">P. Recepción</span>
                             @else
-                                <span class="bib-badge bib-badge-finalizado" style="padding:4px 8px;font-size:0.85em;border-radius:4px;font-weight:600;">Devuelto</span>
+                                <span class="bib-badge bib-badge-finalizado">Devuelto</span>
                             @endif
                         </td>
                         @if(p.getMontoMulta() != null)
                             <td>
-                                <strong style="color:var(--bib-danger);">$${p.getMontoMulta().toString()}</strong> <br/><small style="color:#555;">(${p.getDiasAtraso()} días de atraso)</small>
-                                @if(esAdmin && !p.getMulta().getPagada())
-                                    <form method="post" action="/biblioteca/multa/pagar" style="display:block;margin-top:4px;">
+                                <strong class="bib-monto-multa">$${p.getMontoMulta().toString()}</strong> <br/><small class="bib-cell-sub">(${p.getDiasAtraso()} días de atraso)</small>
+                                @if(esAdmin && p.getMulta() != null && !p.getMulta().getPagada())
+                                    <form method="post" action="/biblioteca/multa/pagar" class="bib-form-inline">
                                         <input type="hidden" name="multaId" value="${p.getMulta().getId()}"/>
-                                        <button type="submit" class="bib-btn bib-btn-accent" style="font-size:0.8em;padding:4px 8px;margin-top:4px;">Registrar pago</button>
+                                        <input type="hidden" name="returnTo" value="/biblioteca/historial"/>
+                                        <button type="submit" class="bib-btn bib-btn-accent bib-btn-sm">Registrar pago</button>
                                     </form>
-                                @elseif(p.getMulta().getPagada())
-                                    <br/><span class="bib-badge bib-badge-finalizado" style="font-size:0.75em;padding:2px 6px;margin-top:4px;">Pagada</span>
+                                @elseif(p.getMulta() != null && p.getMulta().getPagada())
+                                    <br/><span class="bib-badge bib-badge-finalizado bib-badge-sm">Pagada</span>
                                 @endif
                             </td>
                         @else
@@ -76,26 +78,29 @@ content = @`
                         <td>
                             @if(esAdmin)
                                 @if("SOLICITADO".equals(p.getEstado()))
-                                    <form method="post" action="/biblioteca/prestamo/confirmar" style="display:inline;">
+                                    <form method="post" action="/biblioteca/prestamo/confirmar" class="bib-form-inline">
                                         <input type="hidden" name="prestamoId" value="${p.getId()}"/>
-                                        <button type="submit" class="bib-btn bib-btn-accent" style="padding:6px 12px;font-size:0.9em;">Confirmar Entrega</button>
+                                        <input type="hidden" name="returnTo" value="/biblioteca/historial"/>
+                                        <button type="submit" class="bib-btn bib-btn-accent bib-btn-sm">Confirmar Entrega</button>
                                     </form>
                                 @elseif("ACTIVO".equals(p.getEstado()) || "PENDIENTE_DEVOLUCION".equals(p.getEstado()))
-                                    <form method="post" action="/biblioteca/devolucion" style="display:inline;">
+                                    <form method="post" action="/biblioteca/devolucion" class="bib-form-inline">
                                         <input type="hidden" name="prestamoId" value="${p.getId()}"/>
-                                        <button type="submit" class="bib-btn bib-btn-accent" style="padding:6px 12px;font-size:0.9em;">Registrar Devolución</button>
+                                        <input type="hidden" name="returnTo" value="/biblioteca/historial"/>
+                                        <button type="submit" class="bib-btn bib-btn-accent bib-btn-sm">Registrar Devolución</button>
                                     </form>
                                 @else
-                                    <span style="color:#999;">-</span>
+                                    <span class="bib-cell-muted">-</span>
                                 @endif
                             @else
                                 @if("ACTIVO".equals(p.getEstado()))
-                                    <form method="post" action="/biblioteca/prestamo/devolver" style="display:inline;">
+                                    <form method="post" action="/biblioteca/prestamo/devolver" class="bib-form-inline">
                                         <input type="hidden" name="prestamoId" value="${p.getId()}"/>
-                                        <button type="submit" class="bib-btn bib-btn-accent" style="padding:6px 12px;font-size:0.9em;">Devolver</button>
+                                        <input type="hidden" name="returnTo" value="/biblioteca/historial"/>
+                                        <button type="submit" class="bib-btn bib-btn-accent bib-btn-sm">Devolver</button>
                                     </form>
                                 @else
-                                    <span style="color:#999;">-</span>
+                                    <span class="bib-cell-muted">-</span>
                                 @endif
                             @endif
                         </td>

@@ -42,6 +42,7 @@ content = @`
                     }
                 </script>
                 <button type="submit" class="bib-btn bib-btn-primary">Guardar cambios</button>
+                <a href="/biblioteca/lectores/eliminar?id=${lector.getId()}" class="bib-btn bib-btn-danger bib-confirm-delete" data-message="¿Esta seguro de que desea eliminar al lector '${lector.getNombre()}'?">Eliminar</a>
             </form>
         </div>
     </div>

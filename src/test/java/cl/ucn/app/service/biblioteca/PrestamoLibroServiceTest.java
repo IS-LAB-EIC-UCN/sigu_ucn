@@ -1,7 +1,10 @@
 package cl.ucn.app.service.biblioteca;
 
 import cl.ucn.app.exceptions.ConflictoEstadoException;
+import cl.ucn.app.exceptions.ValidacionException;
 import cl.ucn.app.model.biblioteca.Ejemplar;
+import cl.ucn.app.model.biblioteca.EstadoEjemplar;
+import cl.ucn.app.model.biblioteca.EstadoPrestamo;
 import cl.ucn.app.model.biblioteca.Lector;
 import cl.ucn.app.model.biblioteca.Libro;
 import cl.ucn.app.model.biblioteca.PrestamoLibro;
@@ -16,13 +19,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PrestamoLibroServiceTest{
+public class PrestamoLibroServiceTest {
     @Mock
     private PrestamoLibroRepository prestamoLibroRepository;
     @Mock
@@ -31,94 +37,108 @@ public class PrestamoLibroServiceTest{
     private EjemplarRepository ejemplarRepository;
     @Mock
     private LibroRepository libroRepository;
+    @Mock
+    private EntityManager em;
+    @Mock
+    private EntityTransaction tx;
 
     private PrestamoLibroService prestamoLibroService;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         prestamoLibroService = new PrestamoLibroService(
                 prestamoLibroRepository,
                 lectorRepository,
                 ejemplarRepository,
                 libroRepository
         );
+        Mockito.lenient().when(em.getTransaction()).thenReturn(tx);
     }
 
     @Test
-    public void testSolicitar_ok_cambiaEstadoEjemplar(){
+    public void testPreparar_ok_cambiaEstadoEjemplar() {
         LocalDate fechaVencimiento = LocalDate.now().plusDays(7);
-        Lector lectorTest = new Lector();
-        lectorTest.setBloqueado(false);
+        Lector lector = new Lector();
+        lector.setBloqueado(false);
+        Libro libro = new Libro();
+        libro.setId(10L);
+        Ejemplar ejemplar = new Ejemplar();
+        ejemplar.setLibro(libro);
+        ejemplar.setEstado(EstadoEjemplar.DISPONIBLE);
+        Mockito.when(lectorRepository.findById(1L)).thenReturn(lector);
+        Mockito.when(libroRepository.findById(10L)).thenReturn(libro);
+        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libro)).thenReturn(List.of(ejemplar));
 
-        Libro libroTest = new Libro();
-        libroTest.setId(10L);
-        Ejemplar ejemplarTest = new Ejemplar();
-        ejemplarTest.setId(100L);
-        ejemplarTest.setLibro(libroTest);
-        ejemplarTest.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
+        PrestamoLibro resultado = prestamoLibroService.prepararPrestamo(1L, 10L, fechaVencimiento, EstadoPrestamo.SOLICITADO);
 
-        Mockito.when(lectorRepository.findById(1L)).thenReturn(lectorTest);
-        Mockito.when(libroRepository.findById(10L)).thenReturn(libroTest);
-        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libroTest))
-                .thenReturn(List.of(ejemplarTest));
-
-        PrestamoLibro resultado = prestamoLibroService.solicitarPrestamo(1L, 10L, fechaVencimiento);
-
-        assertNotNull(resultado);
-        assertEquals(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO, ejemplarTest.getEstado());
-        assertEquals(cl.ucn.app.model.biblioteca.EstadoPrestamo.SOLICITADO, resultado.getEstado());
-        assertEquals(lectorTest, resultado.getLector());
+        assertEquals(EstadoEjemplar.PRESTADO, ejemplar.getEstado());
+        assertEquals(EstadoPrestamo.SOLICITADO, resultado.getEstado());
     }
 
     @Test
-    public void testPrestamoFallido(){
-        LocalDate fechaVencimiento = LocalDate.now().plusDays(7);
-        Lector lectorTest = new Lector();
-        lectorTest.setBloqueado(false);
-
-        Libro libroTest = new Libro();
-        Ejemplar ejemplarTest = new Ejemplar();
-        ejemplarTest.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.PRESTADO);
-        ejemplarTest.setLibro(libroTest);
-
-        Long idLector = 1L;
-        Long idEjemplar = 2L;
-
-        Mockito.when(lectorRepository.findById(Mockito.anyLong())).thenReturn(lectorTest);
-        Mockito.when(libroRepository.findById(Mockito.anyLong())).thenReturn(libroTest);
-        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libroTest))
-                .thenReturn(List.of());
-
-        ConflictoEstadoException exception = assertThrows(ConflictoEstadoException.class, () ->
-        {prestamoLibroService.solicitarPrestamo(idLector,idEjemplar,fechaVencimiento);});
-
-        assertTrue(exception.getMessage().contains("disponibles"));
-        Mockito.verify(prestamoLibroRepository, Mockito.never()).save(Mockito.any());
+    public void testPreparar_fechaVencimientoNula_lanzaValidacion() {
+        assertThrows(ValidacionException.class, () ->
+                prestamoLibroService.prepararPrestamo(1L, 10L, null, EstadoPrestamo.SOLICITADO));
     }
 
     @Test
-    public void testPrestamoLectorBlock(){
-        LocalDate fechaVencimiento = LocalDate.now().plusDays(7);
-        Lector lectorTest = new Lector();
-        lectorTest.setBloqueado(true);
+    public void testPreparar_lectorBloqueado_lanzaConflicto() {
+        Lector lector = new Lector();
+        lector.setBloqueado(true);
+        Libro libro = new Libro();
+        Ejemplar ejemplar = new Ejemplar();
+        ejemplar.setLibro(libro);
+        Mockito.when(lectorRepository.findById(1L)).thenReturn(lector);
+        Mockito.when(libroRepository.findById(2L)).thenReturn(libro);
+        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libro)).thenReturn(List.of(ejemplar));
 
-        Libro libroTest = new Libro();
-        Ejemplar ejemplarTest = new Ejemplar();
-        ejemplarTest.setEstado(cl.ucn.app.model.biblioteca.EstadoEjemplar.DISPONIBLE);
-        ejemplarTest.setLibro(libroTest);
+        assertThrows(ConflictoEstadoException.class, () ->
+                prestamoLibroService.prepararPrestamo(1L, 2L, LocalDate.now().plusDays(7), EstadoPrestamo.SOLICITADO));
+    }
 
-        Long idLector = 1L;
-        Long idEjemplar = 2L;
+    @Test
+    public void testPreparar_sinDisponibles_lanzaConflicto() {
+        Lector lector = new Lector();
+        Libro libro = new Libro();
+        Mockito.when(lectorRepository.findById(1L)).thenReturn(lector);
+        Mockito.when(libroRepository.findById(2L)).thenReturn(libro);
+        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libro)).thenReturn(List.of());
 
-        Mockito.when(lectorRepository.findById(Mockito.anyLong())).thenReturn(lectorTest);
-        Mockito.when(libroRepository.findById(Mockito.anyLong())).thenReturn(libroTest);
-        Mockito.when(ejemplarRepository.findDisponiblesByLibro(libroTest))
-                .thenReturn(List.of(ejemplarTest));
+        assertThrows(ConflictoEstadoException.class, () ->
+                prestamoLibroService.prepararPrestamo(1L, 2L, LocalDate.now().plusDays(7), EstadoPrestamo.SOLICITADO));
+    }
 
-        ConflictoEstadoException exception = assertThrows(ConflictoEstadoException.class, () ->
-        {prestamoLibroService.solicitarPrestamo(idLector,idEjemplar,fechaVencimiento);});
+    @Test
+    public void testSolicitarDevolucion_estadoNoActivo_lanzaConflicto() {
+        PrestamoLibro prestamo = new PrestamoLibro();
+        prestamo.setId(1L);
+        prestamo.setEstado(EstadoPrestamo.SOLICITADO);
+        Mockito.when(prestamoLibroRepository.findById(1L)).thenReturn(prestamo);
 
-        assertTrue(exception.getMessage().contains("bloqueado"));
-        Mockito.verify(prestamoLibroRepository, Mockito.never()).save(Mockito.any());
+        assertThrows(ConflictoEstadoException.class, () ->
+                prestamoLibroService.solicitarDevolucion(1L));
+    }
+
+    @Test
+    public void testConfirmarEntrega_estadoNoSolicitado_lanzaConflicto() {
+        PrestamoLibro prestamo = new PrestamoLibro();
+        prestamo.setId(1L);
+        prestamo.setEstado(EstadoPrestamo.ACTIVO);
+        Mockito.when(prestamoLibroRepository.findById(1L)).thenReturn(prestamo);
+
+        assertThrows(ConflictoEstadoException.class, () ->
+                prestamoLibroService.confirmarEntrega(1L));
+    }
+
+    @Test
+    public void testPersistirPrestamo_guardaEjemplarYPrestamo() {
+        Ejemplar ejemplar = new Ejemplar();
+        PrestamoLibro prestamo = new PrestamoLibro();
+        prestamo.setEjemplar(ejemplar);
+
+        prestamoLibroService.persistirPrestamo(prestamo, em);
+
+        Mockito.verify(ejemplarRepository).save(ejemplar, em);
+        Mockito.verify(prestamoLibroRepository).save(prestamo, em);
     }
 }
