@@ -15,6 +15,7 @@
         <class>cl.ucn.app.model.Reserva</class>
         <class>cl.ucn.app.model.Evento</class>
         <class>cl.ucn.app.model.Expositor</class>
+        <class>cl.ucn.app.model.Inscripcion</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>

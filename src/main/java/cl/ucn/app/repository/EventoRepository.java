@@ -36,7 +36,7 @@ public class EventoRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Evento> query = em.createQuery(
-                    "SELECT e FROM Evento e JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores WHERE e.id = :id",
+                    "SELECT e FROM Evento e JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores LEFT JOIN FETCH e.inscripciones WHERE e.id = :id",
                     Evento.class);
             query.setParameter("id", id);
             return query.getResultStream().findFirst().orElse(null);
@@ -49,7 +49,7 @@ public class EventoRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Evento> query = em.createQuery(
-                    "SELECT DISTINCT e FROM Evento e JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores ORDER BY e.fecha, e.horaInicio",
+                    "SELECT DISTINCT e FROM Evento e JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores WHERE e.fecha >= CURRENT_DATE ORDER BY e.fecha, e.horaInicio",
                     Evento.class);
             return query.getResultList();
         } finally {
@@ -135,6 +135,19 @@ public class EventoRepository {
         }
     }
 
+    public boolean existenEventosActivosPorEspacio(Long espacioId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT COUNT(e) FROM Evento e WHERE e.espacio.id = :espacioId AND e.estado <> 'CANCELADO'",
+                    Long.class);
+            query.setParameter("espacioId", espacioId);
+            return query.getSingleResult() > 0;
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Evento> findByTematica(String tematica) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -142,6 +155,32 @@ public class EventoRepository {
                     "SELECT DISTINCT e FROM Evento e JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores WHERE LOWER(e.tematica) LIKE LOWER(:tematica) ORDER BY e.fecha, e.horaInicio",
                     Evento.class);
             query.setParameter("tematica", "%" + tematica + "%");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Evento> findByFilters(LocalDate fecha, String tematica) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            StringBuilder jpql = new StringBuilder(
+                    "SELECT DISTINCT e FROM Evento e JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores WHERE 1=1 AND e.fecha >= CURRENT_DATE");
+            if (fecha != null) {
+                jpql.append(" AND e.fecha = :fecha");
+            }
+            if (tematica != null && !tematica.isBlank()) {
+                jpql.append(" AND LOWER(e.tematica) LIKE LOWER(:tematica)");
+            }
+            jpql.append(" ORDER BY e.fecha, e.horaInicio");
+
+            TypedQuery<Evento> query = em.createQuery(jpql.toString(), Evento.class);
+            if (fecha != null) {
+                query.setParameter("fecha", fecha);
+            }
+            if (tematica != null && !tematica.isBlank()) {
+                query.setParameter("tematica", "%" + tematica + "%");
+            }
             return query.getResultList();
         } finally {
             em.close();

@@ -3,6 +3,7 @@ package cl.ucn.app.controller;
 import cl.ucn.app.model.Espacio;
 import cl.ucn.app.model.Evento;
 import cl.ucn.app.model.Expositor;
+import cl.ucn.app.model.Inscripcion;
 import cl.ucn.app.repository.EspacioRepository;
 import cl.ucn.app.repository.ExpositorRepository;
 import cl.ucn.app.service.EventoService;
@@ -36,7 +37,23 @@ public class EventoController {
         String usuarioRol = ctx.sessionAttribute("usuarioRol");
         Long usuarioId = ctx.sessionAttribute("usuarioId");
 
-        List<Evento> eventos = eventoService.listarTodos();
+        String fechaStr = ctx.queryParam("fecha");
+        String tematica = ctx.queryParam("tematica");
+
+        LocalDate fecha = null;
+        if (fechaStr != null && !fechaStr.isBlank()) {
+            fecha = LocalDate.parse(fechaStr);
+        }
+        if (tematica != null && tematica.isBlank()) {
+            tematica = null;
+        }
+
+        List<Evento> eventos;
+        if (fecha != null || tematica != null) {
+            eventos = eventoService.listarConFiltros(fecha, tematica);
+        } else {
+            eventos = eventoService.listarTodos();
+        }
 
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Eventos - SIGU-UCN");
@@ -46,6 +63,8 @@ public class EventoController {
         model.put("eventos", eventos);
         model.put("error", ctx.queryParam("error"));
         model.put("success", ctx.queryParam("success"));
+        model.put("filtroFecha", fechaStr != null ? fechaStr : "");
+        model.put("filtroTematica", tematica != null ? tematica : "");
 
         ctx.render("eventos/lista.jte", model);
     }
@@ -281,6 +300,42 @@ public class EventoController {
 
             eventoService.cancelarInscripcion(usuarioId, eventoId);
             ctx.redirect("/eventos?success=" + java.net.URLEncoder.encode("Inscripción cancelada con éxito."));
+
+        } catch (IllegalArgumentException e) {
+            ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));
+        } catch (Exception e) {
+            ctx.redirect("/eventos?error=Error inesperado: " + java.net.URLEncoder.encode(e.getMessage()));
+        }
+    }
+
+    public void listarAsistentes(Context ctx) {
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        if (usuarioNombre == null) {
+            ctx.redirect("/login");
+            return;
+        }
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        try {
+            String idStr = ctx.pathParam("id");
+            if (idStr == null || idStr.isBlank()) {
+                throw new IllegalArgumentException("ID del evento es obligatorio.");
+            }
+
+            Long eventoId = Long.parseLong(idStr);
+            Evento evento = eventoService.buscarPorId(eventoId);
+            List<Inscripcion> inscripciones = eventoService.listarAsistentes(eventoId);
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("title", "Asistentes - " + evento.getTitulo() + " - SIGU-UCN");
+            model.put("usuarioNombre", usuarioNombre);
+            model.put("usuarioRol", usuarioRol);
+            model.put("usuarioId", usuarioId);
+            model.put("evento", evento);
+            model.put("inscripciones", inscripciones);
+
+            ctx.render("eventos/asistentes.jte", model);
 
         } catch (IllegalArgumentException e) {
             ctx.redirect("/eventos?error=" + java.net.URLEncoder.encode(e.getMessage()));

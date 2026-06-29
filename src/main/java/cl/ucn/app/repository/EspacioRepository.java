@@ -41,4 +41,42 @@ public class EspacioRepository {
             em.close();
         }
     }
+
+    public Espacio save(Espacio espacio) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            if (espacio.getId() == null) {
+                em.persist(espacio);
+            } else {
+                espacio = em.merge(espacio);
+            }
+            em.getTransaction().commit();
+            return espacio;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void delete(Espacio espacio) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Espacio managed = em.merge(espacio);
+            em.remove(managed);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

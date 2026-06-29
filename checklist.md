@@ -7,12 +7,12 @@ Este checklist sirve para hacer seguimiento del progreso de los casos de uso del
 - [x] **“Registrar un Evento”**: El administrador registra un evento en el sistema.
 - [x] **“Registrar Expositor”**: El administrador registra a un expositor para un evento dado en el sistema.
 - [x] **“Definir Cupos”**: El administrador define los cupos disponibles de un evento dado (aforo máximo validado contra capacidad física).
-- [/] **“Emitir Agenda de Eventos”**: Ante la petición de un administrador, el sistema entrega una agenda de eventos en las fechas próximas.
+- [x] **“Emitir Agenda de Eventos”**: Ante la petición de un administrador, el sistema entrega una agenda de eventos en las fechas próximas.
   - [x] Vista general de eventos (/eventos).
-  - [ ] Filtrar y ordenar cronológicamente por fechas próximas (futuras y activas).
-- [/] **“Administrar ubicaciones”**: El administrador designa la ubicación de un evento dado.
+  - [x] Filtrar y ordenar cronológicamente por fechas próximas (futuras y activas).
+- [x] **“Administrar ubicaciones”**: El administrador designa la ubicación de un evento dado.
   - [x] Selección de espacio al crear un evento.
-  - [ ] CRUD administrativo para agregar, modificar o eliminar salas/espacios físicos.
+  - [x] CRUD administrativo para agregar, modificar o eliminar salas/espacios físicos.
 - [x] **“Cancelar un Evento”**: El administrador cancela un evento junto con todas las inscripciones y expositores relacionados (cascada/lógico).
   - [x] Estado de cancelación lógica (estado `CANCELADO`) implementado en servicio, controlador y base de datos.
   - [x] Eliminación física y limpieza en cascada de la relación con expositores (`evento_expositores`).
@@ -21,10 +21,10 @@ Este checklist sirve para hacer seguimiento del progreso de los casos de uso del
 - [x] **“Inscribirse como Asistente”**: El usuario se inscribe como asistente en un evento.
 - [x] **“Cancelar Inscripción”**: Un administrador o usuario cancela la inscripción de un asistente a un evento dado.
 - [x] **“Publicar Cupos”**: El sistema publica los cupos disponibles de un evento dado (cálculo en tiempo real: total - inscritos).
-- [ ] **“Emitir lista de Asistentes”**: Ante la petición del administrador, el sistema entrega una lista de asistentes de un evento dado.
-- [/] **“Filtrar por temática y/o Filtro”**: El usuario busca eventos utilizando un filtro de temática y/o fecha.
+- [x] **“Emitir lista de Asistentes”**: Ante la petición del administrador, el sistema entrega una lista de asistentes de un evento dado.
+- [x] **“Filtrar por temática y/o Filtro”**: El usuario busca eventos utilizando un filtro de temática y/o fecha.
   - [x] Métodos de filtrado `findByFecha` y `findByTematica` implementados en el repositorio y servicio.
-  - [ ] Exponer filtros en el controlador, configurar rutas e integrarlos en la interfaz visual.
+  - [x] Exponer filtros en el controlador, configurar rutas e integrarlos en la interfaz visual.
 
 ---
 
@@ -35,4 +35,4 @@ Este checklist sirve para hacer seguimiento del progreso de los casos de uso del
 - [x] **RN-01: Control de Cupo Máximo** (No permitir inscripciones si el cupo está lleno).
 - [x] **RN-02: Restricción de Inscripción Duplicada** (Un usuario no puede registrarse dos veces en el mismo evento activo).
 - [x] **RN-04: Bloqueo de Acciones sobre Eventos Cancelados** (No se pueden inscribir asistentes si el evento está cancelado).
-- [ ] **RN-06: No Retroactividad Temporal** (Impedir registrar eventos en fechas y horas pasadas).
+- [x] **RN-06: No Retroactividad Temporal** (Impedir registrar eventos en fechas y horas pasadas).

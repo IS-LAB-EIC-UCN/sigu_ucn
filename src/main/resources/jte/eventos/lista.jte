@@ -5,6 +5,8 @@
 @param java.util.List<cl.ucn.app.model.Evento> eventos
 @param String error
 @param String success
+@param String filtroFecha = ""
+@param String filtroTematica = ""
 
 @template.layout.main(
 title = title,
@@ -23,6 +25,7 @@ content = @`
             <a href="/eventos" class="tab tab-active">Eventos</a>
             @if("ADMIN".equals(usuarioRol))
                 <a href="/expositores" class="tab">Expositores</a>
+                <a href="/espacios" class="tab">Ubicaciones</a>
             @endif
         </nav>
 
@@ -32,6 +35,25 @@ content = @`
         @if(success != null && !success.isBlank())
             <div class="alert alert-success">${success}</div>
         @endif
+
+        <div class="filter-section">
+            <form method="GET" action="/eventos" class="filter-form">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filtroFecha">Fecha:</label>
+                        <input type="date" id="filtroFecha" name="fecha" value="${filtroFecha}">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filtroTematica">Temática:</label>
+                        <input type="text" id="filtroTematica" name="tematica" placeholder="Buscar por temática..." value="${filtroTematica}">
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-primary btn-sm">Filtrar</button>
+                        <a href="/eventos" class="btn-secondary btn-sm">Limpiar</a>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <div class="table-container">
             <table class="data-table">
@@ -74,6 +96,7 @@ content = @`
                                     <span class="status-badge status-${evento.getEstado().toLowerCase()}">${evento.getEstado()}</span>
                                 </td>
                                 <td>
+                                    <a href="/eventos/${evento.getId()}/asistentes" class="btn-secondary btn-sm">Ver asistentes</a>
                                     @if("ADMIN".equals(usuarioRol))
                                         @if(evento.getEstado().equals("CANCELADO"))
                                             <form method="POST" action="/eventos/eliminar" style="display:inline;">

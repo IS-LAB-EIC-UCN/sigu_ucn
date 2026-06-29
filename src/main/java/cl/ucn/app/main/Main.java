@@ -1,6 +1,7 @@
 package cl.ucn.app.main;
 
 import cl.ucn.app.routes.AuthRoutes;
+import cl.ucn.app.routes.EspacioRoutes;
 import cl.ucn.app.routes.EventoRoutes;
 import cl.ucn.app.routes.ExpositorRoutes;
 import cl.ucn.app.routes.HomeRoutes;
@@ -42,6 +43,7 @@ public class Main {
             HomeRoutes.register(config);
             EventoRoutes.register(config);
             ExpositorRoutes.register(config);
+            EspacioRoutes.register(config);
         });
 
         app.start(7000);

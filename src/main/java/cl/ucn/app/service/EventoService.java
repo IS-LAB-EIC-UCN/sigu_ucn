@@ -40,6 +40,16 @@ public class EventoService {
         if (!evento.getHoraInicio().isBefore(evento.getHoraFin())) {
             throw new IllegalArgumentException("La hora de inicio debe ser anterior a la hora de fin.");
         }
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        if (evento.getFecha().isBefore(today)) {
+            throw new IllegalArgumentException("No se puede registrar un evento en una fecha pasada.");
+        }
+        if (evento.getFecha().isEqual(today) && evento.getHoraInicio().isBefore(now)) {
+            throw new IllegalArgumentException("No se puede registrar un evento con una hora de inicio ya pasada.");
+        }
+
         if (evento.getCapacidad() == null || evento.getCapacidad() <= 0) {
             throw new IllegalArgumentException("La capacidad debe ser un número positivo.");
         }
@@ -113,6 +123,10 @@ public class EventoService {
         return eventoRepository.findAll();
     }
 
+    public List<Evento> listarConFiltros(LocalDate fecha, String tematica) {
+        return eventoRepository.findByFilters(fecha, tematica);
+    }
+
     public List<Evento> listarPorFecha(LocalDate fecha) {
         if (fecha == null) {
             throw new IllegalArgumentException("La fecha es obligatoria para filtrar.");
@@ -125,6 +139,11 @@ public class EventoService {
             throw new IllegalArgumentException("La temática es obligatoria para filtrar.");
         }
         return eventoRepository.findByTematica(tematica);
+    }
+
+    public List<Inscripcion> listarAsistentes(Long eventoId) {
+        Evento evento = buscarPorId(eventoId);
+        return inscripcionRepository.findByEventoId(evento.getId());
     }
 
     public Evento cancelar(Long id) {
@@ -153,6 +172,16 @@ public class EventoService {
         Evento evento = buscarPorId(eventoId);
         if ("CANCELADO".equals(evento.getEstado())) {
             throw new IllegalArgumentException("No es posible inscribirse en un evento cancelado.");
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+
+        if (evento.getFecha().isBefore(today)) {
+            throw new IllegalArgumentException("No es posible inscribirse en un evento que ya ha finalizado.");
+        }
+        if (evento.getFecha().isEqual(today) && evento.getHoraInicio().isBefore(now)) {
+            throw new IllegalArgumentException("No es posible inscribirse en un evento que ya ha comenzado.");
         }
 
         Usuario usuario = usuarioRepository.findById(usuarioId);

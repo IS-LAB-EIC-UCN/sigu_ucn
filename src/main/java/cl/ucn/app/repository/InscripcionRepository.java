@@ -56,6 +56,19 @@ public class InscripcionRepository {
         }
     }
 
+    public List<Inscripcion> findByEventoId(Long eventoId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Inscripcion> query = em.createQuery(
+                    "SELECT i FROM Inscripcion i JOIN FETCH i.usuario u JOIN FETCH u.rol WHERE i.evento.id = :eventoId ORDER BY i.fechaInscripcion",
+                    Inscripcion.class);
+            query.setParameter("eventoId", eventoId);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public void delete(Inscripcion inscripcion) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
