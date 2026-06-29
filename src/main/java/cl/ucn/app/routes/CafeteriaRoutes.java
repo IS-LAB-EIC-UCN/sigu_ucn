@@ -10,5 +10,7 @@ public class CafeteriaRoutes {
 
         config.routes.get("/cafeteria", ctx -> controller.mostrarCafeteria(ctx));
         config.routes.post("/cafeteria/pedidos", ctx -> controller.crearPedido(ctx));
+        config.routes.post("/cafeteria/pedidos/estado", ctx -> controller.cambiarEstadoPedido(ctx));
+        config.routes.post("/cafeteria/pedidos/anular", ctx -> controller.anularPedido(ctx));
     }
 }

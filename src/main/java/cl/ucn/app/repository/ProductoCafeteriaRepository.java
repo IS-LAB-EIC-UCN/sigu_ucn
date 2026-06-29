@@ -24,6 +24,22 @@ public class ProductoCafeteriaRepository {
             em.close();
         }}
 
+    public void actualizar(ProductoCafeteria producto) {
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            em.getTransaction().begin();
+            em.merge(producto);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }}
+        
     public ProductoCafeteria buscarPorId(Long id) {
         EntityManager em = emf.createEntityManager();
 
@@ -32,3 +48,4 @@ public class ProductoCafeteriaRepository {
         } finally {
             em.close();
         }}}
+        
