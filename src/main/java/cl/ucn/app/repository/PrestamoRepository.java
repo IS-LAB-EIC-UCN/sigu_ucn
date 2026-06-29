@@ -44,10 +44,10 @@ public class PrestamoRepository {
         }
     }
 
-    public void alter(Long equipo_id, String estado) {
+    public void alter(Long movimiento_id, String estado) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            em.createQuery("UPDATE Prestamo p SET p.estado = :estado WHERE p.id = :equipo_id").executeUpdate();
+            em.createQuery("UPDATE Prestamo p SET p.estado = :estado WHERE p.id = :movimiento_id").executeUpdate();
             return;
         } finally {
             em.close();

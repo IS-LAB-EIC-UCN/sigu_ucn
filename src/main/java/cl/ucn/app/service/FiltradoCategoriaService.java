@@ -12,9 +12,9 @@ public class FiltradoCategoriaService implements IEstrategiaFiltrado {
     private final RecursoRepository recursoRepository;
     private final IConsole console;
 
-    public FiltradoCategoriaService () {
+    public FiltradoCategoriaService (IConsole console) {
         this.recursoRepository = new RecursoRepository();
-        this.console = new ConsoleService();
+        this.console = console;
     }
 
     @Override

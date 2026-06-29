@@ -20,7 +20,7 @@ public class ConsoleService implements IConsole {
     public ConsoleService() {
         this.recursoRepository = new RecursoRepository();
         this.notificador = new NotificacionService();
-        this.filtrador = new FiltradoCategoriaService();
+        this.filtrador = new FiltradoCategoriaService(this);
         this.checker = new CheckerService();
     }
 

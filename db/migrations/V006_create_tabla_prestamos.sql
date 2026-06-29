@@ -17,4 +17,4 @@ CREATE TABLE prestamos (
 );
 
 CREATE INDEX idx_prestamos_movimiento_id ON prestamos(movimiento_id);
-CREATE INDEX idx_prestamos_usuario_id ON entradas(proveedor_id);
+CREATE INDEX idx_prestamos_usuario_id ON prestamos(usuario_id);
