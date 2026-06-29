@@ -530,6 +530,19 @@ public class CafeteriaController {
                             text-align: center;
                         }
 
+                        .filtro-categoria {
+                            margin-bottom: 15px;
+                            background-color: #fff0d4;
+                            padding: 12px;
+                            border-radius: 6px;
+                            border-left: 5px solid var(--amarillo);
+                        }
+
+                        .filtro-categoria select {
+                            width: 100%;
+                            margin-top: 8px;
+                        }
+
                         .panel-lateral {
                             height: 100%;
                             width: 0;
@@ -817,11 +830,30 @@ public class CafeteriaController {
                         <section id="seccionProductos" class="seccion-pagina">
                             <h2>Productos disponibles</h2>
 
+                            <div class="filtro-categoria">
+                                <label for="filtroCategoria">Filtrar por categoría:</label>
+                                <select id="filtroCategoria" onchange="filtrarProductosPorCategoria()">
+                                    <option value="TODAS">Todas las categorías</option>
+                """);
+
+        for (CategoriaCafeteria categoria : categorias) {
+            html.append("<option value='")
+                    .append(categoria.getId())
+                    .append("'>")
+                    .append(categoria.getNombre())
+                    .append("</option>");
+        }
+
+        html.append("""
+                                </select>
+                            </div>
+
                             <table>
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Producto</th>
+                                        <th>Categoría</th>
                                         <th>Precio</th>
                                         <th>Stock</th>
                                     </tr>
@@ -830,9 +862,13 @@ public class CafeteriaController {
                 """);
 
         for (ProductoCafeteria producto : productos) {
-            html.append("<tr>");
+            html.append("<tr class='fila-producto' data-categoria='")
+                    .append(producto.getCategoria().getId())
+                    .append("'>");
+
             html.append("<td>").append(producto.getId()).append("</td>");
             html.append("<td>").append(producto.getNombre()).append("</td>");
+            html.append("<td>").append(producto.getCategoria().getNombre()).append("</td>");
             html.append("<td>$").append(producto.getPrecio()).append("</td>");
             html.append("<td>").append(producto.getStock()).append("</td>");
             html.append("</tr>");
@@ -936,6 +972,21 @@ public class CafeteriaController {
                                 seccionSeleccionada.classList.add("activo");
 
                                 seccionSeleccionada.scrollIntoView({ behavior: "smooth" });
+                            }
+
+                            function filtrarProductosPorCategoria() {
+                                const categoriaSeleccionada = document.getElementById("filtroCategoria").value;
+                                const filas = document.querySelectorAll(".fila-producto");
+
+                                filas.forEach(function(fila) {
+                                    const categoriaProducto = fila.getAttribute("data-categoria");
+
+                                    if (categoriaSeleccionada === "TODAS" || categoriaProducto === categoriaSeleccionada) {
+                                        fila.style.display = "";
+                                    } else {
+                                        fila.style.display = "none";
+                                    }
+                                });
                             }
 
                             function agregarProducto() {
