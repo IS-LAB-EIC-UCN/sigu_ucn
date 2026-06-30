@@ -1,6 +1,7 @@
 package cl.ucn.app.repository;
 
 import cl.ucn.app.config.JPAUtil;
+import cl.ucn.app.model.Tutoria;
 import cl.ucn.app.model.TutoriaReserva;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -150,5 +151,33 @@ public class TutoriaReservaRepository {
         } finally {
             em.close();
         }
+
     }
+    public boolean estudianteTieneReservaSolapada(Long estudianteId, Tutoria tutoriaNueva) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            Long cantidad = em.createQuery(
+                            "SELECT COUNT(r) FROM TutoriaReserva r " +
+                                    "JOIN r.tutoria t " +
+                                    "WHERE r.estudiante.id = :estudianteId " +
+                                    "AND t.fecha = :fecha " +
+                                    "AND t.estado <> 'CANCELADA' " +
+                                    "AND t.horaInicio < :horaFin " +
+                                    "AND t.horaFin > :horaInicio",
+                            Long.class
+                    )
+                    .setParameter("estudianteId", estudianteId)
+                    .setParameter("fecha", tutoriaNueva.getFecha())
+                    .setParameter("horaInicio", tutoriaNueva.getHoraInicio())
+                    .setParameter("horaFin", tutoriaNueva.getHoraFin())
+                    .getSingleResult();
+
+            return cantidad > 0;
+
+        } finally {
+            em.close();
+        }
+    }
+
 }

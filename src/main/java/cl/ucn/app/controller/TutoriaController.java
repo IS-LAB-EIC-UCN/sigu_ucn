@@ -198,4 +198,39 @@ public class TutoriaController {
             ctx.result("Error al crear asignatura: " + e.getMessage());
         }
     }
+
+    public void registroUsuarios(Context ctx) {
+
+        String rol = ctx.sessionAttribute("usuarioRol");
+
+        if (!"ADMIN".equals(rol)) {
+            ctx.status(403);
+            return;
+        }
+
+        Map<String,Object> model = new HashMap<>();
+
+        model.put("title","Registrar Usuarios");
+        model.put("usuarioNombre",ctx.sessionAttribute("usuarioNombre"));
+        model.put("usuarioRol",rol);
+
+        model.put("tutores",tutoriaService.listarTutores());
+        model.put("estudiantes",tutoriaService.listarEstudiantes());
+
+        ctx.render("registro_usuarios_tutorias.jte",model);
+    }
+
+    public void guardarUsuario(Context ctx){
+
+        tutoriaService.registrarUsuarioTutoria(
+
+                ctx.formParam("nombre"),
+                ctx.formParam("correo"),
+                ctx.formParam("password"),
+                ctx.formParam("rol")
+
+        );
+
+        ctx.redirect("/tutorias/usuarios");
+    }
 }
