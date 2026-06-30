@@ -1,0 +1,5 @@
+[33m7689172[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgrupo-4[m[33m, [m[1;31morigin/grupo-4[m[33m)[m [G4] Integracion completa: sincronizacion con main, esquema de tickets, entidades actualizadas y modulo funcional en puerto 7000
+[33ma1558c0[m Merge main into grupo-4 - todos los conflictos resueltos
+[33mb4a18cb[m [G4] PC 9 - Finalizacion de pruebas de conexion y dump de la base de datos
+[33m1dcbd88[m [G4] SM y PC - Implementacion parcial de controlador de tickets y tambien se implementa una interfaz visual de prueba
+[33m72992b2[m [G4] SM 16 - Implementar controladores y rutas del módulo Tickets
