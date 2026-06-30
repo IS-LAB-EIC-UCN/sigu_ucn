@@ -1,7 +1,6 @@
 package cl.ucn.app.test;
 
 import cl.ucn.app.model.Prestamo;
-import cl.ucn.app.model.Proveedor;
 import cl.ucn.app.model.Recurso;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.*;
@@ -47,9 +46,7 @@ public class testPrestamoAdmin {
 
     @Test
     public void testCrearPrestamo() {
-        Prestamo prestamo_mock = new Prestamo();
         Recurso recurso_mock = new Recurso();
-        Proveedor proveedor_mock = new Proveedor();
         Usuario usuario_mock = new Usuario();
 
         recurso_mock.setStock(5);
@@ -72,6 +69,20 @@ public class testPrestamoAdmin {
 
     @Test
     public void testCrearDevolucion() {
+        Recurso recurso_mock = new Recurso();
+        Usuario usuario_mock = new Usuario();
+
+        recurso_mock.setStock(5);
+
+        Mockito.when(recursoRepository.findById(Mockito.anyLong())).thenReturn(recurso_mock);
+        Mockito.when(usuarioRepository.findById(Mockito.anyLong())).thenReturn(usuario_mock);
+
+        assertTrue(prestamoService.crearPrestamo("DEVOLUCION", 1L, 2, LocalDate.now(),
+                LocalTime.now(), 1L, "DEVOLUCION PENDIENTE"));
+    }
+
+    @Test
+    public void testConfirmarDevolucion() {
         Prestamo prestamo_mock = new Prestamo();
 
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);

@@ -45,6 +45,20 @@ public class StockService implements IObserver {
         this.console = new ConsoleService();
     }
 
+    public StockService(ProveedorRepository proveedorRepository, MovimientoInventarioRepository movimientoInventarioRepository,
+                        EntradaRepository entradaRepository, SalidaRepository salidaRepository,
+                        RecursoRepository recursoRepository, MovimientoFactoryService factoryService) {
+
+        this.proveedorRepository = proveedorRepository;
+        this.movimientoInventarioRepository = movimientoInventarioRepository;
+        this.entradaRepository = entradaRepository;
+        this.salidaRepository = salidaRepository;
+        this.recursoRepository = recursoRepository;
+
+        movimientoFactoryService = factoryService;
+        this.console = new ConsoleService();
+    }
+
     public static int getStock_minimo() {
         return stock_minimo;
     }
@@ -93,18 +107,20 @@ public class StockService implements IObserver {
             console.log("Error, no queda stock suficiente, reintentar.");
             return false;
         }
+        recurso.setStock(recurso.getStock() - cantidad);
 
-        MovimientoInventario salida = movimientoFactoryService.crearSalida(recurso, cantidad, fecha, hora);
+        Salida salida = movimientoFactoryService.crearSalida(recurso, cantidad, fecha, hora);
 
         movimientoInventarioRepository.save(salida);
-        salidaRepository.save((Salida) salida);
+        salidaRepository.save(salida);
 
         //Añade a este servicio a la lista de observadores de la salida.
-        ((Salida) salida).addObserver(this);
+        salida.addObserver(this);
 
         //Llama a la alerta para todos los observadores.
         if(recurso.getStock() < stock_minimo) {
-            ((Salida) salida).notifyObservers();
+            salida.notifyObservers();
+            console.log("notifyObservers ha sido activado (desde StockService)");
         }
 
         return true;

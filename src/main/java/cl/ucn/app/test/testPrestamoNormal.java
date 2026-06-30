@@ -72,7 +72,6 @@ public class testPrestamoNormal {
 
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);
 
-        assertAll();
         assertTrue(prestamoService.devolverEquipo(1L, 1L, 1L));
     }
 }

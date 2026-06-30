@@ -2,6 +2,7 @@ package cl.ucn.app.test;
 
 import cl.ucn.app.model.*;
 import cl.ucn.app.repository.*;
+import cl.ucn.app.service.MovimientoFactoryService;
 import cl.ucn.app.service.StockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,13 +34,19 @@ public class testStock {
     @Mock
     private SalidaRepository salidaRepository;
 
+    @Mock
+    private MovimientoFactoryService movimientoFactoryService;
+
+    @Mock
+    private Salida salida_mock;
+
     private StockService stockService;
 
     @BeforeEach
     public void setUp() {
         stockService = new StockService(
                 proveedorRepository, movimientoInventarioRepository, entradaRepository,
-                salidaRepository, recursoRepository);
+                salidaRepository, recursoRepository, movimientoFactoryService);
     }
 
     @Test
@@ -67,12 +74,15 @@ public class testStock {
     @Test
     public void testNotificarStockBajo() {
         Recurso recurso_mock = new Recurso();
-
         recurso_mock.setStock(15);
 
         Mockito.when(recursoRepository.findById(Mockito.anyLong())).thenReturn(recurso_mock);
+        Mockito.when(movimientoFactoryService.crearSalida(
+                Mockito.any(), Mockito.anyInt(), Mockito.any(), Mockito.any())
+        ).thenReturn(salida_mock);
 
         assertTrue(stockService.crearSalida(1L,15, LocalDate.now(), LocalTime.now()));
+        Mockito.verify(salida_mock, Mockito.atLeastOnce()).notifyObservers();
     }
 
 }
