@@ -21,5 +21,10 @@ public final class TutoriaRoutes {
         config.routes.post("/tutorias/asistencia", tutoriaController::registrarAsistencia);
 
         config.routes.post("/tutorias/asignaturas", tutoriaController::crearAsignatura);
+        config.routes.get("/tutorias/usuarios",
+                tutoriaController::registroUsuarios);
+
+        config.routes.post("/tutorias/usuarios",
+                tutoriaController::guardarUsuario);
     }
 }

@@ -5,7 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3a1625d1-5da0-4033-82c9-ed8703289353" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db/init/V002__crear_rol_tutor.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/db/init/migrations/V001_modulo_tutorias.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/db/init/migrations/V002_crear_rol_tutor.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/jte/registro_usuarios_tutorias.jte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cl/ucn/app/integration/TutoriaServiceIntegrationTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cl/ucn/app/integration/TutoriaServiceSimpleIntegrationTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/cl/ucn/app/service/TutoriasServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/TutoriaController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/controller/TutoriaController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Asignatura.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Asignatura.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Tutoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/Tutoria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/TutoriaReserva.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/model/TutoriaReserva.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/TutoriaReservaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/TutoriaReservaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/UsuarioRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/repository/UsuarioRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/TutoriaRoutes.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/routes/TutoriaRoutes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cl/ucn/app/service/TutoriaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cl/ucn/app/service/TutoriaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/jte/lista.jte" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/jte/lista.jte" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +66,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "Merging f-main",
+    "git-widget-placeholder": "Merging grupo-8",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/dsanmartins/Insync/daniel.sanmartin@ucn.cl/GDrive/Developments/sigu_ucn",

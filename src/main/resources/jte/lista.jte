@@ -17,7 +17,8 @@ content = @`
         <h1>Listado de Tutorías</h1>
 
         @if("ADMIN".equals(usuarioRol))
-            <a href="/tutorias/crear">Crear Asignatura</a>
+            <a href="/tutorias/crear">Crear Asignatura</a> |
+            <a href="/tutorias/usuarios">Registrar Usuarios</a>
         @endif
 
         @if("TUTOR".equals(usuarioRol))

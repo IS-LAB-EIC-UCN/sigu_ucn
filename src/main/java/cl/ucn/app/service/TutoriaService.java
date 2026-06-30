@@ -15,10 +15,29 @@ import java.util.List;
 
 public class TutoriaService {
 
-    private final TutoriaRepository tutoriaRepository = new TutoriaRepository();
-    private final TutoriaReservaRepository reservaRepository = new TutoriaReservaRepository();
-    private final AsignaturaRepository asignaturaRepository = new AsignaturaRepository();
-    private final UsuarioRepository usuarioRepository = new UsuarioRepository();
+    private final TutoriaRepository tutoriaRepository;
+    private final TutoriaReservaRepository reservaRepository;
+    private final AsignaturaRepository asignaturaRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    // Constructor para producción (sin parámetros, crea los repos normalmente)
+    public TutoriaService() {
+        this.tutoriaRepository = new TutoriaRepository();
+        this.reservaRepository = new TutoriaReservaRepository();
+        this.asignaturaRepository = new AsignaturaRepository();
+        this.usuarioRepository = new UsuarioRepository();
+    }
+
+    // Constructor para tests (recibe los mocks por parámetro)
+    public TutoriaService(TutoriaRepository tutoriaRepository,
+                          TutoriaReservaRepository reservaRepository,
+                          AsignaturaRepository asignaturaRepository,
+                          UsuarioRepository usuarioRepository) {
+        this.tutoriaRepository = tutoriaRepository;
+        this.reservaRepository = reservaRepository;
+        this.asignaturaRepository = asignaturaRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     public List<Tutoria> listarTutorias() {
         return tutoriaRepository.findAll();
@@ -172,6 +191,48 @@ public class TutoriaService {
 
     public List<Usuario> listarTutores() {
         return usuarioRepository.findByRol("TUTOR");
+    }
+
+    public void registrarUsuarioTutoria(String nombre,
+                                        String correo,
+                                        String password,
+                                        String rolNombre) {
+
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("Debe ingresar un nombre.");
+        }
+
+        if (correo == null || correo.isBlank()) {
+            throw new IllegalArgumentException("Debe ingresar un correo.");
+        }
+
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Debe ingresar una contraseña.");
+        }
+
+        if (usuarioRepository.findByCorreo(correo) != null) {
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo.");
+        }
+
+        var rol = usuarioRepository.findRolByNombre(rolNombre);
+
+        if (rol == null) {
+            throw new IllegalArgumentException("No existe el rol.");
+        }
+
+        Usuario usuario = new Usuario(
+                nombre,
+                correo,
+                password,
+                true,
+                rol
+        );
+
+        usuarioRepository.save(usuario);
+    }
+
+    public List<Usuario> listarEstudiantes() {
+        return usuarioRepository.findByRol("ESTUDIANTE");
     }
 
 }
