@@ -112,8 +112,6 @@
           <execution>
             <id>jte-generate</id>
             <phase>generate-sources</phase>
-
-            <goals><goal>generate</goal></goals>
             <goals>
               <goal>generate</goal>
             </goals>
@@ -133,6 +131,3 @@
   </build>
 
 </project>
-
-</project>
-
