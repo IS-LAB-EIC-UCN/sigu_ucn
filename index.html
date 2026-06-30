@@ -115,7 +115,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:8080';
+        const API_URL = 'http://localhost:7000';
 
         function log(message, data = null) {
             const logDiv = document.getElementById('log');
@@ -141,14 +141,19 @@
                 if (body) options.body = JSON.stringify(body);
                 
                 const response = await fetch(`${API_URL}${endpoint}`, options);
-                const data = await response.json().catch(() => null);
+                const text = await response.text();
+                let data = null;
+                try {
+                    data = text ? JSON.parse(text) : null;
+                } catch (e) {
+                    // Not JSON
+                }
                 
                 if (response.ok) {
                     log(`${method} ${endpoint} - OK`, data);
                     return data;
                 } else {
-                    const errorText = await response.text();
-                    log(`${method} ${endpoint} - ERROR (${response.status})`, errorText || data);
+                    log(`${method} ${endpoint} - ERROR (${response.status})`, text || data);
                     return null;
                 }
             } catch (error) {
@@ -170,7 +175,7 @@
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const res = await apiCall('/login', 'POST', {
+            const res = await apiCall('/api/login', 'POST', {
                 email: document.getElementById('loginEmail').value,
                 password: document.getElementById('loginPass').value
             });
@@ -227,17 +232,17 @@
                 const tbody = document.getElementById('reservasTableBody');
                 tbody.innerHTML = data.map(r => `
                     <tr class="border-b hover:bg-gray-50">
-                        <td class="p-2 font-mono text-xs">${r.id.substring(0,8)}...</td>
+                        <td class="p-2 font-mono text-xs">${r.id}</td>
                         <td class="p-2">${r.espacio ? r.espacio.nombre : 'N/A'}</td>
                         <td class="p-2">
                             <span class="px-2 py-1 rounded text-xs ${
-                                r.estado === 'CONFIRMADA' ? 'bg-green-100 text-green-800' :
+                                r.estado === 'APROBADA' ? 'bg-green-100 text-green-800' :
                                 r.estado === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' :
                                 'bg-red-100 text-red-800'
                             }">${r.estado}</span>
                         </td>
                         <td class="p-2 flex gap-1">
-                            <button onclick="updateReservaStatus('${r.id}', 'CONFIRMADA')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">OK</button>
+                            <button onclick="updateReservaStatus('${r.id}', 'APROBADA')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">OK</button>
                             <button onclick="updateReservaStatus('${r.id}', 'CANCELADA')" class="bg-red-500 text-white px-2 py-1 rounded text-xs">X</button>
                         </td>
                     </tr>
