@@ -1,173 +1,174 @@
 package cl.ucn.app.service;
 
-import cl.ucn.app.model.CategoriaTicket;
+import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.Comentario;
 import cl.ucn.app.model.Ticket;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.ICategoriaTicketRepository;
 import cl.ucn.app.repository.IComentarioRepository;
-import cl.ucn.app.repository.TicketRepository;
+import cl.ucn.app.repository.ITicketRepository;
+import jakarta.persistence.EntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-public class TicketServiceImpl implements Iticketservice {
+/**
+ * Lógica de negocio del módulo de soporte.
+ *
+ * SOLID:
+ *  S – solo orquesta reglas de tickets, sin HTTP ni SQL directo.
+ *  O – extender con notificaciones sin modificar esta clase.
+ *  D – recibe interfaces por constructor, no clases concretas.
+ *
+ * Estados válidos (según CHECK en BD): ABIERTO | EN_PROCESO | CERRADO
+ * Prioridades válidas:                 BAJA | MEDIA | ALTA
+ */
+public class TicketServiceImpl implements ITicketService {
 
-    private static final List<String> ESTADOS_VALIDOS = List.of("ABIERTO", "EN_PROCESO", "CERRADO");
-    private static final List<String> PRIORIDADES_VALIDAS = List.of("BAJA", "MEDIA", "ALTA");
+    private final ITicketRepository       ticketRepo;
+    private final IComentarioRepository   comentarioRepo;
+    private final ICategoriaTicketRepository categoriaRepo;
 
-    private final TicketRepository ticketRepository;
-    private final IComentarioRepository comentarioRepository;
-    private final ICategoriaTicketRepository categoriaTicketRepository;
-
-    public TicketServiceImpl(TicketRepository ticketRepository,
-                              IComentarioRepository comentarioRepository,
-                              ICategoriaTicketRepository categoriaTicketRepository) {
-        this.ticketRepository = ticketRepository;
-        this.comentarioRepository = comentarioRepository;
-        this.categoriaTicketRepository = categoriaTicketRepository;
+    public TicketServiceImpl(ITicketRepository ticketRepo,
+                             IComentarioRepository comentarioRepo,
+                             ICategoriaTicketRepository categoriaRepo) {
+        this.ticketRepo    = ticketRepo;
+        this.comentarioRepo = comentarioRepo;
+        this.categoriaRepo  = categoriaRepo;
     }
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+
+    protected Usuario buscarUsuario(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            Usuario u = em.find(Usuario.class, id);
+            if (u == null) throw new IllegalArgumentException("Usuario no encontrado: " + id);
+            return u;
+        } finally {
+            em.close();
+        }
+    }
+
+    private Ticket ticketExistente(Long id) {
+        return ticketRepo.buscarPorId(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket no encontrado: " + id));
+    }
+
+    private void verificarAbierto(Ticket ticket) {
+        if ("CERRADO".equals(ticket.getEstado())) {
+            throw new IllegalStateException("El ticket está cerrado y no puede modificarse.");
+        }
+    }
+
+    // ── Implementación ────────────────────────────────────────────────────────
 
     @Override
     public Ticket crearTicket(String titulo, String descripcion, String prioridad,
-                               Long categoriaId, Long solicitanteId) {
-        if (titulo == null || titulo.isBlank()) {
-            throw new IllegalArgumentException("El título es obligatorio.");
-        }
-        if (descripcion == null || descripcion.isBlank()) {
-            throw new IllegalArgumentException("La descripción es obligatoria.");
-        }
-        if (prioridad == null || !PRIORIDADES_VALIDAS.contains(prioridad)) {
-            throw new IllegalArgumentException("Prioridad inválida. Valores permitidos: " + PRIORIDADES_VALIDAS);
-        }
-        if (categoriaId == null) {
-            throw new IllegalArgumentException("Debe seleccionar una categoría.");
-        }
-        CategoriaTicket categoria = categoriaTicketRepository.buscarPorId(categoriaId)
-                .orElseThrow(() -> new NoSuchElementException("Categoría no encontrada: " + categoriaId));
-        if (solicitanteId == null) {
-            throw new IllegalArgumentException("El solicitante es obligatorio.");
-        }
+                              Long categoriaId, Long solicitanteId) {
+        if (titulo == null || titulo.isBlank())
+            throw new IllegalArgumentException("El título no puede estar vacío.");
+        if (descripcion == null || descripcion.isBlank())
+            throw new IllegalArgumentException("La descripción no puede estar vacía.");
+
+        String prio = (prioridad != null && !prioridad.isBlank()) ? prioridad.toUpperCase() : "MEDIA";
+        if (!List.of("BAJA", "MEDIA", "ALTA").contains(prio))
+            throw new IllegalArgumentException("Prioridad inválida: " + prio);
 
         Ticket ticket = new Ticket();
-        ticket.setTitulo(titulo);
-        ticket.setDescripcion(descripcion);
-        ticket.setPrioridad(prioridad);
+        ticket.setTitulo(titulo.trim());
+        ticket.setDescripcion(descripcion.trim());
+        ticket.setPrioridad(prio);
         ticket.setEstado("ABIERTO");
         ticket.setFechaCreacion(LocalDateTime.now());
-        ticket.setCategoria(categoria);
+        ticket.setSolicitante(buscarUsuario(solicitanteId));
+        categoriaRepo.buscarPorId(categoriaId).ifPresent(ticket::setCategoria);
 
-        Usuario solicitante = new Usuario();
-        solicitante.setId(solicitanteId);
-        ticket.setSolicitante(solicitante);
-
-        ticketRepository.guardar(ticket);
+        ticketRepo.guardar(ticket);
         return ticket;
     }
 
     @Override
     public Ticket cambiarEstado(Long ticketId, String nuevoEstado, Long usuarioId) {
-        Ticket ticket = obtenerTicket(ticketId);
+        Ticket ticket = ticketExistente(ticketId);
+        verificarAbierto(ticket);
 
-        if ("CERRADO".equals(ticket.getEstado())) {
-            throw new IllegalStateException("No se puede modificar un ticket cerrado.");
-        }
-        if (nuevoEstado == null || !ESTADOS_VALIDOS.contains(nuevoEstado)) {
-            throw new IllegalArgumentException("Estado inválido. Valores permitidos: " + ESTADOS_VALIDOS);
-        }
-        if ("EN_PROCESO".equals(nuevoEstado)) {
-            if (ticket.getTecnico() == null || !ticket.getTecnico().getId().equals(usuarioId)) {
-                throw new IllegalStateException("Solo el técnico asignado puede marcar el ticket en proceso.");
-            }
-        }
-        if ("CERRADO".equals(nuevoEstado)) {
-            throw new IllegalStateException("Use cerrarTicket() para cerrar un ticket (requiere resolución).");
+        String estado = nuevoEstado.toUpperCase();
+        if (!List.of("ABIERTO", "EN_PROCESO", "CERRADO").contains(estado))
+            throw new IllegalArgumentException("Estado inválido: " + estado);
+
+        // Regla: solo el técnico asignado puede marcar EN_PROCESO
+        if ("EN_PROCESO".equals(estado)) {
+            if (ticket.getTecnico() == null || !ticket.getTecnico().getId().equals(usuarioId))
+                throw new IllegalStateException(
+                        "Solo el técnico asignado puede marcar el ticket como EN_PROCESO.");
         }
 
-        ticket.setEstado(nuevoEstado);
-        ticketRepository.actualizar(ticket);
+        ticket.setEstado(estado);
+        ticketRepo.actualizar(ticket);
         return ticket;
     }
 
     @Override
     public Ticket asignarTecnico(Long ticketId, Long tecnicoId) {
-        Ticket ticket = obtenerTicket(ticketId);
-        if ("CERRADO".equals(ticket.getEstado())) {
-            throw new IllegalStateException("No se puede asignar técnico a un ticket cerrado.");
-        }
-        if (tecnicoId == null) {
-            throw new IllegalArgumentException("Debe indicar un técnico.");
-        }
-        Usuario tecnico = new Usuario();
-        tecnico.setId(tecnicoId);
-        ticket.setTecnico(tecnico);
-        ticketRepository.actualizar(ticket);
+        Ticket ticket = ticketExistente(ticketId);
+        verificarAbierto(ticket);
+        ticket.setTecnico(buscarUsuario(tecnicoId));
+        ticketRepo.actualizar(ticket);
         return ticket;
     }
 
     @Override
     public Ticket cerrarTicket(Long ticketId, String resolucion) {
-        Ticket ticket = obtenerTicket(ticketId);
-        if ("CERRADO".equals(ticket.getEstado())) {
-            throw new IllegalStateException("El ticket ya se encuentra cerrado.");
-        }
-        if (resolucion == null || resolucion.isBlank()) {
+        Ticket ticket = ticketExistente(ticketId);
+        verificarAbierto(ticket);
+
+        if (resolucion == null || resolucion.isBlank())
             throw new IllegalArgumentException("No se puede cerrar un ticket sin resolución registrada.");
-        }
-        ticket.setResolucion(resolucion);
+
+        ticket.setResolucion(resolucion.trim());
         ticket.setEstado("CERRADO");
         ticket.setFechaCierre(LocalDateTime.now());
-        ticketRepository.actualizar(ticket);
+        ticketRepo.actualizar(ticket);
         return ticket;
     }
 
     @Override
     public Comentario agregarComentario(Long ticketId, String contenido, Long autorId) {
-        Ticket ticket = obtenerTicket(ticketId);
-        if ("CERRADO".equals(ticket.getEstado())) {
-            throw new IllegalStateException("No se pueden agregar comentarios a un ticket cerrado.");
-        }
-        if (contenido == null || contenido.isBlank()) {
+        Ticket ticket = ticketExistente(ticketId);
+        verificarAbierto(ticket);
+
+        if (contenido == null || contenido.isBlank())
             throw new IllegalArgumentException("El comentario no puede estar vacío.");
-        }
-        if (autorId == null) {
-            throw new IllegalArgumentException("El autor es obligatorio.");
-        }
 
         Comentario comentario = new Comentario();
-        comentario.setContenido(contenido);
+        comentario.setContenido(contenido.trim());
         comentario.setFecha(LocalDateTime.now());
         comentario.setTicket(ticket);
-        Usuario autor = new Usuario();
-        autor.setId(autorId);
-        comentario.setAutor(autor);
+        comentario.setAutor(buscarUsuario(autorId));
 
-        comentarioRepository.guardar(comentario);
+        comentarioRepo.guardar(comentario);
         return comentario;
     }
 
     @Override
     public Ticket obtenerTicket(Long ticketId) {
-        if (ticketId == null) {
-            throw new IllegalArgumentException("El id del ticket es obligatorio.");
-        }
-        return ticketRepository.buscarPorId(ticketId)
-                .orElseThrow(() -> new NoSuchElementException("Ticket no encontrado: " + ticketId));
+        return ticketExistente(ticketId);
     }
 
     @Override
     public List<Ticket> listarTickets() {
-        return ticketRepository.listarTodos();
+        return ticketRepo.listarTodos();
     }
 
     @Override
     public List<Ticket> filtrarTickets(String estado, String prioridad, Long tecnicoId) {
-        return ticketRepository.filtrar(estado, prioridad, tecnicoId);
+        return ticketRepo.filtrar(estado, prioridad, tecnicoId);
     }
 
     @Override
     public List<Comentario> obtenerComentarios(Long ticketId) {
-        return comentarioRepository.listarPorTicket(ticketId);
+        ticketExistente(ticketId);
+        return comentarioRepo.listarPorTicket(ticketId);
     }
 }

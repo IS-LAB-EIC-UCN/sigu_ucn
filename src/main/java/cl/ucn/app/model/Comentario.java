@@ -3,37 +3,44 @@ package cl.ucn.app.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Mapeada a "comentarios" según 01_scheme.sql.
+ */
 @Entity
-@Table(name = "comentario")
+@Table(name = "comentarios")
 public class Comentario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_comentario")
-    private Long idComentario;
+    private Long id;
 
-    @Column(name = "contenido", nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
-    @Column(name = "fecha")
+    @Column
     private LocalDateTime fecha;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "autor_id")
     private Usuario autor;
 
-    public Long getIdComentario() { return idComentario; }
-    public void setIdComentario(Long id) { this.idComentario = id; }
+    public Comentario() {}
+
+    public Long getId() { return id; }
+
     public String getContenido() { return contenido; }
-    public void setContenido(String c) { this.contenido = c; }
+    public void setContenido(String contenido) { this.contenido = contenido; }
+
     public LocalDateTime getFecha() { return fecha; }
-    public void setFecha(LocalDateTime f) { this.fecha = f; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+
     public Ticket getTicket() { return ticket; }
-    public void setTicket(Ticket t) { this.ticket = t; }
+    public void setTicket(Ticket ticket) { this.ticket = ticket; }
+
     public Usuario getAutor() { return autor; }
-    public void setAutor(Usuario u) { this.autor = u; }
+    public void setAutor(Usuario autor) { this.autor = autor; }
 }

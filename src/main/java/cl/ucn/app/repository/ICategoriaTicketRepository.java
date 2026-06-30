@@ -1,31 +1,12 @@
 package cl.ucn.app.repository;
 
-import cl.ucn.app.config.JPAUtil;
-import cl.ucn.app.model.Categoriaticket;
-import jakarta.persistence.EntityManager;
+import cl.ucn.app.model.CategoriaTicket;
 import java.util.List;
 import java.util.Optional;
 
-public class ICategoriaTicketRepositoryImpl implements ICategoriaTicketRepository {
+public interface ICategoriaTicketRepository {
 
-    @Override
-    public List<Categoriaticket> listarTodas() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.createQuery("SELECT c FROM Categoriaticket c", Categoriaticket.class)
-                    .getResultList();
-        } finally {
-            em.close();
-        }
-    }
+    List<CategoriaTicket> listarTodas();
 
-    @Override
-    public Optional<Categoriaticket> buscarPorId(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return Optional.ofNullable(em.find(Categoriaticket.class, id));
-        } finally {
-            em.close();
-        }
-    }
+    Optional<CategoriaTicket> buscarPorId(Long id);
 }

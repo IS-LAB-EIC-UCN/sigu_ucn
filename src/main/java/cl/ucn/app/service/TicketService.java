@@ -6,24 +6,24 @@ import java.util.List;
 
 /**
  * Contrato de negocio del módulo de soporte.
- * Interfaz específica y cohesiva (I de SOLID).
+ * Interfaces específicas (I de SOLID) en lugar de un único servicio genérico.
  */
-public interface ITicketService {
+public interface TicketService {
 
-    /** Crea ticket con estado ABIERTO y fechaCreacion = ahora. */
+    /** Crea un ticket nuevo con estado ABIERTO y fecha de creación automática. */
     Ticket crearTicket(String titulo, String descripcion, String prioridad,
                        Long categoriaId, Long solicitanteId);
 
-    /** Solo el técnico asignado puede pasar a EN_PROCESO. Ticket cerrado no se modifica. */
-    Ticket cambiarEstado(Long ticketId, String nuevoEstado, Long usuarioId);
-
-    /** Asigna un técnico; falla si el ticket está CERRADO. */
+    /** Asigna un técnico a un ticket; el ticket no puede estar CERRADO. */
     Ticket asignarTecnico(Long ticketId, Long tecnicoId);
 
-    /** Cierra el ticket; exige resolución no vacía. */
-    Ticket cerrarTicket(Long ticketId, String resolucion);
+    /** Cambia el estado; aplica reglas de negocio (ticket cerrado no modificable). */
+    Ticket cambiarEstado(Long ticketId, String nuevoEstado, Long usuarioId);
 
-    /** Agrega comentario; falla si el ticket está CERRADO. */
+    /** Cierra el ticket; exige que haya resolución registrada. */
+    Ticket cerrarTicket(Long ticketId, String resolucion, Long tecnicoId);
+
+    /** Agrega un comentario; el ticket no puede estar CERRADO. */
     Comentario agregarComentario(Long ticketId, String contenido, Long autorId);
 
     Ticket obtenerTicket(Long ticketId);

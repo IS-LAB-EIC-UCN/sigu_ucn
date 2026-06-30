@@ -3,28 +3,33 @@ package cl.ucn.app.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Mapeada a "tickets" según 01_scheme.sql.
+ *
+ * Estados válidos (CHECK en BD): ABIERTO | EN_PROCESO | CERRADO
+ * Prioridades válidas (CHECK en BD): BAJA | MEDIA | ALTA
+ */
 @Entity
-@Table(name = "ticket")
+@Table(name = "tickets")
 public class Ticket {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_ticket")
-    private Long idTicket;
+    private Long id;
 
-    @Column(name = "titulo", nullable = false)
+    @Column(nullable = false, length = 100)
     private String titulo;
 
-    @Column(name = "descripcion", nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(name = "prioridad", nullable = false)
-    private String prioridad;
+    @Column(nullable = false, length = 16)
+    private String prioridad = "MEDIA";
 
-    @Column(name = "estado", nullable = false)
-    private String estado;
+    @Column(nullable = false, length = 16)
+    private String estado = "ABIERTO";
 
-    @Column(name = "resolucion")
+    @Column(columnDefinition = "TEXT")
     private String resolucion;
 
     @Column(name = "fecha_creacion")
@@ -33,36 +38,51 @@ public class Ticket {
     @Column(name = "fecha_cierre")
     private LocalDateTime fechaCierre;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "solicitante_id")
     private Usuario solicitante;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tecnico_id")
     private Usuario tecnico;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
     private CategoriaTicket categoria;
 
-    public Long getIdTicket() { return idTicket; }
-    public void setIdTicket(Long id) { this.idTicket = id; }
+    public Ticket() {}
+
+    // ── Getters & Setters ──────────────────────────────────────────────────────
+
+    public Long getId() { return id; }
+
     public String getTitulo() { return titulo; }
-    public String getDescripcion() { return descripcion; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
+
     public String getPrioridad() { return prioridad; }
+    public void setPrioridad(String prioridad) { this.prioridad = prioridad; }
+
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+
     public String getResolucion() { return resolucion; }
-    public void setResolucion(String r) { this.resolucion = r; }
+    public void setResolucion(String resolucion) { this.resolucion = resolucion; }
+
     public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+
     public LocalDateTime getFechaCierre() { return fechaCierre; }
+    public void setFechaCierre(LocalDateTime fechaCierre) { this.fechaCierre = fechaCierre; }
+
     public Usuario getSolicitante() { return solicitante; }
-    public void setSolicitante(Usuario u) { this.solicitante = u; }
+    public void setSolicitante(Usuario solicitante) { this.solicitante = solicitante; }
+
     public Usuario getTecnico() { return tecnico; }
-    public void setTecnico(Usuario u) { this.tecnico = u; }
+    public void setTecnico(Usuario tecnico) { this.tecnico = tecnico; }
+
     public CategoriaTicket getCategoria() { return categoria; }
-    public void setCategoria(CategoriaTicket c) { this.categoria = c; }
+    public void setCategoria(CategoriaTicket categoria) { this.categoria = categoria; }
 }
