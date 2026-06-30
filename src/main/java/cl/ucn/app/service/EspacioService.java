@@ -3,6 +3,7 @@ package cl.ucn.app.service;
 import cl.ucn.app.model.Espacio;
 import cl.ucn.app.repository.EspacioRepository;
 import java.util.List;
+import java.util.Optional;
 
 public class EspacioService {
     private final EspacioRepository espacioRepository;
@@ -19,7 +20,7 @@ public class EspacioService {
         return espacioRepository.findByTipo(tipo);
     }
 
-    public void registrarEspacio(Espacio espacio) {
-        espacioRepository.save(espacio);
+    public Optional<Espacio> obtenerPorId(Long id) {
+        return espacioRepository.findById(id);
     }
 }

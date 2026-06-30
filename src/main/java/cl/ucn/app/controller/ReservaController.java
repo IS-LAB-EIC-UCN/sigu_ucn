@@ -17,8 +17,8 @@ public class ReservaController {
         Map<String, String> body = ctx.bodyAsClass(Map.class);
         try {
             Reserva reserva = reservaService.crearReserva(
-                body.get("usuarioId"),
-                body.get("espacioId"),
+                Long.parseLong(body.get("usuarioId")),
+                Long.parseLong(body.get("espacioId")),
                 LocalDateTime.parse(body.get("fechaInicio")),
                 LocalDateTime.parse(body.get("fechaFin"))
             );
@@ -29,20 +29,22 @@ public class ReservaController {
     }
 
     public void getAll(Context ctx) {
-        String usuarioId = ctx.queryParam("usuarioId");
-        String espacioId = ctx.queryParam("espacioId");
+        String usuarioIdStr = ctx.queryParam("usuarioId");
+        String espacioIdStr = ctx.queryParam("espacioId");
         String estado = ctx.queryParam("estado");
         String desdeStr = ctx.queryParam("desde");
         String hastaStr = ctx.queryParam("hasta");
 
-        LocalDateTime desde = (desdeStr != null) ? LocalDateTime.parse(desdeStr) : null;
-        LocalDateTime hasta = (hastaStr != null) ? LocalDateTime.parse(hastaStr) : null;
+        Long usuarioId = (usuarioIdStr != null && !usuarioIdStr.isEmpty()) ? Long.parseLong(usuarioIdStr) : null;
+        Long espacioId = (espacioIdStr != null && !espacioIdStr.isEmpty()) ? Long.parseLong(espacioIdStr) : null;
+        LocalDateTime desde = (desdeStr != null && !desdeStr.isEmpty()) ? LocalDateTime.parse(desdeStr) : null;
+        LocalDateTime hasta = (hastaStr != null && !hastaStr.isEmpty()) ? LocalDateTime.parse(hastaStr) : null;
 
         ctx.json(reservaService.buscarConFiltros(usuarioId, espacioId, estado, desde, hasta));
     }
 
     public void updateStatus(Context ctx) {
-        String id = ctx.pathParam("id");
+        String idStr = ctx.pathParam("id");
         String estadoParam = ctx.queryParam("estado");
         
         if (estadoParam == null) {
@@ -51,13 +53,11 @@ public class ReservaController {
         }
 
         try {
-            Reserva.Estado nuevoEstado = Reserva.Estado.valueOf(estadoParam.toUpperCase());
-            Reserva actualizada = reservaService.actualizarEstado(id, nuevoEstado);
-            ctx.status(200).json(actualizada); // Ahora devuelve el objeto actualizado
-        } catch (IllegalArgumentException e) {
-            ctx.status(400).result("Estado inválido o reserva no encontrada");
+            Long id = Long.parseLong(idStr);
+            Reserva actualizada = reservaService.actualizarEstado(id, estadoParam.toUpperCase());
+            ctx.status(200).json(actualizada);
         } catch (Exception e) {
-            ctx.status(500).result("Error interno: " + e.getMessage());
+            ctx.status(400).result("Error: " + e.getMessage());
         }
     }
 }

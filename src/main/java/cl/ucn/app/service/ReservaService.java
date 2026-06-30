@@ -6,9 +6,10 @@ import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.EspacioRepository;
 import cl.ucn.app.repository.ReservaRepository;
 import cl.ucn.app.repository.UsuarioRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 public class ReservaService {
     private final ReservaRepository reservaRepository;
@@ -21,7 +22,7 @@ public class ReservaService {
         this.espacioRepository = espacioRepository;
     }
 
-    public Reserva crearReserva(String usuarioId, String espacioId, LocalDateTime inicio, LocalDateTime fin) {
+    public Reserva crearReserva(Long usuarioId, Long espacioId, LocalDateTime inicio, LocalDateTime fin) {
         if (inicio.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("No se pueden crear reservas en el pasado.");
         }
@@ -34,31 +35,35 @@ public class ReservaService {
         Espacio espacio = espacioRepository.findById(espacioId)
             .orElseThrow(() -> new IllegalArgumentException("Espacio no encontrado."));
 
-        if (reservaRepository.hasOverlap(espacioId, inicio, fin)) {
+        LocalDate fechaReserva = inicio.toLocalDate();
+        LocalTime horaInicio = inicio.toLocalTime();
+        LocalTime horaFin = fin.toLocalTime();
+
+        if (reservaRepository.hasOverlap(espacioId, fechaReserva, horaInicio, horaFin)) {
             throw new IllegalStateException("El espacio ya está reservado en ese horario.");
         }
 
         Reserva reserva = new Reserva(
-            UUID.randomUUID().toString(),
+            fechaReserva,
+            horaInicio,
+            horaFin,
+            "PENDIENTE",
             usuario,
-            espacio,
-            inicio,
-            fin,
-            Reserva.Estado.PENDIENTE
+            espacio
         );
         reservaRepository.save(reserva);
         return reserva;
     }
 
-    public Reserva actualizarEstado(String reservaId, Reserva.Estado nuevoEstado) {
+    public Reserva actualizarEstado(Long reservaId, String nuevoEstado) {
         Reserva reserva = reservaRepository.findById(reservaId)
             .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada."));
-        reserva.setEstado(nuevoEstado);
+        reserva.setEstado(nuevoEstado.toUpperCase());
         reservaRepository.save(reserva);
         return reserva;
     }
 
-    public List<Reserva> buscarConFiltros(String usuarioId, String espacioId, String estado, LocalDateTime desde, LocalDateTime hasta) {
+    public List<Reserva> buscarConFiltros(Long usuarioId, Long espacioId, String estado, LocalDateTime desde, LocalDateTime hasta) {
         return reservaRepository.findWithFilters(usuarioId, espacioId, estado, desde, hasta);
     }
 
@@ -66,7 +71,7 @@ public class ReservaService {
         return reservaRepository.findAll();
     }
 
-    public List<Reserva> obtenerPorUsuario(String usuarioId) {
+    public List<Reserva> obtenerPorUsuario(Long usuarioId) {
         return reservaRepository.findByUsuarioId(usuarioId);
     }
 }

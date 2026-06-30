@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface EspacioRepository {
     void save(Espacio espacio);
-    Optional<Espacio> findById(String id);
+    Optional<Espacio> findById(Long id);
     List<Espacio> findAll();
     List<Espacio> findByTipo(String tipo);
 }

@@ -38,17 +38,18 @@ public class ReservaServiceTest {
         LocalDateTime inicio = LocalDateTime.now().plusDays(1);
         LocalDateTime fin = inicio.plusHours(2);
         
-        Usuario user = new Usuario("u1", "Test", "test@ucn.cl", "pass", Rol.ESTUDIANTE);
-        Espacio space = new Espacio("e1", "Sala", "SALA", 10, true);
+        Rol rol = new Rol("ESTUDIANTE");
+        Usuario user = new Usuario("Test", "test@ucn.cl", "pass", true, rol);
+        Espacio space = new Espacio("Sala", "SALA", 10, true);
 
-        when(usuarioRepository.findById("u1")).thenReturn(Optional.of(user));
-        when(espacioRepository.findById("e1")).thenReturn(Optional.of(space));
-        when(reservaRepository.hasOverlap(eq("e1"), any(), any())).thenReturn(false);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(espacioRepository.findById(1L)).thenReturn(Optional.of(space));
+        when(reservaRepository.hasOverlap(eq(1L), any(), any(), any())).thenReturn(false);
 
-        Reserva reserva = reservaService.crearReserva("u1", "e1", inicio, fin);
+        Reserva reserva = reservaService.crearReserva(1L, 1L, inicio, fin);
 
         assertNotNull(reserva);
-        assertEquals(Reserva.Estado.PENDIENTE, reserva.getEstado());
+        assertEquals("PENDIENTE", reserva.getEstado());
     }
 
     @Test
@@ -57,7 +58,7 @@ public class ReservaServiceTest {
         LocalDateTime fin = inicio.plusHours(2);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            reservaService.crearReserva("u1", "e1", inicio, fin);
+            reservaService.crearReserva(1L, 1L, inicio, fin);
         });
     }
 
@@ -66,15 +67,16 @@ public class ReservaServiceTest {
         LocalDateTime inicio = LocalDateTime.now().plusDays(1);
         LocalDateTime fin = inicio.plusHours(2);
         
-        Usuario user = new Usuario("u1", "Test", "test@ucn.cl", "pass", Rol.ESTUDIANTE);
-        Espacio space = new Espacio("e1", "Sala", "SALA", 10, true);
+        Rol rol = new Rol("ESTUDIANTE");
+        Usuario user = new Usuario("Test", "test@ucn.cl", "pass", true, rol);
+        Espacio space = new Espacio("Sala", "SALA", 10, true);
 
-        when(usuarioRepository.findById("u1")).thenReturn(Optional.of(user));
-        when(espacioRepository.findById("e1")).thenReturn(Optional.of(space));
-        when(reservaRepository.hasOverlap(eq("e1"), any(), any())).thenReturn(true);
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(espacioRepository.findById(1L)).thenReturn(Optional.of(space));
+        when(reservaRepository.hasOverlap(eq(1L), any(), any(), any())).thenReturn(true);
 
         assertThrows(IllegalStateException.class, () -> {
-            reservaService.crearReserva("u1", "e1", inicio, fin);
+            reservaService.crearReserva(1L, 1L, inicio, fin);
         });
     }
 }

@@ -12,7 +12,7 @@ public class EspacioController {
 
     public void getAll(Context ctx) {
         String tipo = ctx.queryParam("tipo");
-        if (tipo != null) {
+        if (tipo != null && !tipo.isEmpty()) {
             ctx.json(espacioService.obtenerPorTipo(tipo));
         } else {
             ctx.json(espacioService.obtenerTodos());
