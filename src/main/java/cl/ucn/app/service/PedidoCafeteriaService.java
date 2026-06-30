@@ -23,6 +23,12 @@ public class PedidoCafeteriaService {
         this.detalleRepository = new DetallePedidoCafeteriaRepository();
     }
 
+    public PedidoCafeteriaService(PedidoCafeteriaRepository pedidoRepository,ProductoCafeteriaRepository productoRepository,DetallePedidoCafeteriaRepository detalleRepository) {
+
+        this.pedidoRepository = pedidoRepository;
+        this.productoRepository = productoRepository;
+        this.detalleRepository = detalleRepository;}
+
     public BigDecimal calcularSubtotal(ProductoCafeteria producto, int cantidad) {
         if (producto == null) {
             throw new IllegalArgumentException("El producto no puede ser nulo.");
