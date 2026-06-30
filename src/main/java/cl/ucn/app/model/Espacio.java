@@ -67,4 +67,8 @@ public class Espacio {
     public void setDisponible(Boolean disponible) {
         this.disponible = disponible;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

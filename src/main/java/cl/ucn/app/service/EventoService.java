@@ -25,6 +25,14 @@ public class EventoService {
         this.usuarioRepository = new UsuarioRepository();
         this.inscripcionRepository = new InscripcionRepository();
     }
+    // Constructor para los tests
+    public EventoService(EventoRepository eventoRepository,
+                         UsuarioRepository usuarioRepository,
+                         InscripcionRepository inscripcionRepository) {
+        this.eventoRepository = eventoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.inscripcionRepository = inscripcionRepository;
+    }
 
     public Evento registrar(Evento evento) {
 

@@ -13,6 +13,11 @@ public class ExpositorService {
         this.expositorRepository = new ExpositorRepository();
     }
 
+    // Constructor para los tests
+    public ExpositorService(ExpositorRepository expositorRepository) {
+        this.expositorRepository = expositorRepository;
+    }
+
     public Expositor registrar(Expositor expositor) {
         if (expositor.getNombre() == null || expositor.getNombre().isBlank()) {
             throw new IllegalArgumentException("El nombre del expositor es obligatorio.");
