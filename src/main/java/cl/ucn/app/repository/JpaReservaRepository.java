@@ -19,7 +19,11 @@ public class JpaReservaRepository implements ReservaRepository {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.merge(reserva);
+            if (reserva.getId() == null) {
+                em.persist(reserva);
+            } else {
+                em.merge(reserva);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();

@@ -14,7 +14,11 @@ public class JpaEspacioRepository implements EspacioRepository {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.merge(espacio);
+            if (espacio.getId() == null) {
+                em.persist(espacio);
+            } else {
+                em.merge(espacio);
+            }
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();

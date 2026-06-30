@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGU UCN - Test Endpoints</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center text-blue-800">SIGU UCN - Prueba de Endpoints</h1>
+
+        <!-- Auth Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Registro</h2>
+                <form id="registerForm" class="space-y-3">
+                    <input type="text" id="regNombre" placeholder="Nombre" class="w-full p-2 border rounded" required>
+                    <input type="email" id="regEmail" placeholder="Email" class="w-full p-2 border rounded" required>
+                    <input type="password" id="regPass" placeholder="Password" class="w-full p-2 border rounded" required>
+                    <select id="regRol" class="w-full p-2 border rounded" required>
+                        <option value="ESTUDIANTE">Estudiante</option>
+                        <option value="PROFESOR">Profesor</option>
+                        <option value="ADMINISTRADOR">Administrador</option>
+                        <option value="FUNCIONARIO">Funcionario</option>
+                    </select>
+                    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Registrar</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Login</h2>
+                <form id="loginForm" class="space-y-3">
+                    <input type="email" id="loginEmail" placeholder="Email" class="w-full p-2 border rounded" required>
+                    <input type="password" id="loginPass" placeholder="Password" class="w-full p-2 border rounded" required>
+                    <button type="submit" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700">Login</button>
+                </form>
+                <div id="loginStatus" class="mt-4 text-sm font-medium"></div>
+            </div>
+        </div>
+
+        <!-- Espacios Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Espacios</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="filterTipo" placeholder="Filtrar por tipo" class="p-2 border rounded text-sm">
+                    <button onclick="fetchEspacios()" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Cargar Todos</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b bg-gray-50">
+                            <th class="p-2">ID</th>
+                            <th class="p-2">Nombre</th>
+                            <th class="p-2">Tipo</th>
+                            <th class="p-2">Capacidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="espaciosTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reservas Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md lg:col-span-1">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Crear Reserva</h2>
+                <form id="reservaForm" class="space-y-3">
+                    <input type="text" id="resUsuarioId" placeholder="Usuario ID" class="w-full p-2 border rounded" required>
+                    <input type="text" id="resEspacioId" placeholder="Espacio ID" class="w-full p-2 border rounded" required>
+                    <div class="text-xs text-gray-500">Fecha Inicio (YYYY-MM-DDTHH:mm:ss)</div>
+                    <input type="text" id="resInicio" placeholder="2026-06-10T09:00:00" class="w-full p-2 border rounded" required>
+                    <div class="text-xs text-gray-500">Fecha Fin (YYYY-MM-DDTHH:mm:ss)</div>
+                    <input type="text" id="resFin" placeholder="2026-06-10T11:00:00" class="w-full p-2 border rounded" required>
+                    <button type="submit" class="w-full bg-purple-600 text-white p-2 rounded hover:bg-purple-700">Reservar</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-700">Listado de Reservas</h2>
+                    <button onclick="fetchReservas()" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Refrescar</button>
+                </div>
+                <div class="mb-4 grid grid-cols-2 gap-2">
+                    <input type="text" id="filterResUsuario" placeholder="Usuario ID" class="p-2 border rounded text-sm">
+                    <select id="filterResEstado" class="p-2 border rounded text-sm">
+                        <option value="">Cualquier Estado</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="APROBADA">Aprobada</option>
+                        <option value="CANCELADA">Cancelada</option>
+                    </select>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead>
+                            <tr class="border-b bg-gray-50">
+                                <th class="p-2">ID</th>
+                                <th class="p-2">Espacio</th>
+                                <th class="p-2">Estado</th>
+                                <th class="p-2">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reservasTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Log -->
+        <div class="bg-black text-green-400 p-4 rounded shadow-lg font-mono text-xs h-64 overflow-y-auto" id="log">
+            <div>> Bienvenido al SIGU Test Tool</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+
+        function log(message, data = null) {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'mb-1 border-b border-gray-800 pb-1';
+            entry.innerHTML = `<span class="text-gray-500">[${new Date().toLocaleTimeString()}]</span> ${message}`;
+            if (data) {
+                const pre = document.createElement('pre');
+                pre.className = 'text-blue-300 mt-1';
+                pre.textContent = JSON.stringify(data, null, 2);
+                entry.appendChild(pre);
+            }
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method,
+                    headers: { 'Content-Type': 'application/json' }
+                };
+                if (body) options.body = JSON.stringify(body);
+                
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                const data = await response.json().catch(() => null);
+                
+                if (response.ok) {
+                    log(`${method} ${endpoint} - OK`, data);
+                    return data;
+                } else {
+                    const errorText = await response.text();
+                    log(`${method} ${endpoint} - ERROR (${response.status})`, errorText || data);
+                    return null;
+                }
+            } catch (error) {
+                log(`${method} ${endpoint} - EXCEPTION`, error.message);
+                return null;
+            }
+        }
+
+        // Auth
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await apiCall('/register', 'POST', {
+                nombre: document.getElementById('regNombre').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPass').value,
+                rol: document.getElementById('regRol').value
+            });
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const res = await apiCall('/api/login', 'POST', {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPass').value
+            });
+            const status = document.getElementById('loginStatus');
+            if (res) {
+                status.innerText = `Logueado como: ${res.nombre} (ID: ${res.id})`;
+                status.className = 'mt-4 text-sm font-medium text-green-600';
+            } else {
+                status.innerText = 'Login fallido';
+                status.className = 'mt-4 text-sm font-medium text-red-600';
+            }
+        });
+
+        // Espacios
+        async function fetchEspacios() {
+            const tipo = document.getElementById('filterTipo').value;
+            const endpoint = tipo ? `/espacios?tipo=${tipo}` : '/espacios';
+            const data = await apiCall(endpoint);
+            if (data) {
+                const tbody = document.getElementById('espaciosTableBody');
+                tbody.innerHTML = data.map(e => `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-2">${e.id}</td>
+                        <td class="p-2 font-medium">${e.nombre}</td>
+                        <td class="p-2"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${e.tipo}</span></td>
+                        <td class="p-2">${e.capacidad}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Reservas
+        document.getElementById('reservaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await apiCall('/reservas', 'POST', {
+                usuarioId: document.getElementById('resUsuarioId').value,
+                espacioId: document.getElementById('resEspacioId').value,
+                fechaInicio: document.getElementById('resInicio').value,
+                fechaFin: document.getElementById('resFin').value
+            });
+            fetchReservas();
+        });
+
+        async function fetchReservas() {
+            const usuarioId = document.getElementById('filterResUsuario').value;
+            const estado = document.getElementById('filterResEstado').value;
+            let query = [];
+            if (usuarioId) query.push(`usuarioId=${usuarioId}`);
+            if (estado) query.push(`estado=${estado}`);
+            
+            const endpoint = query.length > 0 ? `/reservas?${query.join('&')}` : '/reservas';
+            const data = await apiCall(endpoint);
+            if (data) {
+                const tbody = document.getElementById('reservasTableBody');
+                tbody.innerHTML = data.map(r => `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-2 font-mono text-xs">${String(r.id).substring(0,8)}...</td>
+                        <td class="p-2">${r.espacio ? r.espacio.nombre : 'N/A'}</td>
+                        <td class="p-2">
+                            <span class="px-2 py-1 rounded text-xs ${
+                                r.estado === 'APROBADA' ? 'bg-green-100 text-green-800' :
+                                r.estado === 'PENDIENTE' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                            }">${r.estado}</span>
+                        </td>
+                        <td class="p-2 flex gap-1">
+                            <button onclick="updateReservaStatus('${r.id}', 'APROBADA')" class="bg-green-500 text-white px-2 py-1 rounded text-xs">OK</button>
+                            <button onclick="updateReservaStatus('${r.id}', 'CANCELADA')" class="bg-red-500 text-white px-2 py-1 rounded text-xs">X</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function updateReservaStatus(id, estado) {
+            await apiCall(`/reservas/${id}?estado=${estado}`, 'PATCH');
+            fetchReservas();
+        }
+
+        // Initial load
+        fetchEspacios();
+        fetchReservas();
+    </script>
+</body>
+</html>
