@@ -1,18 +1,18 @@
 package cl.ucn.app.controller;
 
-import cl.ucn.app.model.Espacio;
-import cl.ucn.app.model.Reserva;
-import cl.ucn.app.model.Vehiculo;
-import cl.ucn.app.service.EstacionamientoService;
-import io.javalin.http.Context;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cl.ucn.app.model.Espacio;
 import cl.ucn.app.model.RegistroEstacionamiento;
+import cl.ucn.app.model.Reserva;
+import cl.ucn.app.model.Vehiculo;
+import cl.ucn.app.service.EstacionamientoService;
 import cl.ucn.app.service.RegistroEstacionamientoService;
+import io.javalin.http.Context;
 
 
 public class EstacionamientoController {
@@ -527,6 +527,63 @@ public class EstacionamientoController {
             ctx.status(500);
             ctx.result("Error al registrar usuario y vehículo: " + causa.getMessage());
         }
+    }
+    public void showPanel(Context ctx) {
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+        if (usuarioId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+        String usuarioRol    = ctx.sessionAttribute("usuarioRol");
+
+        // ── Espacios + puestos ocupados (mapa visual) ──────────
+        List<Espacio> espacios = estacionamientoService.obtenerEspaciosPorRol(usuarioRol);
+        List<Reserva> reservasActivas = estacionamientoService.obtenerReservasActivas();
+
+        Map<Long, List<Integer>> puestosOcupados = reservasActivas.stream()
+                .filter(r -> r.getPuestoNumero() != null)
+                .collect(
+                        java.util.stream.Collectors.groupingBy(
+                                r -> r.getEspacio().getId(),
+                                java.util.stream.Collectors.mapping(
+                                        Reserva::getPuestoNumero,
+                                        java.util.stream.Collectors.toList()
+                                )
+                        )
+                );
+
+        // ── Datos según rol ────────────────────────────────────
+        List<Reserva> misReservas;
+        List<Reserva> reservasPendientes;
+        List<cl.ucn.app.model.RegistroEstacionamiento> registros;
+
+        if ("ADMIN".equals(usuarioRol)) {
+            misReservas          = java.util.List.of();
+            reservasPendientes   = estacionamientoService.obtenerReservasPendientes();
+            registros            = registroEstacionamientoService.listarHistorial();
+        } else {
+            misReservas          = estacionamientoService.obtenerReservasPorUsuario(usuarioId);
+            reservasPendientes   = java.util.List.of();
+            registros            = registroEstacionamientoService.listarHistorialPorUsuario(usuarioId);
+        }
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("title",              "Gestión de Estacionamientos");
+        model.put("usuarioNombre",      usuarioNombre);
+        model.put("usuarioRol",         usuarioRol);
+        model.put("espacios",           espacios);
+        model.put("puestosOcupados",    puestosOcupados);
+        model.put("misReservas",        misReservas);
+        model.put("reservasPendientes", reservasPendientes);
+        model.put("registros",          registros);
+        model.put("usuarioFiltro",      null);
+        model.put("patenteFiltro",      null);
+        model.put("fechaFiltro",        null);
+
+        ctx.render("panel-estacionamiento.jte", model);
     }
 
 }

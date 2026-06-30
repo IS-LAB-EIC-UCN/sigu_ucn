@@ -12,7 +12,12 @@ public final class EstacionamientoRoutes {
 
         EstacionamientoController controller =
                 new EstacionamientoController();
-
+                
+        config.routes.get(
+                "/estacionamientos/panel",
+                controller::showPanel
+        );
+        
         config.routes.get(
                 "/estacionamientos",
                 controller::showEstacionamientos

@@ -39,44 +39,8 @@
                 <li><a href="#">Grupo 6 - Eventos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>
                 <li><a href="#">Grupo 8 - Tutorías</a></li>
-
-                <li><a href="/estacionamientos">Grupo 9 - Gestión de estacionamientos</a></li>
-
-                @if(usuarioNombre != null && usuarioNombre.equals("Administrador General"))
-
-                    <li>
-                        <a href="/estacionamientos/usuarios-vehiculos/nuevo">
-                            Registrar usuario y vehículo
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/estacionamientos/reservas-pendientes">
-                            Reservas pendientes
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/estacionamientos/historial">
-                            Historial de estacionamientos
-                        </a>
-                    </li>
-
-                @else
-
-                    <li>
-                        <a href="/mis-reservas/estacionamientos">
-                            Mis reservas
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/estacionamientos/historial">
-                            Historial
-                        </a>
-                    </li>
-
-                @endif
+                <li><a href="/estacionamientos/panel">Grupo 9 - Gestión de estacionamientos</a></li>
+                
             </ul>
         </aside>
     @endif
