@@ -67,13 +67,12 @@ public class testIntegracionInventario {
 
     @Test
     public void testPedir_y_Aceptar_Prestamo() {
-        Recurso recurso_mock = new Recurso();
-        Usuario usuario_mock = new Usuario();
-        recurso_mock.setStock(5);
-
+        Mockito.when(prestamo_mock.getRecurso()).thenReturn(recurso_mock);
+        Mockito.when(recurso_mock.getStock()).thenReturn(5);
         Mockito.when(recursoRepository.findById(Mockito.anyLong())).thenReturn(recurso_mock);
         Mockito.when(usuarioRepository.findById(Mockito.anyLong())).thenReturn(usuario_mock);
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);
+
 
         prestamoService.pedirPrestamo(1L, 2, 1L);
 

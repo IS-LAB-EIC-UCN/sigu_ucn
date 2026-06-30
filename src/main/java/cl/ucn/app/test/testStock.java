@@ -67,6 +67,9 @@ public class testStock {
         recurso_mock.setStock(15);
 
         Mockito.when(recursoRepository.findById(Mockito.anyLong())).thenReturn(recurso_mock);
+        Mockito.when(movimientoFactoryService.crearSalida(
+                Mockito.any(), Mockito.anyInt(), Mockito.any(), Mockito.any())
+        ).thenReturn(salida_mock);
 
         assertTrue(stockService.crearSalida(1L,10, LocalDate.now(), LocalTime.now()));
     }

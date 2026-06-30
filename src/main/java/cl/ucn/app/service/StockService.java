@@ -83,6 +83,7 @@ public class StockService implements IObserver {
             console.log("Error, no se ha encontrado al recurso, reintentar.");
             return false;
         }
+        recurso.setStock(recurso.getStock() + cantidad);
 
         MovimientoInventario entrada = null;
 

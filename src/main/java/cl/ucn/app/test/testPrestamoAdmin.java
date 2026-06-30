@@ -35,6 +35,13 @@ public class testPrestamoAdmin {
     @Mock
     private MovimientoInventarioRepository movimientoInventarioRepository;
 
+    @Mock
+    private Recurso recurso_mock;
+    @Mock
+    private Prestamo prestamo_mock;
+    @Mock
+    private Usuario usuario_mock;
+
     private PrestamoService prestamoService;
 
     @BeforeEach
@@ -60,8 +67,8 @@ public class testPrestamoAdmin {
 
     @Test
     public void testAceptarPrestamo() {
-        Prestamo prestamo_mock = new Prestamo();
-
+        Mockito.when(prestamo_mock.getRecurso()).thenReturn(recurso_mock);
+        Mockito.when(recurso_mock.getStock()).thenReturn(5);
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);
 
         assertTrue(prestamoService.editarPrestamo(1L, "PRESTAMO ACEPTADO"));
@@ -83,8 +90,8 @@ public class testPrestamoAdmin {
 
     @Test
     public void testConfirmarDevolucion() {
-        Prestamo prestamo_mock = new Prestamo();
-
+        Mockito.when(prestamo_mock.getRecurso()).thenReturn(recurso_mock);
+        Mockito.when(recurso_mock.getStock()).thenReturn(5);
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);
 
         assertTrue(prestamoService.editarPrestamo(1L, "DEVOLUCION CONFIRMADA"));
