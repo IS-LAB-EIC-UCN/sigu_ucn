@@ -13,6 +13,7 @@ public interface ITallerService {
     String inscribirAlumno(Long tallerId, Long usuarioId) throws Exception;
     void cancelarInscripcion(Long tallerId, Long usuarioId) throws Exception;
     List<Taller> obtenerTalleres(Long usuarioId, String rol);
+    List<Taller> obtenerTalleres(Long usuarioId, String rol, String categoria, Character bloque);
     List<Inscripcion> obtenerMisInscripciones(Long usuarioId);
     List<Inscripcion> obtenerInscripcionesPorTaller(Long tallerId, Long docenteId) throws Exception;
     List<Usuario> obtenerDocentes();
@@ -20,4 +21,7 @@ public interface ITallerService {
     void eliminarTaller(Long tallerId) throws Exception;
     Taller obtenerTallerPorId(Long id) throws Exception;
     void editarTaller(Long tallerId, String nombre, String descripcion, String categoria, Integer cupos, LocalDate inicio, LocalDate fin, Character bloque, Long profesorId, Long espacioId) throws Exception;
+    void solicitarAnulacion(Long tallerId, Long usuarioId, String justificacion) throws Exception;
+    void procesarAnulacion(Long tallerId, Long usuarioId, boolean aprobada) throws Exception;
+    List<Inscripcion> obtenerAnulacionesPendientes() throws Exception;
 }

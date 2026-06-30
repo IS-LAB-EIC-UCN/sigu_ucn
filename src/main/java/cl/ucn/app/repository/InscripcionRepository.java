@@ -133,4 +133,17 @@ public class InscripcionRepository {
             em.close();
         }
     }
+
+    // Busca todas las inscripciones según su estado
+    public List<Inscripcion> findByEstado(String estado) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Inscripcion> query = em.createQuery(
+                    "SELECT i FROM Inscripcion i JOIN FETCH i.usuario u JOIN FETCH i.taller t WHERE i.estado = :estado", Inscripcion.class);
+            query.setParameter("estado", estado);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

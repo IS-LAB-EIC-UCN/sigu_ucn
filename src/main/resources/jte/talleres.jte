@@ -13,6 +13,9 @@
 @param List<Espacio> espacios
 @param String successMsg = ""
 @param String errorMsg = ""
+@param String categoriaSeleccionada = ""
+@param String bloqueSeleccionado = ""
+@param List<Inscripcion> anulacionesPendientes = null
 
 @template.layout.main(
     title = title,
@@ -248,6 +251,8 @@
                                 
                                 @if("INSCRITO".equals(i.getEstado()))
                                     <span class="badge badge-inscrito">Cupo Confirmado</span>
+                                @elseif("ANULACION_PENDIENTE".equals(i.getEstado()))
+                                    <span class="badge" style="background: #fef08a; color: #854d0e;">Anulación Pendiente</span>
                                 @else
                                     <span class="badge badge-espera">En Lista de Espera</span>
                                 @endif
@@ -257,9 +262,16 @@
                                 <div class="card-info"><strong>Lugar:</strong> ${i.getTaller().getEspacio() != null ? i.getTaller().getEspacio().getNombre() : "Por definir"}</div>
                                 <div class="card-info"><strong>Bloque Horario:</strong> Bloque ${i.getTaller().getBloqueHorario()}</div>
                                 
-                                <form action="/talleres/${i.getTaller().getId()}/cancelar" method="POST">
-                                    <button type="submit" class="btn btn-danger">Cancelar Inscripción</button>
-                                </form>
+                                @if("INSCRITO".equals(i.getEstado()))
+                                    <form action="/talleres/${i.getTaller().getId()}/solicitar-anulacion" method="POST" style="margin-top: 1.5rem;">
+                                        <textarea name="justificacion" class="form-control" rows="2" placeholder="Justificación de anulación" required style="margin-bottom: 0.5rem; width: calc(100% - 1.5rem); resize: vertical;"></textarea>
+                                        <button type="submit" class="btn btn-danger" style="margin-top: 0;">Solicitar Anulación</button>
+                                    </form>
+                                @elseif("EN_ESPERA".equals(i.getEstado()))
+                                    <form action="/talleres/${i.getTaller().getId()}/cancelar" method="POST">
+                                        <button type="submit" class="btn btn-danger">Cancelar Inscripción</button>
+                                    </form>
+                                @endif
                             </div>
                         @endif
                     @endfor
@@ -268,6 +280,34 @@
 
             <!-- SECCIÓN ESTUDIANTE: CATÁLOGO -->
             <h2 class="section-title">Catálogo de Talleres</h2>
+
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+                <form action="/talleres" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155;">Categoría</label>
+                        <input type="text" name="categoria" class="form-control" placeholder="Ej. Deportes, Artes..." value="${categoriaSeleccionada}">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem; color: #334155;">Bloque Horario</label>
+                        <select name="bloque" class="form-control">
+                            <option value="">Todos los bloques</option>
+                            <option value="A" selected="${"A".equals(bloqueSeleccionado)}">Bloque A</option>
+                            <option value="B" selected="${"B".equals(bloqueSeleccionado)}">Bloque B</option>
+                            <option value="C" selected="${"C".equals(bloqueSeleccionado)}">Bloque C</option>
+                            <option value="D" selected="${"D".equals(bloqueSeleccionado)}">Bloque D</option>
+                            <option value="E" selected="${"E".equals(bloqueSeleccionado)}">Bloque E</option>
+                            <option value="F" selected="${"F".equals(bloqueSeleccionado)}">Bloque F</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 0; padding: 0.75rem 1.5rem;">Filtrar</button>
+                    </div>
+                    <div>
+                        <a href="/talleres" class="btn" style="display: inline-block; background: #e2e8f0; color: #475569; margin-top: 0; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 8px;">Limpiar</a>
+                    </div>
+                </form>
+            </div>
+
             @if(talleres == null || talleres.isEmpty())
                 <div class="empty-state">No hay talleres disponibles en este momento.</div>
             @else
@@ -296,6 +336,50 @@
             @endif
 
         @elseif(rol != null && "ADMIN".equalsIgnoreCase(rol.trim()))
+            <!-- SECCIÓN ADMIN: ANULACIONES -->
+            <h2 class="section-title">Anulaciones Pendientes</h2>
+            <div style="margin-bottom: 2rem;">
+                @if(anulacionesPendientes == null || anulacionesPendientes.isEmpty())
+                    <div class="empty-state">No hay solicitudes de anulación pendientes.</div>
+                @else
+                    <div class="table-container">
+                        <table class="modern-table">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Taller</th>
+                                <th>Justificación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(cl.ucn.app.model.Inscripcion i : anulacionesPendientes)
+                                <tr>
+                                    <td>${i.getUsuario().getNombre()}</td>
+                                    <td>${i.getTaller().getNombre()}</td>
+                                    <td>${i.getJustificacion() != null ? i.getJustificacion() : "-"}</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <form action="/talleres/${i.getTaller().getId()}/procesar-anulacion" method="POST" style="margin: 0;">
+                                                <input type="hidden" name="usuarioId" value="${i.getUsuario().getId()}">
+                                                <input type="hidden" name="aprobada" value="true">
+                                                <button type="submit" style="background: #10b981; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Aprobar</button>
+                                            </form>
+                                            <form action="/talleres/${i.getTaller().getId()}/procesar-anulacion" method="POST" style="margin: 0;">
+                                                <input type="hidden" name="usuarioId" value="${i.getUsuario().getId()}">
+                                                <input type="hidden" name="aprobada" value="false">
+                                                <button type="submit" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Rechazar</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endfor
+                        </tbody>
+                        </table>
+                    </div>
+                @endif
+            </div>
+
             <!-- SECCIÓN ADMIN -->
             <h2 class="section-title">Panel de Control: Talleres</h2>
             

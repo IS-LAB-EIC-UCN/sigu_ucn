@@ -170,6 +170,34 @@ public class TallerServiceTest {
     }
 
     @Test
+    public void alProcesarAnulacion_SiSeApruebaYAlguienEstaEnEspera_DebePasarAInscrito() throws Exception {
+        Inscripcion inscripcionPendiente = new Inscripcion();
+        inscripcionPendiente.setEstado("ANULACION_PENDIENTE");
+        Inscripcion inscripcionEnEspera = new Inscripcion();
+        inscripcionEnEspera.setEstado("EN_ESPERA");
+
+        inscripcionRepo.inscripcionBuscada = inscripcionPendiente;
+        inscripcionRepo.inscripcionEnEspera = inscripcionEnEspera;
+
+        tallerService.procesarAnulacion(1L, 2L, true);
+
+        assertEquals("CANCELADO", inscripcionPendiente.getEstado());
+        assertEquals("INSCRITO", inscripcionEnEspera.getEstado());
+    }
+
+    @Test
+    public void alProcesarAnulacion_SiSeRechaza_DebeVolverAInscrito() throws Exception {
+        Inscripcion inscripcionPendiente = new Inscripcion();
+        inscripcionPendiente.setEstado("ANULACION_PENDIENTE");
+
+        inscripcionRepo.inscripcionBuscada = inscripcionPendiente;
+
+        tallerService.procesarAnulacion(1L, 2L, false);
+
+        assertEquals("INSCRITO", inscripcionPendiente.getEstado());
+    }
+
+    @Test
     public void alEliminarTaller_DebeEliminarInscripcionesYTaller() throws Exception {
         tallerService.eliminarTaller(1L);
         assertTrue(inscripcionRepo.deleteLlamado);

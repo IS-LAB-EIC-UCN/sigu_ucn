@@ -72,60 +72,6 @@
         .btn-csv:hover {
             background: #059669;
         }
-
-        .table-container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .modern-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        .modern-table th {
-            background-color: #f1f5f9;
-            color: #475569;
-            font-weight: 600;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .modern-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
-        }
-
-        .modern-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .modern-table tr:hover {
-            background-color: #f8fafc;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .badge-inscrito { background: #d1fae5; color: #065f46; }
-        .badge-espera { background: #fef3c7; color: #92400e; }
-        .badge-cancelado { background: #fee2e2; color: #991b1b; }
-
-        .empty-state {
-            padding: 3rem;
-            text-align: center;
-            color: #64748b;
-        }
     </style>
 
     <div class="taller-container">
@@ -153,6 +99,8 @@
                             <th>Nombre del Alumno</th>
                             <th>Correo Institucional</th>
                             <th>Estado</th>
+                            <th>Justificación</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -165,8 +113,35 @@
                                         <span class="badge badge-inscrito">Cupo Confirmado</span>
                                     @elseif("EN_ESPERA".equals(i.getEstado()))
                                         <span class="badge badge-espera">En Lista de Espera</span>
+                                    @elseif("ANULACION_PENDIENTE".equals(i.getEstado()))
+                                        <span class="badge" style="background: #fef08a; color: #854d0e;">Anulación Pendiente</span>
                                     @else
                                         <span class="badge badge-cancelado">Cancelado</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(i.getJustificacion() != null)
+                                        <small style="color: #475569;">${i.getJustificacion()}</small>
+                                    @else
+                                        <span style="color: #cbd5e1;">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if("ANULACION_PENDIENTE".equals(i.getEstado()))
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <form action="/talleres/${tallerId}/procesar-anulacion" method="POST" style="margin: 0;">
+                                                <input type="hidden" name="usuarioId" value="${i.getUsuario().getId()}">
+                                                <input type="hidden" name="aprobada" value="true">
+                                                <button type="submit" style="background: #10b981; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Aprobar</button>
+                                            </form>
+                                            <form action="/talleres/${tallerId}/procesar-anulacion" method="POST" style="margin: 0;">
+                                                <input type="hidden" name="usuarioId" value="${i.getUsuario().getId()}">
+                                                <input type="hidden" name="aprobada" value="false">
+                                                <button type="submit" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Rechazar</button>
+                                            </form>
+                                        </div>
+                                    @else
+                                        <span style="color: #cbd5e1;">-</span>
                                     @endif
                                 </td>
                             </tr>

@@ -27,6 +27,9 @@ public class Inscripcion {
     @Column(nullable = false, length = 30)
     private String estado;
 
+    @Column(name = "justificacion", columnDefinition = "TEXT")
+    private String justificacion;
+
     public Inscripcion() {
     }
 
@@ -35,6 +38,14 @@ public class Inscripcion {
         this.usuario = usuario;
         this.fechaInscripcion = fechaInscripcion;
         this.estado = estado;
+    }
+
+    public Inscripcion(Taller taller, Usuario usuario, LocalDateTime fechaInscripcion, String estado, String justificacion) {
+        this.taller = taller;
+        this.usuario = usuario;
+        this.fechaInscripcion = fechaInscripcion;
+        this.estado = estado;
+        this.justificacion = justificacion;
     }
 
     @PrePersist
@@ -82,5 +93,13 @@ public class Inscripcion {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getJustificacion() {
+        return justificacion;
+    }
+
+    public void setJustificacion(String justificacion) {
+        this.justificacion = justificacion;
     }
 }

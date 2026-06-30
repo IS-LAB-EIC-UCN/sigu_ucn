@@ -6,6 +6,7 @@ import cl.ucn.app.model.Taller;
 import io.javalin.http.Context;
 import java.time.LocalDate;
 import cl.ucn.app.model.Usuario;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import cl.ucn.app.service.ITallerService;
@@ -25,36 +26,54 @@ public class TallerController {
             return;
         }
 
-        // Obtener el catálogo general de talleres (el servicio ya filtra si es DOCENTE)
-        List<Taller> talleres = tallerService.obtenerTalleres(usuarioId, rolUsuario);
-        
+        String categoria = ctx.queryParam("categoria");
+        String bloqueStr = ctx.queryParam("bloque");
+        Character bloque = null;
+        if (bloqueStr != null && !bloqueStr.isBlank()) {
+            bloque = bloqueStr.toUpperCase().charAt(0);
+        }
+
+        // Obtener el catálogo general de talleres con filtros (el servicio ya filtra si es DOCENTE)
         // Si es estudiante, traemos adicionalmente su lista de inscripciones personales
         List<Inscripcion> misInscripciones = null;
         if ("ESTUDIANTE".equals(rolUsuario)) {
             misInscripciones = tallerService.obtenerMisInscripciones(usuarioId);
         }
 
+        List<Taller> talleres = new ArrayList<>();
         List<Usuario> docentes = null;
         List<Espacio> espacios = null;
-        if ("ADMIN".equals(rolUsuario)) {
-            docentes = tallerService.obtenerDocentes();
-            espacios = tallerService.obtenerEspacios();
+        List<Inscripcion> anulacionesPendientes = null;
+
+        try {
+            talleres = tallerService.obtenerTalleres(usuarioId, rolUsuario, categoria, bloque);
+            if ("ADMIN".equals(rolUsuario)) {
+                docentes = tallerService.obtenerDocentes();
+                espacios = tallerService.obtenerEspacios();
+                anulacionesPendientes = tallerService.obtenerAnulacionesPendientes();
+            }
+        } catch (Exception e) {
+            // Manejo de error silencioso o log
         }
 
         String successMsg = ctx.queryParam("success");
         String errorMsg = ctx.queryParam("error");
 
-        ctx.render("talleres.jte", Map.of(
-                "title", "Talleres - SIGU-UCN",
-                "usuarioNombre", nombreUsuario != null ? nombreUsuario : "Demo",
-                "rol", rolUsuario,
-                "talleres", talleres,
-                "misInscripciones", misInscripciones != null ? misInscripciones : List.of(),
-                "docentes", docentes != null ? docentes : List.of(),
-                "espacios", espacios != null ? espacios : List.of(),
-                "successMsg", successMsg != null ? successMsg : "",
-                "errorMsg", errorMsg != null ? errorMsg : ""
-        ));
+        java.util.Map<String, Object> model = new java.util.HashMap<>();
+        model.put("title", "Talleres - SIGU-UCN");
+        model.put("usuarioNombre", nombreUsuario != null ? nombreUsuario : "Demo");
+        model.put("rol", rolUsuario);
+        model.put("talleres", talleres);
+        model.put("misInscripciones", misInscripciones != null ? misInscripciones : List.of());
+        model.put("docentes", docentes != null ? docentes : List.of());
+        model.put("espacios", espacios != null ? espacios : List.of());
+        model.put("anulacionesPendientes", anulacionesPendientes != null ? anulacionesPendientes : List.of());
+        model.put("successMsg", successMsg != null ? successMsg : "");
+        model.put("errorMsg", errorMsg != null ? errorMsg : "");
+        model.put("categoriaSeleccionada", categoria != null ? categoria : "");
+        model.put("bloqueSeleccionado", bloqueStr != null ? bloqueStr : "");
+
+        ctx.render("talleres.jte", model);
     }
 
     public static void registrarTaller(Context ctx) {
@@ -259,6 +278,57 @@ public class TallerController {
         } catch (Exception e) {
             String errorMsg = e.getMessage() != null ? e.getMessage() : "Error al eliminar taller";
             ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void solicitarAnulacion(Context ctx) {
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
+
+        if (usuarioId == null || !"ESTUDIANTE".equals(rolUsuario)) {
+            ctx.status(403).result("Solo los estudiantes pueden solicitar anulación.");
+            return;
+        }
+
+        try {
+            Long tallerId = Long.parseLong(ctx.pathParam("id"));
+            String justificacion = ctx.formParam("justificacion");
+            tallerService.solicitarAnulacion(tallerId, usuarioId, justificacion);
+            ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Solicitud de anulación enviada", java.nio.charset.StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
+            ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
+        }
+    }
+
+    public static void procesarAnulacion(Context ctx) {
+        Long userId = ctx.sessionAttribute("usuarioId");
+        String rolUsuario = ctx.sessionAttribute("usuarioRol");
+
+        if (userId == null || !("ADMIN".equals(rolUsuario) || "DOCENTE".equals(rolUsuario))) {
+            ctx.status(403).result("No tienes permisos para procesar anulaciones.");
+            return;
+        }
+
+        try {
+            Long tallerId = Long.parseLong(ctx.pathParam("id"));
+            Long usuarioId = Long.parseLong(ctx.formParam("usuarioId"));
+            boolean aprobada = "true".equalsIgnoreCase(ctx.formParam("aprobada"));
+            
+            tallerService.procesarAnulacion(tallerId, usuarioId, aprobada);
+            
+            if ("ADMIN".equals(rolUsuario)) {
+                ctx.redirect("/talleres?success=" + java.net.URLEncoder.encode("Anulación procesada", java.nio.charset.StandardCharsets.UTF_8));
+            } else {
+                ctx.redirect("/talleres/" + tallerId + "/alumnos?success=" + java.net.URLEncoder.encode("Anulación procesada", java.nio.charset.StandardCharsets.UTF_8));
+            }
+        } catch (Exception e) {
+            String errorMsg = e.getMessage() != null ? e.getMessage() : "Error desconocido";
+            if ("ADMIN".equals(rolUsuario)) {
+                ctx.redirect("/talleres?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
+            } else {
+                ctx.redirect("/talleres/" + ctx.pathParam("id") + "/alumnos?error=" + java.net.URLEncoder.encode(errorMsg, java.nio.charset.StandardCharsets.UTF_8));
+            }
         }
     }
 }
