@@ -1,7 +1,6 @@
 package cl.ucn.app.test;
 
 import cl.ucn.app.model.Prestamo;
-import cl.ucn.app.model.Proveedor;
 import cl.ucn.app.model.Recurso;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.*;
@@ -36,6 +35,13 @@ public class testPrestamoAdmin {
     @Mock
     private MovimientoInventarioRepository movimientoInventarioRepository;
 
+    @Mock
+    private Recurso recurso_mock;
+    @Mock
+    private Prestamo prestamo_mock;
+    @Mock
+    private Usuario usuario_mock;
+
     private PrestamoService prestamoService;
 
     @BeforeEach
@@ -47,9 +53,7 @@ public class testPrestamoAdmin {
 
     @Test
     public void testCrearPrestamo() {
-        Prestamo prestamo_mock = new Prestamo();
         Recurso recurso_mock = new Recurso();
-        Proveedor proveedor_mock = new Proveedor();
         Usuario usuario_mock = new Usuario();
 
         recurso_mock.setStock(5);
@@ -63,8 +67,8 @@ public class testPrestamoAdmin {
 
     @Test
     public void testAceptarPrestamo() {
-        Prestamo prestamo_mock = new Prestamo();
-
+        Mockito.when(prestamo_mock.getRecurso()).thenReturn(recurso_mock);
+        Mockito.when(recurso_mock.getStock()).thenReturn(5);
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);
 
         assertTrue(prestamoService.editarPrestamo(1L, "PRESTAMO ACEPTADO"));
@@ -72,8 +76,22 @@ public class testPrestamoAdmin {
 
     @Test
     public void testCrearDevolucion() {
-        Prestamo prestamo_mock = new Prestamo();
+        Recurso recurso_mock = new Recurso();
+        Usuario usuario_mock = new Usuario();
 
+        recurso_mock.setStock(5);
+
+        Mockito.when(recursoRepository.findById(Mockito.anyLong())).thenReturn(recurso_mock);
+        Mockito.when(usuarioRepository.findById(Mockito.anyLong())).thenReturn(usuario_mock);
+
+        assertTrue(prestamoService.crearPrestamo("DEVOLUCION", 1L, 2, LocalDate.now(),
+                LocalTime.now(), 1L, "DEVOLUCION PENDIENTE"));
+    }
+
+    @Test
+    public void testConfirmarDevolucion() {
+        Mockito.when(prestamo_mock.getRecurso()).thenReturn(recurso_mock);
+        Mockito.when(recurso_mock.getStock()).thenReturn(5);
         Mockito.when(prestamoRepository.findById(Mockito.anyLong())).thenReturn(prestamo_mock);
 
         assertTrue(prestamoService.editarPrestamo(1L, "DEVOLUCION CONFIRMADA"));

@@ -108,9 +108,13 @@ public class PrestamoService {
             console.log("No queda suficiente stock, reintentar");
             return false;
         }
+        if (estado.equalsIgnoreCase("PRESTAMO ACEPTADO")) {
+            recurso.setStock(recurso.getStock() - cantidad);
+        } else if (estado.equalsIgnoreCase("DEVOLUCION CONFIRMADA")){
+            recurso.setStock(recurso.getStock() + cantidad);
+        }
 
         Usuario usuario = usuarioRepository.findById(id_usuario);
-        MovimientoInventario movimiento = null;
 
         if (usuario == null) {
             console.log("Error, no se ha encontrado el usuario, reintentar");
@@ -122,9 +126,9 @@ public class PrestamoService {
             return false;
         }
 
-        movimiento = movimientoFactoryService.crearPrestamo(recurso, cantidad, fecha, hora, usuario, estado);
-        movimientoInventarioRepository.save(movimiento);
-        prestamoRepository.save((Prestamo) movimiento);
+        Prestamo prestamo = movimientoFactoryService.crearPrestamo(recurso, cantidad, fecha, hora, usuario, estado);
+        movimientoInventarioRepository.save(prestamo);
+        prestamoRepository.save(prestamo);
         return true;
     }
 
@@ -145,10 +149,18 @@ public class PrestamoService {
             console.log("Error interno, no se inicializó correctamente el servicio PrestamoService para manejar la operación editarPrestamo(). Utilizar el segundo constructor.");
             return false;
         }
+        
+        Prestamo prestamo = prestamoRepository.findById(movimiento_id);
 
-        if(prestamoRepository.findById(movimiento_id) == null){
+        if(prestamo == null){
             console.log("Error, no se ha encontrado el prestamo, reintentar");
             return false;
+        }
+
+        if (estado.equalsIgnoreCase("PRESTAMO ACEPTADO")) {
+            prestamo.getRecurso().setStock(prestamo.getRecurso().getStock() - prestamo.getCantidad());
+        } else if (estado.equalsIgnoreCase("DEVOLUCION CONFIRMADA")){
+            prestamo.getRecurso().setStock(prestamo.getRecurso().getStock() + prestamo.getCantidad());
         }
 
         prestamoRepository.alter(movimiento_id, estado);
