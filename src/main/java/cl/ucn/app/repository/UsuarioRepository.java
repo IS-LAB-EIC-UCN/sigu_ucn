@@ -7,6 +7,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UsuarioRepository {
 
@@ -26,6 +27,15 @@ public class UsuarioRepository {
         }
     }
 
+    public Optional<Usuario> findById(Long id) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return Optional.ofNullable(em.find(Usuario.class, id));
+        } finally {
+            em.close();
+        }
+    }
+
     public void save(Usuario usuario) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -37,15 +47,6 @@ public class UsuarioRepository {
                 em.getTransaction().rollback();
             }
             throw e;
-        } finally {
-            em.close();
-        }
-    }
-
-    public Usuario findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Usuario.class, id);
         } finally {
             em.close();
         }

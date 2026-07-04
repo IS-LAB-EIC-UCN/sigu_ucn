@@ -4,37 +4,38 @@ import cl.ucn.app.routes.AuthRoutes;
 import cl.ucn.app.routes.HomeRoutes;
 import cl.ucn.app.routes.SoporteRoutes;
 import io.javalin.Javalin;
-import io.javalin.rendering.template.JavalinJte;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+import gg.jte.output.StringOutput;
 
 import java.nio.file.Paths;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("JTE Class found: " + gg.jte.html.HtmlTemplateOutput.class.getName());
+        ResourceCodeResolver resolver = new ResourceCodeResolver("jte");
+        TemplateEngine engine = TemplateEngine.create(
+                resolver,
+                Paths.get("jte-classes"),
+                ContentType.Html,
+                Main.class.getClassLoader()
+        );
 
         Javalin app = Javalin.create(config -> {
 
-            ResourceCodeResolver resolver = new ResourceCodeResolver("jte");
-
-            TemplateEngine engine = TemplateEngine.create(
-                    resolver,
-                    Paths.get("jte-classes"),
-                    ContentType.Html,
-                    Main.class.getClassLoader()
-            );
-
-            config.fileRenderer(new JavalinJte(engine));
+            config.fileRenderer((filePath, model, ctx) -> {
+                StringOutput output = new StringOutput();
+                engine.render(filePath, (Map<String, Object>) model, output);
+                return output.toString();
+            });
 
             config.staticFiles.add("/static");
 
-            // Rutas
             AuthRoutes.register(config);
             HomeRoutes.register(config);
-            SoporteRoutes.register(config);   // ← módulo de soporte
+            SoporteRoutes.register(config);
         });
 
         app.start(7000);

@@ -3,10 +3,7 @@ package cl.ucn.app.routes;
 import cl.ucn.app.controller.TicketController;
 import io.javalin.config.JavalinConfig;
 
-/**
- * Registra las rutas del módulo de soporte.
- * Mismo patrón que AuthRoutes y HomeRoutes del proyecto base.
- */
+
 public final class SoporteRoutes {
 
     private SoporteRoutes() {}

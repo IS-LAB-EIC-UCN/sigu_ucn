@@ -1,53 +1,37 @@
 package cl.ucn.app.service;
 
-import cl.ucn.app.config.JPAUtil;
+import cl.ucn.app.model.CategoriaTicket;
 import cl.ucn.app.model.Comentario;
 import cl.ucn.app.model.Ticket;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.ICategoriaTicketRepository;
 import cl.ucn.app.repository.IComentarioRepository;
 import cl.ucn.app.repository.ITicketRepository;
-import jakarta.persistence.EntityManager;
+import cl.ucn.app.repository.UsuarioRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Lógica de negocio del módulo de soporte.
- *
- * SOLID:
- *  S – solo orquesta reglas de tickets, sin HTTP ni SQL directo.
- *  O – extender con notificaciones sin modificar esta clase.
- *  D – recibe interfaces por constructor, no clases concretas.
- *
- * Estados válidos (según CHECK en BD): ABIERTO | EN_PROCESO | CERRADO
- * Prioridades válidas:                 BAJA | MEDIA | ALTA
- */
 public class TicketServiceImpl implements ITicketService {
 
-    private final ITicketRepository       ticketRepo;
-    private final IComentarioRepository   comentarioRepo;
+    private final ITicketRepository ticketRepo;
+    private final IComentarioRepository comentarioRepo;
     private final ICategoriaTicketRepository categoriaRepo;
+    private final UsuarioRepository usuarioRepo;
 
     public TicketServiceImpl(ITicketRepository ticketRepo,
                              IComentarioRepository comentarioRepo,
-                             ICategoriaTicketRepository categoriaRepo) {
-        this.ticketRepo    = ticketRepo;
+                             ICategoriaTicketRepository categoriaRepo,
+                             UsuarioRepository usuarioRepo) {
+        this.ticketRepo = ticketRepo;
         this.comentarioRepo = comentarioRepo;
-        this.categoriaRepo  = categoriaRepo;
+        this.categoriaRepo = categoriaRepo;
+        this.usuarioRepo = usuarioRepo;
     }
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
-
-    protected Usuario buscarUsuario(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            Usuario u = em.find(Usuario.class, id);
-            if (u == null) throw new IllegalArgumentException("Usuario no encontrado: " + id);
-            return u;
-        } finally {
-            em.close();
-        }
+    private Usuario buscarUsuario(Long id) {
+        return usuarioRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado: " + id));
     }
 
     private Ticket ticketExistente(Long id) {
@@ -61,8 +45,6 @@ public class TicketServiceImpl implements ITicketService {
         }
     }
 
-    // ── Implementación ────────────────────────────────────────────────────────
-
     @Override
     public Ticket crearTicket(String titulo, String descripcion, String prioridad,
                               Long categoriaId, Long solicitanteId) {
@@ -75,6 +57,9 @@ public class TicketServiceImpl implements ITicketService {
         if (!List.of("BAJA", "MEDIA", "ALTA").contains(prio))
             throw new IllegalArgumentException("Prioridad inválida: " + prio);
 
+        CategoriaTicket categoria = categoriaRepo.buscarPorId(categoriaId)
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada: " + categoriaId));
+
         Ticket ticket = new Ticket();
         ticket.setTitulo(titulo.trim());
         ticket.setDescripcion(descripcion.trim());
@@ -82,7 +67,7 @@ public class TicketServiceImpl implements ITicketService {
         ticket.setEstado("ABIERTO");
         ticket.setFechaCreacion(LocalDateTime.now());
         ticket.setSolicitante(buscarUsuario(solicitanteId));
-        categoriaRepo.buscarPorId(categoriaId).ifPresent(ticket::setCategoria);
+        ticket.setCategoria(categoria);
 
         ticketRepo.guardar(ticket);
         return ticket;
@@ -97,7 +82,6 @@ public class TicketServiceImpl implements ITicketService {
         if (!List.of("ABIERTO", "EN_PROCESO", "CERRADO").contains(estado))
             throw new IllegalArgumentException("Estado inválido: " + estado);
 
-        // Regla: solo el técnico asignado puede marcar EN_PROCESO
         if ("EN_PROCESO".equals(estado)) {
             if (ticket.getTecnico() == null || !ticket.getTecnico().getId().equals(usuarioId))
                 throw new IllegalStateException(

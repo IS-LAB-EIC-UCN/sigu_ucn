@@ -2,37 +2,46 @@
 @param String usuarioNombre
 
 @template.layout.main(
-title = title,
-usuarioNombre = usuarioNombre,
-content = @`
-    <section class="dashboard">
-        <h1>Panel principal</h1>
-        <p>Bienvenido al sistema integrado de gestión universitaria.</p>
+    title = title,
+    usuarioNombre = usuarioNombre,
+    content = @`
+        <section class="dashboard">
+            <h1>Panel principal</h1>
+            <p>Bienvenido al sistema integrado de gestión universitaria.</p>
 
-        <div class="card-grid">
-            <div class="info-card">
-                <h3>Instrucciones para los equipos</h3>
-                <p>
-                    Cada grupo deberá desarrollar su módulo y reemplazar la opción de menú
-                    correspondiente por la ruta real de acceso a su funcionalidad.
-                </p>
-            </div>
+            <div class="card-grid">
+                <!-- Módulo de Tickets - Grupo 4 -->
+                <div class="info-card">
+                    <h3>🎫 Tickets de Soporte</h3>
+                    <p>
+                        Gestiona los tickets de soporte técnico: crea, asigna, prioriza y da seguimiento.
+                    </p>
+                    <a href="/soporte" class="btn-primary">Ir a Tickets</a>
+                </div>
 
-            <div class="info-card">
-                <h3>Integración</h3>
-                <p>
-                    Las nuevas rutas, vistas y controladores deben respetar la estructura
-                    común del sistema base.
-                </p>
-            </div>
+                <div class="info-card">
+                    <h3>Instrucciones para los equipos</h3>
+                    <p>
+                        Cada grupo deberá desarrollar su módulo y reemplazar la opción de menú
+                        correspondiente por la ruta real de acceso a su funcionalidad.
+                    </p>
+                </div>
 
-            <div class="info-card">
-                <h3>Tecnologías base</h3>
-                <p>
-                    Java, Javalin, JPA/Hibernate, PostgreSQL, JTE y jQuery.
-                </p>
+                <div class="info-card">
+                    <h3>Integración</h3>
+                    <p>
+                        Las nuevas rutas, vistas y controladores deben respetar la estructura
+                        común del sistema base.
+                    </p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Tecnologías base</h3>
+                    <p>
+                        Java, Javalin, JPA/Hibernate, PostgreSQL, JTE y jQuery.
+                    </p>
+                </div>
             </div>
-        </div>
-    </section>
-`
+        </section>
+    `
 )

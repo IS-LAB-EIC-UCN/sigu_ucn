@@ -34,7 +34,7 @@
                 <li><a href="#">Grupo 1 - Reservas de salas</a></li>
                 <li><a href="#">Grupo 2 - Biblioteca</a></li>
                 <li><a href="#">Grupo 3 - Talleres</a></li>
-                <li><a href="#">Grupo 4 - Soporte</a></li>
+                <li><a href="/soporte">Grupo 4 - Soporte</a></li>
                 <li><a href="#">Grupo 5 - Inventario</a></li>
                 <li><a href="#">Grupo 6 - Eventos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>

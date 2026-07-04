@@ -3,6 +3,7 @@ package cl.ucn.app.repository;
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.Ticket;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.ArrayList;
@@ -34,7 +35,18 @@ public class TicketRepositoryImpl implements ITicketRepository {
     public Optional<Ticket> buscarPorId(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            return Optional.ofNullable(em.find(Ticket.class, id));
+            TypedQuery<Ticket> query = em.createQuery(
+                    "SELECT t FROM Ticket t " +
+                    "LEFT JOIN FETCH t.solicitante " +
+                    "LEFT JOIN FETCH t.tecnico " +
+                    "LEFT JOIN FETCH t.categoria " +
+                    "WHERE t.id = :id",
+                    Ticket.class
+            );
+            query.setParameter("id", id);
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
         } finally {
             em.close();
         }
@@ -58,7 +70,11 @@ public class TicketRepositoryImpl implements ITicketRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             StringBuilder jpql = new StringBuilder(
-                    "SELECT t FROM Ticket t LEFT JOIN FETCH t.solicitante LEFT JOIN FETCH t.categoria WHERE 1=1"
+                    "SELECT t FROM Ticket t " +
+                    "LEFT JOIN FETCH t.solicitante " +
+                    "LEFT JOIN FETCH t.tecnico " +
+                    "LEFT JOIN FETCH t.categoria " +
+                    "WHERE 1=1"
             );
             List<Object[]> params = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package cl.ucn.app;
+package cl.ucn.app.service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

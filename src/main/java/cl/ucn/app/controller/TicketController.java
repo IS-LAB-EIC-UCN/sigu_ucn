@@ -1,5 +1,6 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.repository.UsuarioRepository;
 import cl.ucn.app.model.CategoriaTicket;
 import cl.ucn.app.model.Ticket;
 import cl.ucn.app.repository.CategoriaTicketRepositoryImpl;
@@ -12,15 +13,6 @@ import io.javalin.http.Context;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controlador del módulo de soporte.
- *
- * Responsabilidad única (S de SOLID): recibir peticiones HTTP,
- * delegar al servicio y renderizar la vista. Sin lógica de negocio.
- *
- * Instancia sus dependencias igual que AuthController (new en constructor),
- * respetando el patrón del proyecto base.
- */
 public class TicketController {
 
     private final ITicketService ticketService;
@@ -29,13 +21,11 @@ public class TicketController {
         this.ticketService = new TicketServiceImpl(
                 new TicketRepositoryImpl(),
                 new ComentarioRepositoryImpl(),
-                new CategoriaTicketRepositoryImpl()
+                new CategoriaTicketRepositoryImpl(),
+                new UsuarioRepository()
         );
     }
 
-    // ── Vistas ────────────────────────────────────────────────────────────────
-
-    /** GET /soporte */
     public void listarTickets(Context ctx) {
         String estado    = ctx.queryParam("estado");
         String prioridad = ctx.queryParam("prioridad");
@@ -46,19 +36,18 @@ public class TicketController {
         List<CategoriaTicket> categorias = new CategoriaTicketRepositoryImpl().listarTodas();
 
         ctx.render("soporte/lista.jte", Map.of(
-                "tickets",   tickets,
-                "categorias", categorias,
-                "usuarioRol", String.valueOf(ctx.sessionAttribute("usuarioRol"))
+            "tickets",       tickets,
+            "categorias",    categorias,
+            "usuarioRol",    String.valueOf(ctx.sessionAttribute("usuarioRol")),
+            "usuarioNombre", String.valueOf(ctx.sessionAttribute("usuarioNombre"))
         ));
     }
 
-    /** GET /soporte/nuevo */
     public void mostrarFormularioCrear(Context ctx) {
         List<CategoriaTicket> categorias = new CategoriaTicketRepositoryImpl().listarTodas();
         ctx.render("soporte/nuevo.jte", Map.of("categorias", categorias, "error", ""));
     }
 
-    /** POST /soporte/nuevo */
     public void crearTicket(Context ctx) {
         try {
             String titulo      = ctx.formParam("titulo");
@@ -75,7 +64,6 @@ public class TicketController {
         }
     }
 
-    /** GET /soporte/{id} */
     public void verTicket(Context ctx) {
         Long id = Long.parseLong(ctx.pathParam("id"));
         Ticket ticket = ticketService.obtenerTicket(id);
@@ -87,7 +75,6 @@ public class TicketController {
         ));
     }
 
-    /** POST /soporte/{id}/asignar */
     public void asignarTecnico(Context ctx) {
         Long ticketId  = Long.parseLong(ctx.pathParam("id"));
         Long tecnicoId = Long.parseLong(ctx.formParam("tecnicoId"));
@@ -99,7 +86,6 @@ public class TicketController {
         ctx.redirect("/soporte/" + ticketId);
     }
 
-    /** POST /soporte/{id}/estado */
     public void cambiarEstado(Context ctx) {
         Long ticketId  = Long.parseLong(ctx.pathParam("id"));
         String estado  = ctx.formParam("estado");
@@ -112,7 +98,6 @@ public class TicketController {
         ctx.redirect("/soporte/" + ticketId);
     }
 
-    /** POST /soporte/{id}/cerrar */
     public void cerrarTicket(Context ctx) {
         Long ticketId   = Long.parseLong(ctx.pathParam("id"));
         String resolucion = ctx.formParam("resolucion");
@@ -124,7 +109,6 @@ public class TicketController {
         ctx.redirect("/soporte/" + ticketId);
     }
 
-    /** POST /soporte/{id}/comentar */
     public void agregarComentario(Context ctx) {
         Long ticketId  = Long.parseLong(ctx.pathParam("id"));
         String cuerpo  = ctx.formParam("contenido");
