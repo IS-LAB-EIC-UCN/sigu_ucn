@@ -36,7 +36,7 @@
                 <li><a href="#">Grupo 3 - Talleres</a></li>
                 <li><a href="#">Grupo 4 - Soporte</a></li>
                 <li><a href="#">Grupo 5 - Inventario</a></li>
-                <li><a href="#">Grupo 6 - Eventos</a></li>
+                <li><a href="/eventos">Grupo 6 - Eventos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>
                 <li><a href="#">Grupo 8 - Tutorías</a></li>
                 <li><a href="#">Grupo 9 - Estacionamientos</a></li>
