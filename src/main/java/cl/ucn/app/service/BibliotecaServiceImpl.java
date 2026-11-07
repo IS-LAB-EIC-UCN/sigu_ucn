@@ -152,7 +152,7 @@ public class BibliotecaServiceImpl implements BibliotecaService {
     public Libro registrarLibroConEjemplares(String isbn, String titulo, String editorial, int anio,
                                              Long categoriaId, List<Long> autoresIds, int cantidadEjemplares, String ubicacion) {
         return JPAUtil.runInTransaction(() -> {
-            validarDatosNuevoLibro(isbn, titulo, categoriaId, autoresIds);
+            validarDatosNuevoLibro(isbn, titulo, categoriaId, autoresIds, cantidadEjemplares);
             Categoria categoria = categoriaRepository.findById(categoriaId)
                     .orElseThrow(() -> new DatosInvalidosException("categoriaId", "Categoría no encontrada."));
 
@@ -165,12 +165,15 @@ public class BibliotecaServiceImpl implements BibliotecaService {
         });
     }
 
-    private void validarDatosNuevoLibro(String isbn, String titulo, Long categoriaId, List<Long> autoresIds) {
+    private void validarDatosNuevoLibro(String isbn, String titulo, Long categoriaId, List<Long> autoresIds, int cantidadEjemplares) {
         if (!IsbnValidator.esValido(isbn)) {
             throw new DatosInvalidosException("isbn", "El ISBN no tiene un formato válido (10 o 13 dígitos).");
         }
         if (titulo == null || titulo.trim().isBlank()) {
             throw new DatosInvalidosException("titulo", "El título del libro es obligatorio.");
+        }
+        if (cantidadEjemplares <= 0) {
+            throw new DatosInvalidosException("cantidadEjemplares", "Debe registrar al menos 1 ejemplar.");
         }
         if (autoresIds == null || autoresIds.isEmpty()) {
             throw new ReglaNegocioException("RN-11", "Todo libro debe tener al menos un autor.");
@@ -210,5 +213,15 @@ public class BibliotecaServiceImpl implements BibliotecaService {
     @Override
     public Optional<Bibliotecario> buscarBibliotecarioPorCorreo(String correo) {
         return bibliotecarioRepository.findByCorreo(correo);
+    }
+
+    @Override
+    public List<Categoria> listarCategorias() {
+        return categoriaRepository.findAll();
+    }
+
+    @Override
+    public List<Autor> listarAutores() {
+        return autorRepository.findAll();
     }
 }

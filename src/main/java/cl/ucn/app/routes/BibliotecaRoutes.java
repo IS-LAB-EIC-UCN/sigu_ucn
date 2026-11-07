@@ -24,6 +24,8 @@ public final class BibliotecaRoutes {
         BibliotecaController controller = new BibliotecaController(bibliotecaService, lectorService);
 
         config.routes.get("/biblioteca", controller::showIndex);
+        config.routes.post("/biblioteca/lectores", controller::registrarLector);
+        config.routes.post("/biblioteca/libros", controller::registrarLibro);
         config.routes.post("/biblioteca/prestamos", controller::solicitarPrestamo);
         config.routes.post("/biblioteca/devoluciones", controller::registrarDevolucion);
         config.routes.post("/biblioteca/multas/pago", controller::registrarPagoMulta);

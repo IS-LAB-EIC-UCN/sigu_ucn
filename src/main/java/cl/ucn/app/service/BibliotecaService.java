@@ -15,4 +15,6 @@ public interface BibliotecaService {
     List<Prestamo> consultarPrestamosActivos(Long lectorId);
     List<Multa> consultarMultasPendientes(Long lectorId);
     Optional<Bibliotecario> buscarBibliotecarioPorCorreo(String correo);
+    List<Categoria> listarCategorias();
+    List<Autor> listarAutores();
 }

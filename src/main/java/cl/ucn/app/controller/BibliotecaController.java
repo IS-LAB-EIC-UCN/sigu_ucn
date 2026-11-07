@@ -5,6 +5,7 @@ import cl.ucn.app.service.*;
 import io.javalin.http.Context;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class BibliotecaController {
         String q = ctx.queryParam("q");
         List<Libro> libros = bibliotecaService.buscarLibros(q);
         Map<String, Object> model = construirModeloBase(ctx, libros, q);
-        cargarDatosLectorEnModelo(ctx, model);
+        cargarDatosActorEnModelo(ctx, model);
 
         ctx.render("biblioteca/index.jte", model);
     }
@@ -64,9 +65,15 @@ public class BibliotecaController {
         return model;
     }
 
-    private void cargarDatosLectorEnModelo(Context ctx, Map<String, Object> model) {
+    private void cargarDatosActorEnModelo(Context ctx, Map<String, Object> model) {
+        if (esBibliotecario(ctx)) {
+            model.put("categorias", bibliotecaService.listarCategorias());
+            model.put("autores", bibliotecaService.listarAutores());
+            model.put("lectoresRegistrados", lectorService.listarTodos());
+            return;
+        }
         String correo = ctx.sessionAttribute("usuarioCorreo");
-        if (!esBibliotecario(ctx) && correo != null) {
+        if (correo != null) {
             Optional<Lector> lectorOpt = lectorService.buscarPorCorreo(correo);
             lectorOpt.ifPresent(lector -> {
                 model.put("lector", lector);
@@ -74,6 +81,35 @@ public class BibliotecaController {
                 model.put("multasPendientes", bibliotecaService.consultarMultasPendientes(lector.getId()));
             });
         }
+    }
+
+    public void registrarLector(Context ctx) {
+        exigirRolBibliotecario(ctx);
+
+        String rut = ctx.formParam("rut");
+        String nombre = ctx.formParam("nombre");
+        String correo = ctx.formParam("correo");
+        TipoLector tipo = parsearTipoLector(ctx.formParam("tipo"));
+
+        lectorService.registrarLector(rut, nombre, correo, tipo);
+        ctx.redirect("/biblioteca?success=lector");
+    }
+
+    public void registrarLibro(Context ctx) {
+        exigirRolBibliotecario(ctx);
+
+        String isbn = ctx.formParam("isbn");
+        String titulo = ctx.formParam("titulo");
+        String editorial = ctx.formParam("editorial");
+        int anio = parsearLongObligatorio(ctx.formParam("anio"), "anio").intValue();
+        Long categoriaId = parsearLongObligatorio(ctx.formParam("categoriaId"), "categoriaId");
+        Long autorId = parsearLongObligatorio(ctx.formParam("autorId"), "autorId");
+        int cantidad = parsearLongObligatorio(ctx.formParam("cantidad"), "cantidad").intValue();
+        String ubicacion = ctx.formParam("ubicacion");
+
+        bibliotecaService.registrarLibroConEjemplares(
+                isbn, titulo, editorial, anio, categoriaId, Collections.singletonList(autorId), cantidad, ubicacion);
+        ctx.redirect("/biblioteca?success=libro");
     }
 
     public void solicitarPrestamo(Context ctx) {
@@ -111,6 +147,17 @@ public class BibliotecaController {
         Long multaId = parsearLongObligatorio(ctx.formParam("multaId"), "multaId");
         bibliotecaService.registrarPagoMulta(multaId, LocalDate.now());
         ctx.redirect("/biblioteca?success=pago");
+    }
+
+    private TipoLector parsearTipoLector(String valor) {
+        if (valor == null || valor.isBlank()) {
+            throw new DatosInvalidosException("tipo", "El tipo de lector es obligatorio.");
+        }
+        try {
+            return TipoLector.valueOf(valor.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new DatosInvalidosException("tipo", "Tipo de lector inválido.");
+        }
     }
 
     private Long parsearLongObligatorio(String valor, String nombreCampo) {
