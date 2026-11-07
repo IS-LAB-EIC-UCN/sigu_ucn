@@ -9,10 +9,21 @@
 
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <!-- Entidades Base y Grupo 1 -->
         <class>cl.ucn.app.model.Usuario</class>
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+
+        <!-- Entidades Grupo 2: Módulo de Biblioteca -->
+        <class>cl.ucn.app.model.Bibliotecario</class>
+        <class>cl.ucn.app.model.Lector</class>
+        <class>cl.ucn.app.model.Categoria</class>
+        <class>cl.ucn.app.model.Autor</class>
+        <class>cl.ucn.app.model.Libro</class>
+        <class>cl.ucn.app.model.Ejemplar</class>
+        <class>cl.ucn.app.model.Prestamo</class>
+        <class>cl.ucn.app.model.Multa</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
