@@ -6,46 +6,60 @@
     title = title,
     usuarioNombre = usuarioNombre,
     content = @`
-        <section class="dashboard">
 
-            <h1>Crear evento académico</h1>
 
-            <form action="/eventos/crear" method="post">
+<section class="dashboard eventos-panel">
+  <h1>Crear evento académico</h1>
+  <p>Completa la información para registrar un evento.</p>
 
-                <label>Título</label>
-                <input type="text" name="titulo"
-                       maxlength="150" required>
+  <form action="/eventos/crear" method="post" class="eventos-formulario">
+    <div class="eventos-form-grid">
+      <div class="eventos-campo eventos-campo-completo">
+        <label for="titulo">Título del evento</label>
+        <input type="text" id="titulo" name="titulo" maxlength="150" required />
+      </div>
 
-                <label>Descripción</label>
-                <textarea name="descripcion"></textarea>
+      <div class="eventos-campo eventos-campo-completo">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+      </div>
 
-                <label>Fecha</label>
-                <input type="date" name="fecha" required>
+      <div class="eventos-campo">
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" name="fecha" required />
+      </div>
 
-                <label>Hora de inicio</label>
-                <input type="time" name="horaInicio" required>
+      <div class="eventos-campo">
+        <label for="cupoMaximo">Cupo máximo</label>
+        <input
+          type="number"
+          id="cupoMaximo"
+          name="cupoMaximo"
+          min="1"
+          required
+        />
+      </div>
 
-                <label>Hora de término</label>
-                <input type="time" name="horaFin" required>
+      <div class="eventos-campo">
+        <label for="horaInicio">Hora de inicio</label>
+        <input type="time" id="horaInicio" name="horaInicio" required />
+      </div>
 
-                <label>Lugar</label>
-                <input type="text" name="lugar"
-                       maxlength="150" required>
+      <div class="eventos-campo">
+        <label for="horaFin">Hora de término</label>
+        <input type="time" id="horaFin" name="horaFin" required />
+      </div>
 
-                <label>Cupo máximo</label>
-                <input type="number" name="cupoMaximo"
-                       min="1" required>
+      <div class="eventos-campo eventos-campo-completo">
+        <label for="lugar">Lugar</label>
+        <input type="text" id="lugar" name="lugar" maxlength="150" required />
+      </div>
+    </div>
 
-                <button type="submit">
-                    Guardar evento
-                </button>
-
-            </form>
-
-            <p>
-                <a href="/eventos">Volver a eventos</a>
-            </p>
-
-        </section>
-    `
-)
+    <div class="eventos-acciones">
+      <button type="submit" class="eventos-btn">Guardar evento</button>
+      <a href="/eventos">Cancelar y volver</a>
+    </div>
+  </form>
+</section>
+` )

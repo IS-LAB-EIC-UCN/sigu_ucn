@@ -11,6 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
     <link rel="stylesheet" href="/css/styles.css">
+    @if(title != null && title.toLowerCase().contains("evento"))
+    <link rel="stylesheet" href="/css/eventos.css">
+    @endif
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/js/app.js"></script>
 </head>

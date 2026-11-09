@@ -7,7 +7,8 @@
     title = title,
     usuarioNombre = usuarioNombre,
     content = @`
-        <section class="dashboard">
+        
+        <section class="dashboard eventos-panel">   
             <h1>Gestión de Eventos Académicos</h1>
 
             <p>Bienvenido al módulo del Grupo 6.</p>
@@ -24,7 +25,8 @@
                 </div>
             </div>
             <p>
-                <a href="/eventos/nuevo" class="btn">
+                
+                <a href="/eventos/nuevo" class="eventos-btn">  
                     + Crear evento académico
                 </a>
             </p>
@@ -33,7 +35,8 @@
             @if(eventos.isEmpty())
                 <p>No hay eventos registrados actualmente.</p>
             @else
-                <table>
+                <div class="eventos-tabla-contenedor">
+                <table class="eventos-tabla">
                     <thead>
                         <tr>
                             <th>Título</th>
@@ -61,6 +64,7 @@
                         @endfor
                     </tbody>
                 </table>
+</div>
             @endif
         </section>
     `
