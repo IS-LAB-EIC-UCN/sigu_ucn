@@ -118,4 +118,130 @@ public class EventosController {
         }
     }
 
+    public void mostrarFormularioEditar(Context ctx) {
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        if (usuarioId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        Long eventoId;
+
+        try {
+            eventoId = Long.parseLong(ctx.pathParam("id"));
+        } catch (NumberFormatException e) {
+            ctx.status(400).result("ID de evento inválido");
+            return;
+        }
+
+        Evento evento = eventoRepository.findById(eventoId);
+
+        if (evento == null) {
+            ctx.status(404).result("Evento no encontrado");
+            return;
+        }
+
+        // Antes de permitir la edición, verificar permisos.
+        if (evento.getOrganizador() == null ||
+                !usuarioId.equals(evento.getOrganizador().getId())) {
+            ctx.status(403).result(
+                    "No tienes permisos para editar este evento");
+            return;
+        }
+
+        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
+
+        ctx.render("eventos-editar.jte", Map.of(
+                "title", "Editar evento académico",
+                "usuarioNombre", usuarioNombre,
+                "evento", evento));
+    }
+
+    public void actualizarEvento(Context ctx) {
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        if (usuarioId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        Long eventoId;
+
+        try {
+            eventoId = Long.parseLong(ctx.pathParam("id"));
+        } catch (NumberFormatException e) {
+            ctx.status(400).result("ID de evento inválido");
+            return;
+        }
+
+        Evento evento = eventoRepository.findById(eventoId);
+
+        if (evento == null) {
+            ctx.status(404).result("Evento no encontrado");
+            return;
+        }
+
+        // Comprobar que el usuario sea el organizador
+        if (evento.getOrganizador() == null ||
+                !usuarioId.equals(evento.getOrganizador().getId())) {
+            ctx.status(403).result(
+                    "No tienes permisos para editar este evento");
+            return;
+        }
+
+        try {
+            String titulo = ctx.formParam("titulo");
+            String descripcion = ctx.formParam("descripcion");
+            String fechaTexto = ctx.formParam("fecha");
+            String inicioTexto = ctx.formParam("horaInicio");
+            String finTexto = ctx.formParam("horaFin");
+            String lugar = ctx.formParam("lugar");
+            String cupoTexto = ctx.formParam("cupoMaximo");
+
+            if (titulo == null || titulo.isBlank()
+                    || lugar == null || lugar.isBlank()
+                    || fechaTexto == null
+                    || inicioTexto == null
+                    || finTexto == null
+                    || cupoTexto == null) {
+                ctx.status(400).result("Faltan campos obligatorios");
+                return;
+            }
+
+            LocalDate fecha = LocalDate.parse(fechaTexto);
+            LocalTime inicio = LocalTime.parse(inicioTexto);
+            LocalTime fin = LocalTime.parse(finTexto);
+            int cupo = Integer.parseInt(cupoTexto);
+
+            if (fecha.isBefore(LocalDate.now())
+                    || !fin.isAfter(inicio)
+                    || cupo <= 0
+                    || titulo.length() > 150
+                    || lugar.length() > 150) {
+                ctx.status(400).result("Datos del evento inválidos");
+                return;
+            }
+
+            evento.setTitulo(titulo.trim());
+            evento.setDescripcion(descripcion);
+            evento.setFecha(fecha);
+            evento.setHoraInicio(inicio);
+            evento.setHoraFin(fin);
+            evento.setLugar(lugar.trim());
+            evento.setCupoMaximo(cupo);
+
+            // Se conserva el estado y organizador originales.
+            eventoRepository.update(evento);
+
+            ctx.redirect("/eventos");
+
+        } catch (IllegalArgumentException e) {
+            ctx.status(400).result(
+                    "Revisa los datos ingresados en el formulario");
+        }
+    }
+
 }

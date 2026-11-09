@@ -45,6 +45,7 @@
                             <th>Lugar</th>
                             <th>Cupos</th>
                             <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,6 +61,12 @@
                                 <td>${evento.getLugar()}</td>
                                 <td>${evento.getCupoMaximo()}</td>
                                 <td>${evento.getEstado()}</td>
+                                <td>
+                                    <a href="/eventos/${evento.getId()}/editar"
+                                        class="eventos-btn">
+                                        Editar
+                                    </a>
+                                </td>
                             </tr>
                         @endfor
                     </tbody>

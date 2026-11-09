@@ -45,9 +45,40 @@ public class EventoRepository {
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
-            return em.find(Evento.class, id);
+            return em.createQuery(
+                    "SELECT e FROM Evento e " +
+                            "JOIN FETCH e.organizador " +
+                            "WHERE e.id = :id",
+                    Evento.class)
+                    .setParameter("id", id)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
         } finally {
             em.close();
         }
     }
+
+    public void update(Evento evento) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            em.merge(evento);
+
+            em.getTransaction().commit();
+
+        } catch (RuntimeException e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
+
 }
