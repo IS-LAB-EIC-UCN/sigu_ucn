@@ -23,7 +23,11 @@
                     <p>Gestión de inscripciones de participantes.</p>
                 </div>
             </div>
-
+            <p>
+                <a href="/eventos/nuevo" class="btn">
+                    + Crear evento académico
+                </a>
+            </p>
             <h2>Listado de eventos</h2>
 
             @if(eventos.isEmpty())
