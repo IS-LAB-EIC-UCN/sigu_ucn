@@ -55,6 +55,10 @@ public class Prestamo {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public LocalDate getFechaPrestamo() {
         return fechaPrestamo;
     }
