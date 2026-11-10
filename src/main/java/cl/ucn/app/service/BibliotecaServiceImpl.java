@@ -156,11 +156,12 @@ public class BibliotecaServiceImpl implements BibliotecaService {
             Categoria categoria = categoriaRepository.findById(categoriaId)
                     .orElseThrow(() -> new DatosInvalidosException("categoriaId", "Categoría no encontrada."));
 
-            Libro libro = new Libro(isbn.trim(), titulo.trim(), editorial == null ? "" : editorial.trim(), anio, categoria);
+            String isbnNormalizado = IsbnValidator.normalizar(isbn);
+            Libro libro = new Libro(isbnNormalizado, titulo.trim(), editorial == null ? "" : editorial.trim(), anio, categoria);
             for (Long autorId : autoresIds) {
                 autorRepository.findById(autorId).ifPresent(libro.getAutores()::add);
             }
-            generarEjemplaresIniciales(libro, isbn, cantidadEjemplares, ubicacion);
+            generarEjemplaresIniciales(libro, isbnNormalizado, cantidadEjemplares, ubicacion);
             return libroRepository.save(libro);
         });
     }
@@ -181,13 +182,13 @@ public class BibliotecaServiceImpl implements BibliotecaService {
         if (categoriaId == null) {
             throw new ReglaNegocioException("RN-11", "Todo libro debe tener exactamente una categoría.");
         }
-        if (libroRepository.findByIsbn(isbn.trim()).isPresent()) {
+        if (libroRepository.findByIsbn(IsbnValidator.normalizar(isbn)).isPresent()) {
             throw new ReglaNegocioException("RN-10", "Ya existe un libro registrado con este ISBN.");
         }
     }
 
     private void generarEjemplaresIniciales(Libro libro, String isbn, int cantidad, String ubicacion) {
-        String baseCodigo = "EJ-" + isbn.replaceAll("[^0-9X]", "");
+        String baseCodigo = "EJ-" + isbn;
         String ubicacionFinal = (ubicacion == null || ubicacion.isBlank()) ? "General" : ubicacion.trim();
         for (int i = 1; i <= cantidad; i++) {
             String codigo = baseCodigo + "-" + String.format("%03d", i);

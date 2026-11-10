@@ -20,6 +20,13 @@ public final class IsbnValidator {
         return false;
     }
 
+    public static String normalizar(String isbn) {
+        if (isbn == null) {
+            return "";
+        }
+        return isbn.toUpperCase().replaceAll("[^0-9X]", "");
+    }
+
     private static boolean validarIsbn10(String isbn) {
         int suma = 0;
         for (int i = 0; i < 9; i++) {
