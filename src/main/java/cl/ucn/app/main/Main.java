@@ -8,8 +8,8 @@ import io.javalin.rendering.template.JavalinJte;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
-
 import java.nio.file.Paths;
+import cl.ucn.app.routes.InscripcionesRoutes;
 
 public class Main {
     public static void main(String[] args) {
@@ -40,6 +40,8 @@ public class Main {
             AuthRoutes.register(config);
             HomeRoutes.register(config);
             EventosRoutes.register(config);
+            InscripcionesRoutes.register(config);
+
         });
 
         app.start(7000);

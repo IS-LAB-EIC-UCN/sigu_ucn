@@ -67,6 +67,18 @@
 
                                         @if(!"CANCELADO".equals(evento.getEstado()))
 
+                                        @if("BORRADOR".equals(evento.getEstado()))
+                                            <form action="/eventos/${evento.getId()}/publicar"
+                                                method="post"
+                                                onsubmit="return confirm('¿Deseas publicar este evento?');">
+
+                                                <button type="submit" class="eventos-btn">
+                                                    Publicar
+                                                </button>
+                                            </form>
+                                        @endif
+
+
                                             <a href="/eventos/${evento.getId()}/editar"
                                             class="eventos-btn">
                                                 Editar

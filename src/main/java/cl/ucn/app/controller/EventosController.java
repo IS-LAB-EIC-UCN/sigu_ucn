@@ -300,4 +300,59 @@ public class EventosController {
         ctx.redirect("/eventos");
     }
 
+
+public void publicarEvento(Context ctx) {
+
+    Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+    if (usuarioId == null) {
+        ctx.redirect("/login");
+        return;
+    }
+
+    Long eventoId;
+
+    try {
+        eventoId = Long.parseLong(ctx.pathParam("id"));
+    } catch (NumberFormatException e) {
+        ctx.status(400).result("ID de evento inválido");
+        return;
+    }
+
+    Evento evento = eventoRepository.findById(eventoId);
+
+    if (evento == null) {
+        ctx.status(404).result("Evento no encontrado");
+        return;
+    }
+
+    // Solo el organizador puede publicar.
+    if (evento.getOrganizador() == null ||
+        !usuarioId.equals(evento.getOrganizador().getId())) {
+        ctx.status(403).result(
+            "No tienes permisos para publicar este evento");
+        return;
+    }
+
+    // Solo pueden publicarse eventos en borrador.
+    if (!"BORRADOR".equals(evento.getEstado())) {
+        ctx.status(409).result(
+            "Solo se pueden publicar eventos en borrador");
+        return;
+    }
+
+    if (evento.getFecha().isBefore(LocalDate.now())) {
+        ctx.status(409).result(
+            "No se puede publicar un evento pasado");
+        return;
+    }
+
+    evento.setEstado("PUBLICADO");
+    eventoRepository.update(evento);
+
+    ctx.redirect("/eventos");
+}
+
+
+
 }

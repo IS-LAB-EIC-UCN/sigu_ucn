@@ -43,5 +43,9 @@ public final class EventosRoutes {
                                 "/eventos/{id}/cancelar",
                                 controller::cancelarEvento);
 
+                config.routes.post(
+                                "/eventos/{id}/publicar",
+                                controller::publicarEvento);
+
         }
 }
