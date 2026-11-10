@@ -61,12 +61,34 @@
                                 <td>${evento.getLugar()}</td>
                                 <td>${evento.getCupoMaximo()}</td>
                                 <td>${evento.getEstado()}</td>
+                                
                                 <td>
-                                    <a href="/eventos/${evento.getId()}/editar"
-                                        class="eventos-btn">
-                                        Editar
-                                    </a>
+                                    <div class="eventos-acciones">
+
+                                        @if(!"CANCELADO".equals(evento.getEstado()))
+
+                                            <a href="/eventos/${evento.getId()}/editar"
+                                            class="eventos-btn">
+                                                Editar
+                                            </a>
+
+                                            <form action="/eventos/${evento.getId()}/cancelar"
+                                                method="post"
+                                                onsubmit="return confirm('¿Seguro que deseas cancelar este evento?');">
+
+                                                <button type="submit"
+                                                        class="eventos-btn eventos-btn-cancelar">
+                                                    Cancelar
+                                                </button>
+                                            </form>
+
+                                        @else
+                                            <span>Evento cancelado</span>
+                                        @endif
+
+                                    </div>
                                 </td>
+
                             </tr>
                         @endfor
                     </tbody>

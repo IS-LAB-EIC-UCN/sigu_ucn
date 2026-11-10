@@ -37,5 +37,11 @@ public final class EventosRoutes {
                 config.routes.post(
                                 "/eventos/{id}/editar",
                                 controller::actualizarEvento);
+
+                // Cancelar un evento académico
+                config.routes.post(
+                                "/eventos/{id}/cancelar",
+                                controller::cancelarEvento);
+
         }
 }

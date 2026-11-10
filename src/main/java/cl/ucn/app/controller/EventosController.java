@@ -151,6 +151,12 @@ public class EventosController {
             return;
         }
 
+        if ("CANCELADO".equals(evento.getEstado())) {
+            ctx.status(409).result(
+                    "No se puede editar un evento cancelado");
+            return;
+        }
+
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
 
         ctx.render("eventos-editar.jte", Map.of(
@@ -189,6 +195,12 @@ public class EventosController {
                 !usuarioId.equals(evento.getOrganizador().getId())) {
             ctx.status(403).result(
                     "No tienes permisos para editar este evento");
+            return;
+        }
+
+        if ("CANCELADO".equals(evento.getEstado())) {
+            ctx.status(409).result(
+                    "No se puede editar un evento cancelado");
             return;
         }
 
@@ -242,6 +254,50 @@ public class EventosController {
             ctx.status(400).result(
                     "Revisa los datos ingresados en el formulario");
         }
+    }
+
+    public void cancelarEvento(Context ctx) {
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        if (usuarioId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        Long eventoId;
+
+        try {
+            eventoId = Long.parseLong(ctx.pathParam("id"));
+        } catch (NumberFormatException e) {
+            ctx.status(400).result("ID de evento inválido");
+            return;
+        }
+
+        Evento evento = eventoRepository.findById(eventoId);
+
+        if (evento == null) {
+            ctx.status(404).result("Evento no encontrado");
+            return;
+        }
+
+        // Solo el organizador puede cancelar su evento.
+        if (evento.getOrganizador() == null ||
+                !usuarioId.equals(evento.getOrganizador().getId())) {
+            ctx.status(403).result(
+                    "No tienes permisos para cancelar este evento");
+            return;
+        }
+
+        if ("CANCELADO".equals(evento.getEstado())) {
+            ctx.status(409).result("El evento ya está cancelado");
+            return;
+        }
+
+        evento.setEstado("CANCELADO");
+        eventoRepository.update(evento);
+
+        ctx.redirect("/eventos");
     }
 
 }

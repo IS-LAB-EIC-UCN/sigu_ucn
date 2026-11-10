@@ -123,3 +123,24 @@
     padding: 18px;
   }
 }
+
+.eventos-btn-cancelar {
+  background-color: #dc3545;
+  color: white;
+}
+
+.eventos-btn-cancelar:hover {
+  background-color: #b02a37;
+}
+
+.eventos-tabla .eventos-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+  flex-wrap: nowrap;
+}
+
+.eventos-tabla .eventos-acciones form {
+  margin: 0;
+}
