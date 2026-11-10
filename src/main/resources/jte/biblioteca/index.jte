@@ -20,14 +20,20 @@
 @param List<Categoria> categorias = Collections.emptyList()
 @param List<Autor> autores = Collections.emptyList()
 @param List<Lector> lectoresRegistrados = Collections.emptyList()
+@param String mensajeExito = null
 
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
 content = @`
+    <link rel="stylesheet" href="/css/biblioteca.css">
     <section class="dashboard">
         <h1>Sistema de Gestión de Biblioteca (Grupo 2)</h1>
         <p>Rol activo: <strong>${usuarioRol}</strong></p>
+
+        @if(mensajeExito != null)
+            <div class="alert-success">${mensajeExito}</div>
+        @endif
 
         @if(!esBibliotecario && lector != null)
             <div class="info-card" style="margin-bottom: 20px; border-left: 5px solid #1f3b73;">

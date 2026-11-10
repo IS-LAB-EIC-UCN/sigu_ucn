@@ -13,6 +13,14 @@ import java.util.Optional;
 
 public class BibliotecaController {
 
+    private static final Map<String, String> MENSAJES_EXITO = Map.of(
+            "lector", "Lector registrado correctamente.",
+            "libro", "Libro y ejemplares incorporados al catálogo.",
+            "prestamo", "Préstamo registrado. Revisa la fecha límite en tus préstamos activos.",
+            "devolucion", "Devolución registrada. Si hubo atraso, se generó la multa y se bloqueó al lector.",
+            "pago", "Pago de multa registrado. Si no quedan multas pendientes, el lector fue habilitado."
+    );
+
     private final BibliotecaService bibliotecaService;
     private final LectorService lectorService;
 
@@ -62,7 +70,12 @@ public class BibliotecaController {
         model.put("esBibliotecario", esBibliotecario(ctx));
         model.put("libros", libros);
         model.put("busqueda", q != null ? q : "");
+        model.put("mensajeExito", obtenerMensajeExito(ctx.queryParam("success")));
         return model;
+    }
+
+    private String obtenerMensajeExito(String clave) {
+        return clave == null ? null : MENSAJES_EXITO.get(clave);
     }
 
     private void cargarDatosActorEnModelo(Context ctx, Map<String, Object> model) {
@@ -147,6 +160,43 @@ public class BibliotecaController {
         Long multaId = parsearLongObligatorio(ctx.formParam("multaId"), "multaId");
         bibliotecaService.registrarPagoMulta(multaId, LocalDate.now());
         ctx.redirect("/biblioteca?success=pago");
+    }
+
+    public void manejarReglaNegocio(ReglaNegocioException e, Context ctx) {
+        responderError(ctx, 409, "Operación rechazada", "Regla de negocio: " + e.getCodigoRegla(),
+                e.getMessage(), "[" + e.getCodigoRegla() + "] " + e.getMessage());
+    }
+
+    public void manejarDatosInvalidos(DatosInvalidosException e, Context ctx) {
+        responderError(ctx, 400, "Datos inválidos", "Campo inválido: " + e.getCampo(),
+                e.getMessage(), "Error en campo [" + e.getCampo() + "]: " + e.getMessage());
+    }
+
+    public void manejarAccesoDenegado(AccesoDenegadoException e, Context ctx) {
+        String titulo = e.getStatusCode() == 401 ? "Sesión requerida" : "Acceso denegado";
+        responderError(ctx, e.getStatusCode(), titulo, null, e.getMessage(), e.getMessage());
+    }
+
+    private void responderError(Context ctx, int status, String titulo, String detalle,
+                                String mensaje, String textoPlano) {
+        ctx.status(status);
+        if (!aceptaHtml(ctx)) {
+            ctx.result(textoPlano);
+            return;
+        }
+        Map<String, Object> model = new HashMap<>();
+        model.put("title", titulo + " - SIGU-UCN");
+        model.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
+        model.put("status", status);
+        model.put("titulo", titulo);
+        model.put("detalle", detalle);
+        model.put("mensaje", mensaje);
+        ctx.render("biblioteca/error.jte", model);
+    }
+
+    private boolean aceptaHtml(Context ctx) {
+        String accept = ctx.header("Accept");
+        return accept != null && accept.contains("text/html");
     }
 
     private TipoLector parsearTipoLector(String valor) {

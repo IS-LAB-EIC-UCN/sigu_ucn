@@ -30,15 +30,8 @@ public final class BibliotecaRoutes {
         config.routes.post("/biblioteca/devoluciones", controller::registrarDevolucion);
         config.routes.post("/biblioteca/multas/pago", controller::registrarPagoMulta);
 
-        // Manejo controlado de excepciones del dominio (RNF-01, RNF-02, RNF-06)
-        config.routes.exception(ReglaNegocioException.class, (e, ctx) -> {
-            ctx.status(409).result("[" + e.getCodigoRegla() + "] " + e.getMessage());
-        });
-        config.routes.exception(DatosInvalidosException.class, (e, ctx) -> {
-            ctx.status(400).result("Error en campo [" + e.getCampo() + "]: " + e.getMessage());
-        });
-        config.routes.exception(AccesoDenegadoException.class, (e, ctx) -> {
-            ctx.status(e.getStatusCode()).result(e.getMessage());
-        });
+        config.routes.exception(ReglaNegocioException.class, controller::manejarReglaNegocio);
+        config.routes.exception(DatosInvalidosException.class, controller::manejarDatosInvalidos);
+        config.routes.exception(AccesoDenegadoException.class, controller::manejarAccesoDenegado);
     }
 }
