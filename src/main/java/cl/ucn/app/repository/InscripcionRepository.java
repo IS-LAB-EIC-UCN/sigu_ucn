@@ -35,8 +35,7 @@ public class InscripcionRepository {
                         "El evento no está disponible para inscripciones");
             }
 
-            if (evento.getFecha().isBefore(
-                    java.time.LocalDate.now())) {
+            if (!evento.isDisponible()) {
                 throw new IllegalStateException(
                         "El evento ya pasó");
             }
@@ -114,6 +113,22 @@ public class InscripcionRepository {
             em.close();
         }
 
+    }
+
+    public java.util.Map<Long, long[]> resumenPorEvento(Long usuarioId) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            java.util.Map<Long, long[]> resumen = new java.util.HashMap<>();
+            for (Object[] fila : em.createQuery(
+                    "SELECT i.evento.id, COUNT(i), SUM(CASE WHEN i.usuario.id = :usuarioId THEN 1 ELSE 0 END) " +
+                    "FROM Inscripcion i WHERE i.estado = 'INSCRITO' GROUP BY i.evento.id", Object[].class)
+                    .setParameter("usuarioId", usuarioId).getResultList()) {
+                resumen.put((Long) fila[0], new long[]{((Number) fila[1]).longValue(), ((Number) fila[2]).longValue()});
+            }
+            return resumen;
+        } finally {
+            em.close();
+        }
     }
 
     public long contarInscritos(Long eventoId) {

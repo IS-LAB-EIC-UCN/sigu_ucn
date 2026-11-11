@@ -41,6 +41,21 @@ public class Evento {
     @JoinColumn(name = "organizador_id", nullable = false)
     private Usuario organizador;
 
+    @Column(length = 100)
+    private String tematica;
+    @ManyToOne @JoinColumn(name = "expositor_id")
+    private Expositor expositor;
+    @ManyToOne @JoinColumn(name = "espacio_id")
+    private Espacio espacio;
+    public String getTematica() { return tematica == null ? "General" : tematica; }
+    public void setTematica(String tematica) { this.tematica = tematica; }
+    public Expositor getExpositor() { return expositor; }
+    public void setExpositor(Expositor expositor) { this.expositor = expositor; }
+    public Espacio getEspacio() { return espacio; }
+    public void setEspacio(Espacio espacio) { this.espacio = espacio; }
+    public boolean isDisponible() {
+        return "PUBLICADO".equals(estado) && java.time.LocalDateTime.of(fecha, horaInicio).isAfter(java.time.LocalDateTime.now());
+    }
     public Evento() {
     }
 
