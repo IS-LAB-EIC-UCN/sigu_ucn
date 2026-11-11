@@ -52,4 +52,48 @@ public class InscripcionesController {
             ctx.status(409).result(e.getMessage());
         }
     }
+
+    public void cancelar(Context ctx) {
+
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        if (usuarioId == null) {
+            ctx.redirect("/login");
+            return;
+        }
+
+        // Validar token CSRF
+        String tokenSesion = ctx.sessionAttribute("csrfToken");
+        String tokenFormulario = ctx.formParam("csrfToken");
+
+        if (tokenSesion == null || tokenFormulario == null ||
+                !MessageDigest.isEqual(
+                        tokenSesion.getBytes(StandardCharsets.UTF_8),
+                        tokenFormulario.getBytes(StandardCharsets.UTF_8))) {
+
+            ctx.status(403).result("Token de seguridad inválido");
+            return;
+        }
+
+        Long eventoId;
+
+        try {
+            eventoId = Long.parseLong(ctx.pathParam("id"));
+        } catch (NumberFormatException e) {
+            ctx.status(400).result("ID de evento inválido");
+            return;
+        }
+
+        try {
+            repository.cancelarInscripcion(eventoId, usuarioId);
+            ctx.redirect("/eventos");
+
+        } catch (IllegalArgumentException e) {
+            ctx.status(400).result(e.getMessage());
+
+        } catch (IllegalStateException e) {
+            ctx.status(409).result(e.getMessage());
+        }
+    }
+
 }

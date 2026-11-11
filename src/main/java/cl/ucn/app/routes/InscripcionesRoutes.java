@@ -16,5 +16,10 @@ public final class InscripcionesRoutes {
         config.routes.post(
                 "/eventos/{id}/inscribir",
                 controller::inscribir);
+
+        config.routes.post(
+                "/eventos/{id}/cancelar-inscripcion",
+                controller::cancelar);
+
     }
 }

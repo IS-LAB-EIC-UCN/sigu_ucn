@@ -41,19 +41,23 @@ public class InscripcionRepository {
                         "El evento ya pasó");
             }
 
-            // Comprobar si el usuario ya está inscrito
-            Long existentes = em.createQuery(
-                    "SELECT COUNT(i) FROM Inscripcion i " +
+            // Buscar una inscripción anterior del usuario
+            java.util.List<Inscripcion> anteriores = em.createQuery(
+                    "SELECT i FROM Inscripcion i " +
                             "WHERE i.evento.id = :eventoId " +
                             "AND i.usuario.id = :usuarioId",
-                    Long.class)
+                    Inscripcion.class)
                     .setParameter("eventoId", eventoId)
                     .setParameter("usuarioId", usuarioId)
-                    .getSingleResult();
+                    .getResultList();
 
-            if (existentes > 0) {
+            Inscripcion anterior = anteriores.isEmpty()
+                    ? null
+                    : anteriores.get(0);
+
+            if (anterior != null && "INSCRITO".equals(anterior.getEstado())) {
                 throw new IllegalStateException(
-                        "El usuario ya tiene una inscripción en este evento");
+                        "El usuario ya tiene una inscripción activa en este evento");
             }
 
             // Contar las inscripciones activas
@@ -77,13 +81,24 @@ public class InscripcionRepository {
                         "Usuario no encontrado o inactivo");
             }
 
-            Inscripcion inscripcion = new Inscripcion();
-            inscripcion.setEvento(evento);
-            inscripcion.setUsuario(usuario);
-            inscripcion.setEstado("INSCRITO");
-            inscripcion.setFechaInscripcion(LocalDateTime.now());
+            if (anterior != null) {
 
-            em.persist(inscripcion);
+                // Reactivar una inscripción previamente cancelada
+                anterior.setEstado("INSCRITO");
+                anterior.setFechaInscripcion(LocalDateTime.now());
+
+            } else {
+
+                // Crear una inscripción nueva
+                Inscripcion inscripcion = new Inscripcion();
+
+                inscripcion.setEvento(evento);
+                inscripcion.setUsuario(usuario);
+                inscripcion.setEstado("INSCRITO");
+                inscripcion.setFechaInscripcion(LocalDateTime.now());
+
+                em.persist(inscripcion);
+            }
 
             em.getTransaction().commit();
 
@@ -98,6 +113,7 @@ public class InscripcionRepository {
         } finally {
             em.close();
         }
+
     }
 
     public long contarInscritos(Long eventoId) {
@@ -134,6 +150,64 @@ public class InscripcionRepository {
                     .getSingleResult();
 
             return cantidad > 0;
+
+        } finally {
+            em.close();
+        }
+    }
+
+    public void cancelarInscripcion(Long eventoId, Long usuarioId) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            em.getTransaction().begin();
+
+            // Bloquear el evento para coordinar cambios de inscripciones
+            Evento evento = em.find(
+                    Evento.class,
+                    eventoId,
+                    LockModeType.PESSIMISTIC_WRITE);
+
+            if (evento == null) {
+                throw new IllegalArgumentException(
+                        "Evento no encontrado");
+            }
+
+            if (!"PUBLICADO".equals(evento.getEstado())) {
+                throw new IllegalStateException(
+                        "El evento no está disponible para cancelar inscripciones");
+            }
+
+            // Buscar la inscripción activa del usuario
+            java.util.List<Inscripcion> inscripciones = em.createQuery(
+                    "SELECT i FROM Inscripcion i " +
+                            "WHERE i.evento.id = :eventoId " +
+                            "AND i.usuario.id = :usuarioId " +
+                            "AND i.estado = 'INSCRITO'",
+                    Inscripcion.class)
+                    .setParameter("eventoId", eventoId)
+                    .setParameter("usuarioId", usuarioId)
+                    .getResultList();
+
+            if (inscripciones.isEmpty()) {
+                throw new IllegalStateException(
+                        "No tienes una inscripción activa en este evento");
+            }
+
+            // Cancelación lógica: conservar el registro histórico
+            Inscripcion inscripcion = inscripciones.get(0);
+            inscripcion.setEstado("CANCELADO");
+
+            em.getTransaction().commit();
+
+        } catch (RuntimeException e) {
+
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+
+            throw e;
 
         } finally {
             em.close();

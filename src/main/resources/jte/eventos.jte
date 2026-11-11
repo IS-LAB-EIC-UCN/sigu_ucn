@@ -74,7 +74,22 @@
                                                                                 
                                         @if("PUBLICADO".equals(evento.getEstado()))
                                             @if(Boolean.TRUE.equals(inscripcionesUsuario.get(evento.getId())))
-                                                <span>Ya inscrito</span>
+                                                
+                                            <form action="/eventos/${evento.getId()}/cancelar-inscripcion"
+                                                method="post"
+                                                onsubmit="return confirm('¿Seguro que deseas cancelar tu inscripción?');">
+
+                                                <input type="hidden"
+                                                    name="csrfToken"
+                                                    value="${csrfToken}" />
+
+                                                <button type="submit"
+                                                        class="eventos-btn eventos-btn-cancelar">
+                                                    Cancelar mi inscripción
+                                                </button>
+
+                                            </form>
+
                                             @else
                                                 @if(cuposDisponibles.getOrDefault(evento.getId(), 0L) > 0L)
                                                     
