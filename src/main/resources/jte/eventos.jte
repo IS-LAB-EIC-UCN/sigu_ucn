@@ -1,168 +1,69 @@
-
 @param String title
 @param String usuarioNombre
-@param java.util.List<cl.ucn.app.model.Evento> eventos
-@param java.util.Map<Long, Long> cuposDisponibles
-@param java.util.Map<Long, Boolean> inscripcionesUsuario
 @param String csrfToken
-
-@template.layout.main(
-    title = title,
-    usuarioNombre = usuarioNombre,
-    content = @`
-        
-        <section class="dashboard eventos-panel">   
-            <h1>Gestión de Eventos Académicos</h1>
-
-            <p>Bienvenido al módulo del Grupo 6.</p>
-
-            <div class="card-grid">
-                <div class="info-card">
-                    <h3>Eventos académicos</h3>
-                    <p>Administración de eventos universitarios.</p>
-                </div>
-
-                <div class="info-card">
-                    <h3>Inscripciones</h3>
-                    <p>Gestión de inscripciones de participantes.</p>
-                </div>
-            </div>
-            <p>
-                
-                <a href="/eventos/nuevo" class="eventos-btn">  
-                    + Crear evento académico
-                </a>
-            </p>
-            <h2>Listado de eventos</h2>
-
-            @if(eventos.isEmpty())
-                <p>No hay eventos registrados actualmente.</p>
-            @else
-                <div class="eventos-tabla-contenedor">
-                <table class="eventos-tabla">
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Fecha</th>
-                            <th>Horario</th>
-                            <th>Lugar</th>
-                            <th>Cupos</th>
-                            <th>Disponibles</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for(var evento : eventos)
-                            <tr>
-                                <td>${evento.getTitulo()}</td>
-                                <td>${evento.getFecha().toString()}</td>
-                                <td>
-                                    ${evento.getHoraInicio().toString()}
-                                    -
-                                    ${evento.getHoraFin().toString()}
-                                </td>
-                                <td>${evento.getLugar()}</td>
-                                <td>${evento.getCupoMaximo()}</td>
-                                <td>${cuposDisponibles.getOrDefault(evento.getId(), 0L)}</td>
-                                <td>${evento.getEstado()}</td>
-                                
-                                <td>
-                                    <div class="eventos-acciones">
-
-
-                                                                                
-                                        @if("PUBLICADO".equals(evento.getEstado()))
-                                            @if(Boolean.TRUE.equals(inscripcionesUsuario.get(evento.getId())))
-                                                
-                                            <form action="/eventos/${evento.getId()}/cancelar-inscripcion"
-                                                method="post"
-                                                onsubmit="return confirm('¿Seguro que deseas cancelar tu inscripción?');">
-
-                                                <input type="hidden"
-                                                    name="csrfToken"
-                                                    value="${csrfToken}" />
-
-                                                <button type="submit"
-                                                        class="eventos-btn eventos-btn-cancelar">
-                                                    Cancelar mi inscripción
-                                                </button>
-
-                                            </form>
-
-                                            @else
-                                                @if(cuposDisponibles.getOrDefault(evento.getId(), 0L) > 0L)
-                                                    
-                                                <form action="/eventos/${evento.getId()}/inscribir"
-                                                    method="post">
-
-                                                    <input type="hidden"
-                                                        name="csrfToken"
-                                                        value="${csrfToken}" />
-
-                                                    <button type="submit"
-                                                            class="eventos-btn">
-                                                        Inscribirse
-                                                    </button>
-
-                                                </form>
-
-                                                @else
-                                                    <span>Cupos agotados</span>
-                                                @endif
-                                            @endif
-                                        @endif
-
-
-
-                                        @if(!"CANCELADO".equals(evento.getEstado()))
-
-                                        @if("BORRADOR".equals(evento.getEstado()))
-                                            <form action="/eventos/${evento.getId()}/publicar"
-                                                method="post"
-                                                onsubmit="return confirm('¿Deseas publicar este evento?');">
-
-                                                <button type="submit" class="eventos-btn">
-                                                    Publicar
-                                                </button>
-                                            </form>
-                                        @endif
-
-
-                                            <a href="/eventos/${evento.getId()}/inscritos"
-                                            class="eventos-btn">
-                                                Ver inscritos
-                                            </a>
-
-
-                                            <a href="/eventos/${evento.getId()}/editar"
-                                            class="eventos-btn">
-                                                Editar
-                                            </a>
-
-                                            <form action="/eventos/${evento.getId()}/cancelar"
-                                                method="post"
-                                                onsubmit="return confirm('¿Seguro que deseas cancelar este evento?');">
-
-                                                <button type="submit"
-                                                        class="eventos-btn eventos-btn-cancelar">
-                                                    Cancelar
-                                                </button>
-                                            </form>
-
-                                        @else
-                                            <span>Evento cancelado</span>
-                                        @endif
-
-                                    </div>
-                                </td>
-
-                            </tr>
-                        @endfor
-                    </tbody>
-                </table>
+@param String error
+@param String aviso
+@param Long usuarioId
+@param java.util.List<cl.ucn.app.model.Evento> eventos
+@param java.util.Map<Long,long[]> resumen
+@param java.util.List<String> tematicas
+@param String q
+@param String tematica
+@param String fecha
+@param String vista
+@param long proximos
+@param long misInscripciones
+@param long organizados
+@template.layout.main(title=title, usuarioNombre=usuarioNombre, content=@`
+<section class="eventos-panel">
+<header class="eventos-cabecera"><div><p class="eyebrow">VIDA UNIVERSITARIA / MÓDULO 06</p><h1>Eventos académicos</h1><p>Conecta con nuevas ideas. Encuentra tu próxima actividad.</p></div><a class="eventos-btn" href="/eventos/nuevo"><span aria-hidden="true">+</span> Crear evento</a></header>
+<nav class="eventos-nav" aria-label="Secciones de eventos"><a href="/eventos">Todos los eventos</a><a href="/eventos?vista=agenda">Agenda</a><a href="/eventos?vista=mios">Mis actividades</a><a href="/eventos/catalogos">Expositores y ubicaciones</a></nav>@if(!aviso.isBlank())<div class="evento-alerta exito" role="status">${aviso}</div>@endif
+@if(!error.isBlank())<div class="evento-alerta error" role="alert">${error}</div>@endif
+<div class="eventos-metricas"><article><span>PRÓXIMOS EVENTOS</span><strong>${proximos}</strong><small>Actividades con inscripción abierta</small></article><article><span>MIS INSCRIPCIONES</span><strong>${misInscripciones}</strong><small>Participaciones activas</small></article><article><span>MIS EVENTOS</span><strong>${organizados}</strong><small>Actividades que organizas</small></article></div>
+<form class="eventos-filtros" method="get" action="/eventos">
+<input type="hidden" name="vista" value="${vista}">
+<div><label for="buscar">Buscar evento</label><input id="buscar" type="search" name="q" value="${q}" placeholder="Título o ubicación"></div>
+<div><label for="tema">Temática</label><select id="tema" name="tematica"><option value="">Todas las temáticas</option>@for(var t:tematicas)<option value="${t}" selected="${t.equals(tematica)}">${t}</option>@endfor</select></div>
+<div><label for="fecha">Fecha</label><input id="fecha" type="date" name="fecha" value="${fecha}"></div>
+<button class="eventos-btn" type="submit">Aplicar filtros</button><a class="enlace-suave" href="/eventos">Limpiar</a>
+</form>
+<div class="eventos-seccion"><h2>${"agenda".equals(vista) ? "Agenda de próximos eventos" : "mios".equals(vista) ? "Mis actividades" : "Explora los eventos"}</h2><span>${eventos.size()} resultados</span></div>
+@if(eventos.isEmpty())
+<div class="eventos-vacio"><span class="vacio-icono" aria-hidden="true">◇</span><h3>No hay eventos para mostrar</h3><p>Prueba con otros filtros o crea una nueva actividad académica.</p><a href="/eventos/nuevo" class="eventos-btn">Crear un evento</a></div>
+@else
+<div class="eventos-lista">
+@for(var e:eventos)
+<article class="evento-tarjeta">
+<div class="evento-fecha"><strong>${e.getFecha().getDayOfMonth()}</strong><span>${e.getFecha().format(java.time.format.DateTimeFormatter.ofPattern("MMM",java.util.Locale.forLanguageTag("es"))).toUpperCase()}</span><small>${e.getFecha().getYear()}</small></div>
+<div class="evento-info"><div class="evento-etiquetas"><span class="badge tema">${e.getTematica()}</span><span class="badge estado-${e.getEstado()}">${e.getEstado()}</span>@if(resumen.getOrDefault(e.getId(),new long[]{0,0})[1]>0)<span class="badge inscrito">Inscripción activa</span>@endif</div>
+<h3>${e.getTitulo()}</h3><p class="evento-descripcion">${e.getDescripcion()==null || e.getDescripcion().isBlank() ? "Actividad académica de la comunidad universitaria." : e.getDescripcion()}</p>
+<div class="evento-detalles"><span>Horario · ${e.getHoraInicio().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}–${e.getHoraFin().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}</span><span>Ubicación · ${e.getLugar()}</span><span>Expositor · ${e.getExpositor()==null ? "Por confirmar" : e.getExpositor().getNombre()}</span></div>
+<div class="evento-pie"><span class="evento-cupo"><strong>${Math.max(0,e.getCupoMaximo()-resumen.getOrDefault(e.getId(),new long[]{0,0})[0])}</strong> de ${e.getCupoMaximo()} cupos disponibles</span>
+<div class="eventos-acciones">
+@if(e.isDisponible())
+@if(resumen.getOrDefault(e.getId(),new long[]{0,0})[1]>0)
+<form method="post" action="/eventos/${e.getId()}/cancelar-inscripcion" onsubmit="return confirm('¿Cancelar tu inscripción?');"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn secundario" type="submit">Cancelar inscripción</button></form>
+@else
+@if(resumen.getOrDefault(e.getId(),new long[]{0,0})[0]<e.getCupoMaximo())
+<form method="post" action="/eventos/${e.getId()}/inscribir"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn" type="submit">Inscribirme</button></form>
+@else <span class="badge">Cupos agotados</span> @endif
+@endif
+@endif
+@if(usuarioId.equals(e.getOrganizador().getId()))
+<a class="eventos-btn secundario" href="/eventos/${e.getId()}/inscritos">Participantes</a>
+@if("CANCELADO".equals(e.getEstado()))
+<form method="post" action="/eventos/${e.getId()}/reactivar" onsubmit="return confirm('El evento volvera a borrador. Las inscripciones anteriores quedaran canceladas. Deberas revisar los datos y publicarlo nuevamente. Continuar?');"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn" type="submit">Reactivar como borrador</button></form>
+@endif
+@if(!"CANCELADO".equals(e.getEstado()) && !"FINALIZADO".equals(e.getEstado()))
+<a class="eventos-btn secundario" href="/eventos/${e.getId()}/editar">Editar</a>
+@if("BORRADOR".equals(e.getEstado()))
+<form method="post" action="/eventos/${e.getId()}/publicar"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn" type="submit">Publicar</button></form>
+@endif
+<form method="post" action="/eventos/${e.getId()}/cancelar" onsubmit="return confirm('¿Cancelar el evento? Se conservará su historial.');"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn peligro" type="submit">Cancelar evento</button></form>
+@endif
+@endif
+</div></div></div></article>
+@endfor
 </div>
-            @endif
-        </section>
-    `
-)
+@endif
+</section>`)

@@ -13,6 +13,10 @@ public final class EventosRoutes {
 
                 EventosController controller = new EventosController();
 
+                config.routes.get("/eventos/catalogos", controller::catalogos);
+                config.routes.post("/eventos/expositores", controller::guardarExpositor);
+                config.routes.post("/eventos/ubicaciones", controller::guardarUbicacion);
+                config.routes.post("/eventos/ubicaciones/{id}/disponibilidad", controller::cambiarUbicacion);
                 // Mostrar listado de eventos
                 config.routes.get(
                                 "/eventos",
@@ -37,6 +41,8 @@ public final class EventosRoutes {
                 config.routes.post(
                                 "/eventos/{id}/editar",
                                 controller::actualizarEvento);
+
+                config.routes.post("/eventos/{id}/reactivar", controller::reactivarEvento);
 
                 // Cancelar un evento académico
                 config.routes.post(

@@ -1,388 +1,193 @@
-
 package cl.ucn.app.controller;
 
-import cl.ucn.app.model.Evento;
-import cl.ucn.app.repository.EventoRepository;
-import io.javalin.http.Context;
-
-import java.util.List;
-import java.util.Map;
-
-import cl.ucn.app.model.Usuario;
-import cl.ucn.app.repository.UsuarioRepository;
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import cl.ucn.app.repository.InscripcionRepository;
-import java.util.HashMap;
+import cl.ucn.app.model.*;
+import cl.ucn.app.repository.*;
+import cl.ucn.app.service.EventoService;
+import io.javalin.http.*;
+import java.time.*;
+import java.util.*;
 
 public class EventosController {
+    private final EventoRepository eventos = new EventoRepository();
+    private final InscripcionRepository inscripciones = new InscripcionRepository();
+    private final CatalogoEventosRepository catalogo = new CatalogoEventosRepository();
+    private final EventoService servicio = new EventoService(eventos);
 
-    private final EventoRepository eventoRepository = new EventoRepository();
-    private final InscripcionRepository inscripcionRepository = new InscripcionRepository();
-
+    private boolean acceso(Context ctx, boolean escritura) {
+        if (ctx.sessionAttribute("usuarioId") == null) { ctx.redirect("/login"); return false; }
+        if (escritura) {
+            String token = ctx.sessionAttribute("csrfToken");
+            String recibido = ctx.formParam("csrfToken");
+            if (token == null || recibido == null || !java.security.MessageDigest.isEqual(
+                    token.getBytes(java.nio.charset.StandardCharsets.UTF_8), recibido.getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+                ctx.status(403).result("Token de seguridad inválido. Vuelve a iniciar sesión."); return false;
+            }
+        }
+        return true;
+    }
+    private Map<String,Object> modelo(Context ctx) {
+        Map<String,Object> m = new HashMap<>();
+        m.put("title", "Eventos académicos · SIGU-UCN");
+        m.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
+        m.put("usuarioId", ctx.sessionAttribute("usuarioId"));
+        m.put("csrfToken", ctx.sessionAttribute("csrfToken"));
+        m.put("admin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")));
+        m.put("error", "");
+        String aviso = ctx.sessionAttribute("eventosAviso");
+        ctx.sessionAttribute("eventosAviso", null);
+        m.put("aviso", aviso == null ? "" : aviso);
+        return m;
+    }
+    private String parametro(Context ctx, String nombre) {
+        String valor = ctx.queryParam(nombre); return valor == null ? "" : valor.strip();
+    }
     public void mostrarEventos(Context ctx) {
-
-        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-
+        if (!acceso(ctx,false)) return;
+        Map<String,Object> m = modelo(ctx);
+        String q = parametro(ctx,"q"), tema = parametro(ctx,"tematica"), fecha = parametro(ctx,"fecha");
+        String vista = parametro(ctx,"vista");
         Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        String csrfToken = ctx.sessionAttribute("csrfToken");
-
-        if (csrfToken == null) {
-            ctx.status(403).result("Token de seguridad no disponible. Inicia sesión nuevamente.");
-            return;
-        }
-
-        if (usuarioNombre == null || usuarioId == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
-        List<Evento> eventos = eventoRepository.findAll();
-
-        Map<Long, Long> cuposDisponibles = new HashMap<>();
-        Map<Long, Boolean> inscripcionesUsuario = new HashMap<>();
-
-        for (Evento evento : eventos) {
-
-            long inscritos = inscripcionRepository.contarInscritos(evento.getId());
-
-            long disponibles = Math.max(0L, (long) evento.getCupoMaximo() - inscritos);
-
-            cuposDisponibles.put(evento.getId(), disponibles);
-            boolean inscrito = inscripcionRepository.estaInscrito(
-                    evento.getId(), usuarioId);
-
-            inscripcionesUsuario.put(evento.getId(), inscrito);
-        }
-
-        ctx.render("eventos.jte", Map.of(
-                "title", "Gestión de Eventos",
-                "usuarioNombre", usuarioNombre,
-                "eventos", eventos,
-                "cuposDisponibles", cuposDisponibles,
-                "inscripcionesUsuario", inscripcionesUsuario,
-                "csrfToken", csrfToken));
-
+        List<Evento> todos = eventos.findAll();
+        Map<Long,long[]> resumen = inscripciones.resumenPorEvento(usuarioId);
+        List<Evento> lista = todos.stream()
+            .filter(e -> !"BORRADOR".equals(e.getEstado()) || usuarioId.equals(e.getOrganizador().getId()))
+            .filter(e -> q.isEmpty() || (e.getTitulo()+" "+e.getLugar()).toLowerCase(Locale.ROOT).contains(q.toLowerCase(Locale.ROOT)))
+            .filter(e -> tema.isEmpty() || tema.equals(e.getTematica()))
+            .filter(e -> fecha.isEmpty() || fecha.equals(e.getFecha().toString()))
+            .filter(e -> !"agenda".equals(vista) || e.isDisponible())
+            .filter(e -> !"mios".equals(vista) || usuarioId.equals(e.getOrganizador().getId()) || resumen.getOrDefault(e.getId(),new long[]{0,0})[1] > 0)
+            .toList();
+        m.put("eventos", lista); m.put("resumen", resumen);
+        m.put("tematicas", todos.stream().map(Evento::getTematica).distinct().sorted().toList());
+        m.put("q",q); m.put("tematica",tema); m.put("fecha",fecha); m.put("vista",vista);
+        m.put("proximos",todos.stream().filter(Evento::isDisponible).count());
+        m.put("misInscripciones",resumen.values().stream().filter(v -> v[1]>0).count());
+        m.put("organizados",todos.stream().filter(e -> usuarioId.equals(e.getOrganizador().getId())).count());
+        ctx.render("eventos.jte",m);
     }
-
-    public void mostrarFormulario(Context ctx) {
-
-        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-
-        Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        if (usuarioNombre == null || usuarioId == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
-        ctx.render("eventos-nuevo.jte", Map.of(
-                "title", "Crear evento académico",
-                "usuarioNombre", usuarioNombre));
+    private Evento propio(Context ctx) {
+        long id;
+        try { id=Long.parseLong(ctx.pathParam("id")); }
+        catch (NumberFormatException e) { throw new BadRequestResponse("ID de evento inválido"); }
+        Evento evento=eventos.findById(id);
+        if(evento==null) throw new NotFoundResponse("Evento no encontrado");
+        Long usuario=ctx.sessionAttribute("usuarioId");
+        if(!usuario.equals(evento.getOrganizador().getId())) throw new ForbiddenResponse("Solo el organizador puede administrar este evento.");
+        return evento;
     }
-
-    public void crearEvento(Context ctx) {
-
-        Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        if (usuarioId == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
-        try {
-            String titulo = ctx.formParam("titulo");
-            String descripcion = ctx.formParam("descripcion");
-            String fechaTexto = ctx.formParam("fecha");
-            String inicioTexto = ctx.formParam("horaInicio");
-            String finTexto = ctx.formParam("horaFin");
-            String lugar = ctx.formParam("lugar");
-            String cupoTexto = ctx.formParam("cupoMaximo");
-
-            if (titulo == null || titulo.isBlank()
-                    || lugar == null || lugar.isBlank()) {
-                ctx.status(400).result("Título y lugar son obligatorios");
-                return;
-            }
-
-            LocalDate fecha = LocalDate.parse(fechaTexto);
-            LocalTime inicio = LocalTime.parse(inicioTexto);
-            LocalTime fin = LocalTime.parse(finTexto);
-            int cupo = Integer.parseInt(cupoTexto);
-
-            if (fecha.isBefore(LocalDate.now())
-                    || !fin.isAfter(inicio)
-                    || cupo <= 0
-                    || titulo.length() > 150
-                    || lugar.length() > 150) {
-                ctx.status(400).result("Datos del evento inválidos");
-                return;
-            }
-
-            UsuarioRepository usuarioRepository = new UsuarioRepository();
-
-            Usuario organizador = usuarioRepository.findById(usuarioId);
-
-            if (organizador == null) {
-                ctx.status(403).result("Usuario no encontrado");
-                return;
-            }
-
-            Evento evento = new Evento();
-
-            evento.setTitulo(titulo.trim());
-            evento.setDescripcion(descripcion);
-            evento.setFecha(fecha);
-            evento.setHoraInicio(inicio);
-            evento.setHoraFin(fin);
-            evento.setLugar(lugar.trim());
-            evento.setCupoMaximo(cupo);
-            evento.setEstado("BORRADOR");
-            evento.setOrganizador(organizador);
-
-            eventoRepository.save(evento);
-
-            ctx.redirect("/eventos");
-
-        } catch (IllegalArgumentException e) {
-            ctx.status(400).result("Revisa los datos del formulario");
-        }
+    private void formulario(Context ctx, Evento e, Map<String,String> datos, String error) {
+        Map<String,Object> m=modelo(ctx);
+        m.put("evento",e); m.put("datos",datos); m.put("error",error);
+        m.put("expositores",catalogo.expositores()); m.put("espacios",catalogo.espacios());
+        ctx.render("eventos-formulario.jte",m);
     }
-
+    private Map<String,String> datos(Evento e) {
+        Map<String,String> d=new HashMap<>();
+        if(e!=null) {
+            d.put("titulo",e.getTitulo()); d.put("descripcion",e.getDescripcion()==null?"":e.getDescripcion());
+            d.put("fecha",e.getFecha().toString()); d.put("horaInicio",e.getHoraInicio().toString()); d.put("horaFin",e.getHoraFin().toString());
+            d.put("cupoMaximo",e.getCupoMaximo().toString()); d.put("tematica",e.getTematica());
+            d.put("espacioId",e.getEspacio()==null?"":e.getEspacio().getId().toString());
+            d.put("expositorId",e.getExpositor()==null?"":e.getExpositor().getId().toString());
+        }
+        return d;
+    }
+    public void mostrarFormulario(Context ctx) { if(acceso(ctx,false)) formulario(ctx,null,Map.of(),""); }
     public void mostrarFormularioEditar(Context ctx) {
-
-        Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        if (usuarioId == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
-        Long eventoId;
-
-        try {
-            eventoId = Long.parseLong(ctx.pathParam("id"));
-        } catch (NumberFormatException e) {
-            ctx.status(400).result("ID de evento inválido");
-            return;
-        }
-
-        Evento evento = eventoRepository.findById(eventoId);
-
-        if (evento == null) {
-            ctx.status(404).result("Evento no encontrado");
-            return;
-        }
-
-        // Antes de permitir la edición, verificar permisos.
-        if (evento.getOrganizador() == null ||
-                !usuarioId.equals(evento.getOrganizador().getId())) {
-            ctx.status(403).result(
-                    "No tienes permisos para editar este evento");
-            return;
-        }
-
-        if ("CANCELADO".equals(evento.getEstado())) {
-            ctx.status(409).result(
-                    "No se puede editar un evento cancelado");
-            return;
-        }
-
-        String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
-
-        ctx.render("eventos-editar.jte", Map.of(
-                "title", "Editar evento académico",
-                "usuarioNombre", usuarioNombre,
-                "evento", evento));
+        if(!acceso(ctx,false)) return;
+        Evento e=propio(ctx);
+        if("CANCELADO".equals(e.getEstado())) throw new ConflictResponse("El evento cancelado no se puede editar.");
+        formulario(ctx,e,datos(e),"");
     }
-
-    public void actualizarEvento(Context ctx) {
-
-        Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        if (usuarioId == null) {
-            ctx.redirect("/login");
-            return;
+    private void guardar(Context ctx, Evento e) {
+        Map<String,String> d=new HashMap<>();
+        for(String campo:List.of("titulo","descripcion","fecha","horaInicio","horaFin","cupoMaximo","tematica","espacioId","expositorId")) {
+            String valor=ctx.formParam(campo); d.put(campo,valor==null?"":valor.strip());
         }
-
-        Long eventoId;
-
         try {
-            eventoId = Long.parseLong(ctx.pathParam("id"));
-        } catch (NumberFormatException e) {
-            ctx.status(400).result("ID de evento inválido");
-            return;
+            if("CANCELADO".equals(e.getEstado())) throw new IllegalArgumentException("El evento cancelado no se puede editar.");
+            e.setTitulo(d.get("titulo"));e.setDescripcion(d.get("descripcion"));e.setTematica(d.get("tematica"));
+            e.setFecha(LocalDate.parse(d.get("fecha")));e.setHoraInicio(LocalTime.parse(d.get("horaInicio")));e.setHoraFin(LocalTime.parse(d.get("horaFin")));
+            e.setCupoMaximo(Integer.parseInt(d.get("cupoMaximo")));
+            e.setEspacio(catalogo.buscar(Espacio.class,Long.valueOf(d.get("espacioId"))));
+            e.setExpositor(catalogo.buscar(Expositor.class,Long.valueOf(d.get("expositorId"))));
+            servicio.guardar(e); exito(ctx,"Evento guardado correctamente.");
+        } catch(IllegalArgumentException | java.time.format.DateTimeParseException ex) {
+            ctx.status(400); formulario(ctx,e.getId()==null?null:e,d,
+                ex instanceof NumberFormatException || ex instanceof java.time.format.DateTimeParseException ? "Completa los campos con una fecha, horarios, cupo, ubicación y expositor válidos." : ex.getMessage());
         }
-
-        Evento evento = eventoRepository.findById(eventoId);
-
-        if (evento == null) {
-            ctx.status(404).result("Evento no encontrado");
-            return;
-        }
-
-        // Comprobar que el usuario sea el organizador
-        if (evento.getOrganizador() == null ||
-                !usuarioId.equals(evento.getOrganizador().getId())) {
-            ctx.status(403).result(
-                    "No tienes permisos para editar este evento");
-            return;
-        }
-
-        if ("CANCELADO".equals(evento.getEstado())) {
-            ctx.status(409).result(
-                    "No se puede editar un evento cancelado");
-            return;
-        }
-
+    }
+    public void crearEvento(Context ctx) {
+        if(!acceso(ctx,true)) return;
+        Evento e=new Evento(); e.setOrganizador(new UsuarioRepository().findById(ctx.sessionAttribute("usuarioId")));
+        guardar(ctx,e);
+    }
+    public void actualizarEvento(Context ctx) { if(acceso(ctx,true)) guardar(ctx,propio(ctx)); }
+    public void reactivarEvento(Context ctx) {
+        if (!acceso(ctx, true)) return;
         try {
-            String titulo = ctx.formParam("titulo");
-            String descripcion = ctx.formParam("descripcion");
-            String fechaTexto = ctx.formParam("fecha");
-            String inicioTexto = ctx.formParam("horaInicio");
-            String finTexto = ctx.formParam("horaFin");
-            String lugar = ctx.formParam("lugar");
-            String cupoTexto = ctx.formParam("cupoMaximo");
-
-            if (titulo == null || titulo.isBlank()
-                    || lugar == null || lugar.isBlank()
-                    || fechaTexto == null
-                    || inicioTexto == null
-                    || finTexto == null
-                    || cupoTexto == null) {
-                ctx.status(400).result("Faltan campos obligatorios");
-                return;
-            }
-
-            LocalDate fecha = LocalDate.parse(fechaTexto);
-            LocalTime inicio = LocalTime.parse(inicioTexto);
-            LocalTime fin = LocalTime.parse(finTexto);
-            int cupo = Integer.parseInt(cupoTexto);
-
-            if (fecha.isBefore(LocalDate.now())
-                    || !fin.isAfter(inicio)
-                    || cupo <= 0
-                    || titulo.length() > 150
-                    || lugar.length() > 150) {
-                ctx.status(400).result("Datos del evento inválidos");
-                return;
-            }
-
-            evento.setTitulo(titulo.trim());
-            evento.setDescripcion(descripcion);
-            evento.setFecha(fecha);
-            evento.setHoraInicio(inicio);
-            evento.setHoraFin(fin);
-            evento.setLugar(lugar.trim());
-            evento.setCupoMaximo(cupo);
-
-            // Se conserva el estado y organizador originales.
-            eventoRepository.update(evento);
-
-            ctx.redirect("/eventos");
-
+            Evento evento = propio(ctx);
+            servicio.reactivar(evento);
+            ctx.sessionAttribute("eventosAviso", "Evento recuperado como borrador. Revisa fecha, sala y cupos antes de publicarlo. Las inscripciones anteriores quedan canceladas.");
+            ctx.redirect("/eventos/" + evento.getId() + "/editar");
         } catch (IllegalArgumentException e) {
-            ctx.status(400).result(
-                    "Revisa los datos ingresados en el formulario");
+            ctx.status(409);
+            Map<String,Object> m = modelo(ctx); m.put("error", e.getMessage());
+            ctx.render("eventos-error.jte", m);
         }
     }
-
-    public void cancelarEvento(Context ctx) {
-
-        Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        if (usuarioId == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
-        Long eventoId;
-
+    public void cancelarEvento(Context ctx) { cambiar(ctx,false); }
+    public void publicarEvento(Context ctx) { cambiar(ctx,true); }
+    private void cambiar(Context ctx,boolean publicar) {
+        if(!acceso(ctx,true)) return;
         try {
-            eventoId = Long.parseLong(ctx.pathParam("id"));
-        } catch (NumberFormatException e) {
-            ctx.status(400).result("ID de evento inválido");
-            return;
+            Evento e=propio(ctx); if(publicar) servicio.publicar(e); else servicio.cancelar(e);
+            exito(ctx,publicar?"Evento publicado. Las inscripciones ya están abiertas.":"Evento cancelado. Se conserva el historial de participantes.");
+        } catch(IllegalArgumentException e) {
+            ctx.status(409); Map<String,Object> m=modelo(ctx);m.put("error",e.getMessage()); ctx.render("eventos-error.jte",m);
         }
-
-        Evento evento = eventoRepository.findById(eventoId);
-
-        if (evento == null) {
-            ctx.status(404).result("Evento no encontrado");
-            return;
-        }
-
-        // Solo el organizador puede cancelar su evento.
-        if (evento.getOrganizador() == null ||
-                !usuarioId.equals(evento.getOrganizador().getId())) {
-            ctx.status(403).result(
-                    "No tienes permisos para cancelar este evento");
-            return;
-        }
-
-        if ("CANCELADO".equals(evento.getEstado())) {
-            ctx.status(409).result("El evento ya está cancelado");
-            return;
-        }
-
-        evento.setEstado("CANCELADO");
-        eventoRepository.update(evento);
-
-        ctx.redirect("/eventos");
     }
-
-    public void publicarEvento(Context ctx) {
-
-        Long usuarioId = ctx.sessionAttribute("usuarioId");
-
-        if (usuarioId == null) {
-            ctx.redirect("/login");
-            return;
-        }
-
-        Long eventoId;
-
+    private void exito(Context ctx,String mensaje) { ctx.sessionAttribute("eventosAviso",mensaje);ctx.redirect("/eventos"); }
+    public void catalogos(Context ctx) {
+        if(!acceso(ctx,false)) return;
+        catalogos(ctx,"");
+    }
+    private void catalogos(Context ctx,String error) {
+        Map<String,Object> m=modelo(ctx);m.put("error",error);
+        m.put("expositores",catalogo.expositores());m.put("espacios",catalogo.espacios());
+        ctx.render("eventos-catalogos.jte",m);
+    }
+    public void guardarExpositor(Context ctx) {
+        if(!acceso(ctx,true)) return;
         try {
-            eventoId = Long.parseLong(ctx.pathParam("id"));
-        } catch (NumberFormatException e) {
-            ctx.status(400).result("ID de evento inválido");
-            return;
-        }
-
-        Evento evento = eventoRepository.findById(eventoId);
-
-        if (evento == null) {
-            ctx.status(404).result("Evento no encontrado");
-            return;
-        }
-
-        // Solo el organizador puede publicar.
-        if (evento.getOrganizador() == null ||
-                !usuarioId.equals(evento.getOrganizador().getId())) {
-            ctx.status(403).result(
-                    "No tienes permisos para publicar este evento");
-            return;
-        }
-
-        // Solo pueden publicarse eventos en borrador.
-        if (!"BORRADOR".equals(evento.getEstado())) {
-            ctx.status(409).result(
-                    "Solo se pueden publicar eventos en borrador");
-            return;
-        }
-
-        if (evento.getFecha().isBefore(LocalDate.now())) {
-            ctx.status(409).result(
-                    "No se puede publicar un evento pasado");
-            return;
-        }
-
-        evento.setEstado("PUBLICADO");
-        eventoRepository.update(evento);
-
-        ctx.redirect("/eventos");
+            Expositor e=new Expositor(); e.setNombre(texto(ctx,"nombre",100,true));
+            e.setCorreo(texto(ctx,"correo",120,false));e.setEspecialidad(texto(ctx,"especialidad",150,false));
+            if(!e.getCorreo().isBlank() && !e.getCorreo().matches("[^\\s@]+@[^\\s@]+[.][^\\s@]+")) throw new IllegalArgumentException("Ingresa un correo válido.");
+            catalogo.guardar(e);ctx.sessionAttribute("eventosAviso","Expositor registrado.");ctx.redirect("/eventos/catalogos");
+        } catch(IllegalArgumentException e) { ctx.status(400);catalogos(ctx,e.getMessage()); }
     }
-
+    public void guardarUbicacion(Context ctx) {
+        if(!acceso(ctx,true)) return;
+        if(!"ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) throw new ForbiddenResponse("Solo el administrador gestiona ubicaciones.");
+        try {
+            String nombre=texto(ctx,"nombre",100,true); int capacidad=Integer.parseInt(texto(ctx,"capacidad",9,true));
+            if(capacidad<1) throw new IllegalArgumentException("La capacidad debe ser mayor que cero.");
+            if(catalogo.espacios().stream().anyMatch(e->e.getNombre().strip().equalsIgnoreCase(nombre))) throw new IllegalArgumentException("Ya existe una ubicación con ese nombre.");
+            catalogo.guardar(new Espacio(nombre,"EVENTOS",capacidad,true));ctx.sessionAttribute("eventosAviso","Ubicación registrada.");ctx.redirect("/eventos/catalogos");
+        } catch(IllegalArgumentException e) { ctx.status(400);catalogos(ctx,e instanceof NumberFormatException?"Ingresa una capacidad válida.":e.getMessage()); }
+    }
+    public void cambiarUbicacion(Context ctx) {
+        if(!acceso(ctx,true)) return;
+        if(!"ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) throw new ForbiddenResponse();
+        try {
+            Espacio e=catalogo.buscar(Espacio.class,Long.valueOf(ctx.pathParam("id")));
+            if(e==null) throw new NotFoundResponse();
+            e.setDisponible(!Boolean.TRUE.equals(e.getDisponible()));catalogo.guardar(e);ctx.redirect("/eventos/catalogos");
+        } catch(NumberFormatException e) { throw new BadRequestResponse("ID inválido"); }
+    }
+    private String texto(Context ctx,String campo,int max,boolean obligatorio) {
+        String v=ctx.formParam(campo);v=v==null?"":v.strip();
+        if((obligatorio && v.isBlank()) || v.length()>max) throw new IllegalArgumentException("Revisa el campo "+campo+" (máximo "+max+" caracteres).");
+        return v;
+    }
 }

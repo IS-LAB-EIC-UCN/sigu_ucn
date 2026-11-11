@@ -52,10 +52,10 @@ public class InscripcionesController {
             ctx.redirect("/eventos");
 
         } catch (IllegalArgumentException e) {
-            ctx.status(400).result(e.getMessage());
+            mostrarError(ctx, 400, e.getMessage());
 
         } catch (IllegalStateException e) {
-            ctx.status(409).result(e.getMessage());
+            mostrarError(ctx, 409, e.getMessage());
         }
     }
 
@@ -95,10 +95,10 @@ public class InscripcionesController {
             ctx.redirect("/eventos");
 
         } catch (IllegalArgumentException e) {
-            ctx.status(400).result(e.getMessage());
+            mostrarError(ctx, 400, e.getMessage());
 
         } catch (IllegalStateException e) {
-            ctx.status(409).result(e.getMessage());
+            mostrarError(ctx, 409, e.getMessage());
         }
     }
 
@@ -138,12 +138,20 @@ public class InscripcionesController {
         }
 
         List<Inscripcion> inscripciones = repository.listarPorEvento(eventoId);
+        if ("true".equals(ctx.queryParam("activos"))) inscripciones = inscripciones.stream().filter(i -> "INSCRITO".equals(i.getEstado())).toList();
 
         ctx.render("eventos-inscritos.jte", Map.of(
                 "title", "Participantes del evento",
                 "usuarioNombre", usuarioNombre,
                 "evento", evento,
                 "inscripciones", inscripciones));
+    }
+
+    private void mostrarError(Context ctx, int estado, String mensaje) {
+        ctx.status(estado);
+        ctx.render("eventos-error.jte", Map.of(
+            "title", "Eventos acad\u00e9micos", "usuarioNombre", ctx.sessionAttribute("usuarioNombre"),
+            "csrfToken", ctx.sessionAttribute("csrfToken"), "error", mensaje, "aviso", ""));
     }
 
 }
