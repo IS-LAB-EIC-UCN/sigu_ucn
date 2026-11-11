@@ -99,4 +99,45 @@ public class InscripcionRepository {
             em.close();
         }
     }
+
+    public long contarInscritos(Long eventoId) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT COUNT(i) FROM Inscripcion i " +
+                            "WHERE i.evento.id = :eventoId " +
+                            "AND i.estado = 'INSCRITO'",
+                    Long.class)
+                    .setParameter("eventoId", eventoId)
+                    .getSingleResult();
+
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean estaInscrito(Long eventoId, Long usuarioId) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            Long cantidad = em.createQuery(
+                    "SELECT COUNT(i) FROM Inscripcion i " +
+                            "WHERE i.evento.id = :eventoId " +
+                            "AND i.usuario.id = :usuarioId " +
+                            "AND i.estado = 'INSCRITO'",
+                    Long.class)
+                    .setParameter("eventoId", eventoId)
+                    .setParameter("usuarioId", usuarioId)
+                    .getSingleResult();
+
+            return cantidad > 0;
+
+        } finally {
+            em.close();
+        }
+    }
+
 }

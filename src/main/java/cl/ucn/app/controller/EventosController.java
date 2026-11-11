@@ -13,25 +13,58 @@ import cl.ucn.app.repository.UsuarioRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import cl.ucn.app.repository.InscripcionRepository;
+import java.util.HashMap;
+
 public class EventosController {
 
     private final EventoRepository eventoRepository = new EventoRepository();
+    private final InscripcionRepository inscripcionRepository = new InscripcionRepository();
 
     public void mostrarEventos(Context ctx) {
 
         String usuarioNombre = ctx.sessionAttribute("usuarioNombre");
 
-        if (usuarioNombre == null) {
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
+
+        String csrfToken = ctx.sessionAttribute("csrfToken");
+
+        if (csrfToken == null) {
+            ctx.status(403).result("Token de seguridad no disponible. Inicia sesión nuevamente.");
+            return;
+        }
+
+        if (usuarioNombre == null || usuarioId == null) {
             ctx.redirect("/login");
             return;
         }
 
         List<Evento> eventos = eventoRepository.findAll();
 
+        Map<Long, Long> cuposDisponibles = new HashMap<>();
+        Map<Long, Boolean> inscripcionesUsuario = new HashMap<>();
+
+        for (Evento evento : eventos) {
+
+            long inscritos = inscripcionRepository.contarInscritos(evento.getId());
+
+            long disponibles = Math.max(0L, (long) evento.getCupoMaximo() - inscritos);
+
+            cuposDisponibles.put(evento.getId(), disponibles);
+            boolean inscrito = inscripcionRepository.estaInscrito(
+                    evento.getId(), usuarioId);
+
+            inscripcionesUsuario.put(evento.getId(), inscrito);
+        }
+
         ctx.render("eventos.jte", Map.of(
                 "title", "Gestión de Eventos",
                 "usuarioNombre", usuarioNombre,
-                "eventos", eventos));
+                "eventos", eventos,
+                "cuposDisponibles", cuposDisponibles,
+                "inscripcionesUsuario", inscripcionesUsuario,
+                "csrfToken", csrfToken));
+
     }
 
     public void mostrarFormulario(Context ctx) {
@@ -300,59 +333,56 @@ public class EventosController {
         ctx.redirect("/eventos");
     }
 
+    public void publicarEvento(Context ctx) {
 
-public void publicarEvento(Context ctx) {
+        Long usuarioId = ctx.sessionAttribute("usuarioId");
 
-    Long usuarioId = ctx.sessionAttribute("usuarioId");
+        if (usuarioId == null) {
+            ctx.redirect("/login");
+            return;
+        }
 
-    if (usuarioId == null) {
-        ctx.redirect("/login");
-        return;
+        Long eventoId;
+
+        try {
+            eventoId = Long.parseLong(ctx.pathParam("id"));
+        } catch (NumberFormatException e) {
+            ctx.status(400).result("ID de evento inválido");
+            return;
+        }
+
+        Evento evento = eventoRepository.findById(eventoId);
+
+        if (evento == null) {
+            ctx.status(404).result("Evento no encontrado");
+            return;
+        }
+
+        // Solo el organizador puede publicar.
+        if (evento.getOrganizador() == null ||
+                !usuarioId.equals(evento.getOrganizador().getId())) {
+            ctx.status(403).result(
+                    "No tienes permisos para publicar este evento");
+            return;
+        }
+
+        // Solo pueden publicarse eventos en borrador.
+        if (!"BORRADOR".equals(evento.getEstado())) {
+            ctx.status(409).result(
+                    "Solo se pueden publicar eventos en borrador");
+            return;
+        }
+
+        if (evento.getFecha().isBefore(LocalDate.now())) {
+            ctx.status(409).result(
+                    "No se puede publicar un evento pasado");
+            return;
+        }
+
+        evento.setEstado("PUBLICADO");
+        eventoRepository.update(evento);
+
+        ctx.redirect("/eventos");
     }
-
-    Long eventoId;
-
-    try {
-        eventoId = Long.parseLong(ctx.pathParam("id"));
-    } catch (NumberFormatException e) {
-        ctx.status(400).result("ID de evento inválido");
-        return;
-    }
-
-    Evento evento = eventoRepository.findById(eventoId);
-
-    if (evento == null) {
-        ctx.status(404).result("Evento no encontrado");
-        return;
-    }
-
-    // Solo el organizador puede publicar.
-    if (evento.getOrganizador() == null ||
-        !usuarioId.equals(evento.getOrganizador().getId())) {
-        ctx.status(403).result(
-            "No tienes permisos para publicar este evento");
-        return;
-    }
-
-    // Solo pueden publicarse eventos en borrador.
-    if (!"BORRADOR".equals(evento.getEstado())) {
-        ctx.status(409).result(
-            "Solo se pueden publicar eventos en borrador");
-        return;
-    }
-
-    if (evento.getFecha().isBefore(LocalDate.now())) {
-        ctx.status(409).result(
-            "No se puede publicar un evento pasado");
-        return;
-    }
-
-    evento.setEstado("PUBLICADO");
-    eventoRepository.update(evento);
-
-    ctx.redirect("/eventos");
-}
-
-
 
 }

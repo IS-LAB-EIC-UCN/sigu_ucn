@@ -2,6 +2,9 @@
 @param String title
 @param String usuarioNombre
 @param java.util.List<cl.ucn.app.model.Evento> eventos
+@param java.util.Map<Long, Long> cuposDisponibles
+@param java.util.Map<Long, Boolean> inscripcionesUsuario
+@param String csrfToken
 
 @template.layout.main(
     title = title,
@@ -44,6 +47,7 @@
                             <th>Horario</th>
                             <th>Lugar</th>
                             <th>Cupos</th>
+                            <th>Disponibles</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -60,10 +64,41 @@
                                 </td>
                                 <td>${evento.getLugar()}</td>
                                 <td>${evento.getCupoMaximo()}</td>
+                                <td>${cuposDisponibles.getOrDefault(evento.getId(), 0L)}</td>
                                 <td>${evento.getEstado()}</td>
                                 
                                 <td>
                                     <div class="eventos-acciones">
+
+
+                                                                                
+                                        @if("PUBLICADO".equals(evento.getEstado()))
+                                            @if(Boolean.TRUE.equals(inscripcionesUsuario.get(evento.getId())))
+                                                <span>Ya inscrito</span>
+                                            @else
+                                                @if(cuposDisponibles.getOrDefault(evento.getId(), 0L) > 0L)
+                                                    
+                                                <form action="/eventos/${evento.getId()}/inscribir"
+                                                    method="post">
+
+                                                    <input type="hidden"
+                                                        name="csrfToken"
+                                                        value="${csrfToken}" />
+
+                                                    <button type="submit"
+                                                            class="eventos-btn">
+                                                        Inscribirse
+                                                    </button>
+
+                                                </form>
+
+                                                @else
+                                                    <span>Cupos agotados</span>
+                                                @endif
+                                            @endif
+                                        @endif
+
+
 
                                         @if(!"CANCELADO".equals(evento.getEstado()))
 

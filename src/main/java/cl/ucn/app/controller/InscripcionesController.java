@@ -3,6 +3,8 @@ package cl.ucn.app.controller;
 
 import cl.ucn.app.repository.InscripcionRepository;
 import io.javalin.http.Context;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 
 public class InscripcionesController {
 
@@ -14,6 +16,18 @@ public class InscripcionesController {
 
         if (usuarioId == null) {
             ctx.redirect("/login");
+            return;
+        }
+
+        String tokenSesion = ctx.sessionAttribute("csrfToken");
+        String tokenFormulario = ctx.formParam("csrfToken");
+
+        if (tokenSesion == null || tokenFormulario == null ||
+                !MessageDigest.isEqual(
+                        tokenSesion.getBytes(StandardCharsets.UTF_8),
+                        tokenFormulario.getBytes(StandardCharsets.UTF_8))) {
+
+            ctx.status(403).result("Token de seguridad inválido");
             return;
         }
 

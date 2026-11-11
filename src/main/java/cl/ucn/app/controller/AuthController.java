@@ -6,6 +6,9 @@ import io.javalin.http.Context;
 
 import java.util.Map;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 public class AuthController {
 
     private final AuthService authService;
@@ -40,6 +43,15 @@ public class AuthController {
         ctx.sessionAttribute("usuarioNombre", usuario.getNombre());
         ctx.sessionAttribute("usuarioCorreo", usuario.getCorreo());
         ctx.sessionAttribute("usuarioRol", usuario.getRol().getNombre());
+
+        byte[] bytes = new byte[32];
+        new SecureRandom().nextBytes(bytes);
+
+        String csrfToken = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(bytes);
+
+        ctx.sessionAttribute("csrfToken", csrfToken);
 
         ctx.redirect("/home");
     }
