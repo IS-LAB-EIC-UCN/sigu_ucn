@@ -14,7 +14,7 @@ public class UsuarioRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Usuario> query = em.createQuery(
-                    "SELECT u FROM Usuario u JOIN FETCH u.rol WHERE u.correo = :correo",
+                    "SELECT u FROM Usuario u JOIN FETCH u.rol WHERE lower(u.correo) = :correo",
                     Usuario.class
             );
             query.setParameter("correo", correo);

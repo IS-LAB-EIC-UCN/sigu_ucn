@@ -39,6 +39,8 @@ public class AuthController {
             return;
         }
 
+        ctx.req().getSession();
+        ctx.req().changeSessionId();
         ctx.sessionAttribute("usuarioId", usuario.getId());
         ctx.sessionAttribute("usuarioNombre", usuario.getNombre());
         ctx.sessionAttribute("usuarioCorreo", usuario.getCorreo());

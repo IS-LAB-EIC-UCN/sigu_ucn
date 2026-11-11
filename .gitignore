@@ -45,3 +45,6 @@ build/
 
 # Configuracion personal del IDE: no compartir entre cohortes
 /.idea/
+
+# Sesiones locales de prueba
+/cookies.txt
