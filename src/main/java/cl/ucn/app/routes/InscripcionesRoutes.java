@@ -21,5 +21,9 @@ public final class InscripcionesRoutes {
                 "/eventos/{id}/cancelar-inscripcion",
                 controller::cancelar);
 
+        config.routes.get(
+                "/eventos/{id}/inscritos",
+                controller::mostrarInscritos);
+
     }
 }

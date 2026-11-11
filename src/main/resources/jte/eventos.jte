@@ -129,6 +129,12 @@
                                         @endif
 
 
+                                            <a href="/eventos/${evento.getId()}/inscritos"
+                                            class="eventos-btn">
+                                                Ver inscritos
+                                            </a>
+
+
                                             <a href="/eventos/${evento.getId()}/editar"
                                             class="eventos-btn">
                                                 Editar
