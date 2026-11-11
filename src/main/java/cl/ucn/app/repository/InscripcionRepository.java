@@ -214,4 +214,23 @@ public class InscripcionRepository {
         }
     }
 
+    public java.util.List<Inscripcion> listarPorEvento(Long eventoId) {
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            return em.createQuery(
+                    "SELECT i FROM Inscripcion i " +
+                            "JOIN FETCH i.usuario " +
+                            "WHERE i.evento.id = :eventoId " +
+                            "ORDER BY i.fechaInscripcion DESC",
+                    Inscripcion.class)
+                    .setParameter("eventoId", eventoId)
+                    .getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
 }
