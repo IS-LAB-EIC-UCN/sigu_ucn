@@ -12,7 +12,7 @@ Cada equipo desarrollará un módulo funcional dentro del sistema, integrándose
 
 Antes de ejecutar el proyecto, asegúrese de tener instalado lo siguiente:
 
-- Java 17 o superior
+- Java 21 o superior
 - Maven 3.9 o superior
 - Docker
 - Docker Compose
@@ -26,7 +26,7 @@ sigu-ucn/
 ├── pom.xml
 ├── db/
 │   └── init/
-│       ├── 01_schema.sql
+│       ├── 01_scheme.sql
 │       └── 02_seed.sql
 ├── src/
 │   ├── main/
@@ -73,7 +73,7 @@ Esto hará lo siguiente:
 - levantará un contenedor PostgreSQL;
 - creará la base de datos `sigu_ucn`;
 - ejecutará automáticamente los scripts:
-  - `db/init/01_schema.sql`
+  - `db/init/01_scheme.sql`
   - `db/init/02_seed.sql`
 
 ### Verificar estado del contenedor
@@ -103,7 +103,7 @@ docker compose down -v
 docker compose up -d
 ```
 
-> **Importante:** los scripts de inicialización se ejecutan solo la primera vez que se crea la base de datos dentro del volumen. Si modifica `01_schema.sql` o `02_seed.sql`, deberá eliminar el volumen con `docker compose down -v`.
+> **Importante:** los scripts de inicialización se ejecutan solo la primera vez que se crea la base de datos dentro del volumen. Si modifica `01_scheme.sql` o `02_seed.sql`, deberá eliminar el volumen con `docker compose down -v`.
 
 ---
 
@@ -149,7 +149,7 @@ docker compose up -d
 
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass="cl.ucn.app.Main"
+mvn exec:java -Dexec.mainClass="cl.ucn.app.main.Main"
 ```
 
 ### Paso 3: abrir en navegador
@@ -177,7 +177,7 @@ src/main/resources/application.properties
 ### Base de datos esperada
 
 - Host: `localhost`
-- Puerto: `5432`
+- Puerto: `5433`
 - Base de datos: `sigu_ucn`
 - Usuario: `postgres`
 - Contraseña: `postgres`
@@ -194,7 +194,7 @@ db/init/
 
 ### Archivos incluidos
 
-- `01_schema.sql`: crea la estructura base de tablas
+- `01_scheme.sql`: crea la estructura base de tablas
 - `02_seed.sql`: inserta datos iniciales
 
 ---
@@ -410,3 +410,8 @@ La base del sistema será común para todos los equipos. Cada grupo desarrollar�
 - la configuración base;
 - el modelo de persistencia;
 - la navegación principal del sistema.
+
+
+## Módulo 6: eventos académicos
+
+Ver [guía del módulo 6](docs/modulo-6.md) para requisitos, migración de una base existente, uso, arquitectura y pruebas.
