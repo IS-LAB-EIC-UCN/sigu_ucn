@@ -48,3 +48,7 @@ build/
 
 # Sesiones locales de prueba
 /cookies.txt
+
+# Cachés de las herramientas de documentación y verificación
+__pycache__/
+*.py[cod]
