@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="500" height="400" preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="500" height="400"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-400)" style="clip-path: url(#clip)">
+		<g transform="">
+			<circle cx="210" cy="385" r="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,23%,43%); fill-rule: evenodd;"/>
+			<rect x="95" y="325" width="230" height="34" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="95" y="335" width="230" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="104" y="343" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,686) scale(1,-1)">Consultar agenda y detalle</text>
+			<path d="M 210,380 L 210,359 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="210 359, 212.3365 364.5264, 207.6635 364.5264" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<rect x="95" y="260" width="230" height="34" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="95" y="270" width="230" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="104" y="278" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,556) scale(1,-1)">Confirmar inscripción</text>
+			<path d="M 210,325 L 210,294 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="210 294, 212.3365 299.5264, 207.6635 299.5264" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<polygon points="210 230, 330 195, 210 160, 90 195" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="166.72265625" y="200" style="font-family: UI; font-size: 9px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,400) scale(1,-1)">¿Publicado, en plazo,</text>
+			<text x="158.21484375" y="186" style="font-family: UI; font-size: 9px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,372) scale(1,-1)">sin duplicado y con cupo?</text>
+			<path d="M 210,260 L 210,230 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="210 230, 212.3365 235.5264, 207.6635 235.5264" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<path d="M 210,160 L 210,125 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="210 125, 212.3365 130.5264, 207.6635 130.5264" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="206.4569091796875" y="148.5" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,297) scale(1,-1)">Sí</text>
+			<rect x="95" y="90" width="230" height="34" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="95" y="100" width="230" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="104" y="108" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,216) scale(1,-1)">Guardar inscripción y COMMIT</text>
+			<rect x="95" y="25" width="230" height="34" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="95" y="35" width="230" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="104" y="43" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,86) scale(1,-1)">Confirmar cupo reservado</text>
+			<path d="M 210,90 L 210,59 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="210 59, 212.3365 64.52637, 207.6635 64.52637" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<circle cx="210" cy="8" r="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,23%,43%); fill-rule: evenodd;"/>
+			<path d="M 210,25 L 210,13 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="210 13, 212.3365 18.52637, 207.6635 18.52637" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<rect x="355" y="175" width="140" height="45" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="355" y="196" width="140" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="364" y="204" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,408) scale(1,-1)">Informar motivo</text>
+			<text x="363" y="180" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,360) scale(1,-1)">No modificar registro</text>
+			<path d="M 330,195 L 355,195 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="355 195, 349.4736 197.3365, 349.4736 192.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="337.706298828125" y="201.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,402) scale(1,-1)">No</text>
+		</g>
+	</g>
+</svg>

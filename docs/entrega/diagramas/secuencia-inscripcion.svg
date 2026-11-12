@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="500" height="350" preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="500" height="350"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-350)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="2.0" y="318" width="86.0" height="25" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="23.876953125" y="327" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,654) scale(1,-1)">Participante</text>
+			<path d="M 45,318 L 45,10 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; stroke-dasharray: 3, 4;"/>
+			<rect x="138.66666666666666" y="318" width="86.0" height="25" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="160.76627604166666" y="327" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,654) scale(1,-1)">Controlador</text>
+			<path d="M 181.666667,318 L 181.666667,10 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; stroke-dasharray: 3, 4;"/>
+			<rect x="275.3333333333333" y="318" width="86.0" height="25" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="298.1009114583333" y="327" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,654) scale(1,-1)">Repositorio</text>
+			<path d="M 318.333333,318 L 318.333333,10 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; stroke-dasharray: 3, 4;"/>
+			<rect x="412.0" y="318" width="86.0" height="25" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="433.2109375" y="327" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,654) scale(1,-1)">PostgreSQL</text>
+			<path d="M 455,318 L 455,10 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; stroke-dasharray: 3, 4;"/>
+			<path d="M 45,298 L 181.666667,298 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="181.6667 298, 176.1403 300.3365, 176.1403 295.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="84.36604817708333" y="304.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,608) scale(1,-1)">POST inscripción</text>
+			<path d="M 181.666667,273 L 318.333333,273 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="318.3333 273, 312.807 275.3365, 312.807 270.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="209.984130859375" y="279.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,558) scale(1,-1)">inscribir(evento,usuario)</text>
+			<path d="M 318.333333,248 L 455,248 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="455 248, 449.4736 250.3365, 449.4736 245.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="343.82731119791663" y="254.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,508) scale(1,-1)">BEGIN + bloquear evento</text>
+			<path d="M 455,223 L 318.333333,223 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9; stroke-dasharray: 3, 3;"/>
+			<polygon points="318.3333 223, 323.8597 220.6635, 323.8597 225.3365" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="363.94327799479163" y="229.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,458) scale(1,-1)">Evento actual</text>
+			<path d="M 318.333333,198 L 455,198 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="455 198, 449.4736 200.3365, 449.4736 195.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="339.55362955729163" y="204.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,408) scale(1,-1)">Validar estado, plazo y cupo</text>
+			<path d="M 455,173 L 318.333333,173 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9; stroke-dasharray: 3, 3;"/>
+			<polygon points="318.3333 173, 323.8597 170.6635, 323.8597 175.3365" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="367.90568033854163" y="179.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,358) scale(1,-1)">Resultados</text>
+			<path d="M 318.333333,148 L 455,148 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="455 148, 449.4736 150.3365, 449.4736 145.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="341.86442057291663" y="154.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,308) scale(1,-1)">INSERT / reactivar registro</text>
+			<path d="M 318.333333,123 L 455,123 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="455 123, 449.4736 125.3365, 449.4736 120.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="371.46158854166663" y="129.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,258) scale(1,-1)">COMMIT</text>
+			<path d="M 318.333333,98 L 181.666667,98 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9; stroke-dasharray: 3, 3;"/>
+			<polygon points="181.6667 98, 187.193 95.66349, 187.193 100.3365" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="213.1060791015625" y="104.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,208) scale(1,-1)">Operación confirmada</text>
+			<path d="M 181.666667,73 L 45,73 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9; stroke-dasharray: 3, 3;"/>
+			<polygon points="45 73, 50.52637 70.66349, 50.52637 75.33651" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="68.31502278645833" y="79.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,158) scale(1,-1)">Redirección y confirmación</text>
+		</g>
+	</g>
+</svg>

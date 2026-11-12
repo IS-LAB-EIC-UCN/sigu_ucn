@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="500" height="410" preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 410" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="500" height="410"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-410)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="125" y="5" width="370" height="400" rx="6" ry="6" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="225.311279296875" y="388" style="font-family: UI; font-size: 11px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,776) scale(1,-1)">Módulo 6 — usuarios autenticados</text>
+			<circle cx="50" cy="358" r="8" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: none; fill-rule: evenodd;"/>
+			<path d="M 50,350 L 50,327 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 33,343 L 67,343 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,327 L 35,312 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,327 L 65,312 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="42.111328125" y="297" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,594) scale(1,-1)">ADMIN</text>
+			<ellipse cx="305.0" cy="350.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="255.7759765625" y="347.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,694) scale(1,-1)">Usuarios y roles asignados</text>
+			<path d="M 70,342 L 148,350 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<ellipse cx="305.0" cy="305.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="248.254638671875" y="302.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,604) scale(1,-1)">Salas, categorías y supervisión</text>
+			<path d="M 70,342 L 148,305 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<circle cx="50" cy="233" r="8" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: none; fill-rule: evenodd;"/>
+			<path d="M 50,225 L 50,202 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 33,218 L 67,218 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,202 L 35,187 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,202 L 65,187 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="25.220703125" y="172" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,344) scale(1,-1)">ORGANIZADOR</text>
+			<ellipse cx="305.0" cy="225.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="251.44775390625" y="222.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,444) scale(1,-1)">Programar y publicar eventos</text>
+			<path d="M 70,217 L 148,225 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<ellipse cx="305.0" cy="180.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="243.70419921875" y="177.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,354) scale(1,-1)">Expositores, inscritos y asistencia</text>
+			<path d="M 70,217 L 148,180 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<circle cx="50" cy="108" r="8" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: none; fill-rule: evenodd;"/>
+			<path d="M 50,100 L 50,77 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 33,93 L 67,93 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,77 L 35,62 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 50,77 L 65,62 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="25.884765625" y="47" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,94) scale(1,-1)">PARTICIPANTE</text>
+			<ellipse cx="305.0" cy="100.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="249.619970703125" y="97.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,194) scale(1,-1)">Consultar agenda e inscribirse</text>
+			<path d="M 70,92 L 148,100 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<ellipse cx="305.0" cy="55.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="251.44375000000002" y="52.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,104) scale(1,-1)">Cancelar inscripción en plazo</text>
+			<path d="M 70,92 L 148,55 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+		</g>
+	</g>
+</svg>

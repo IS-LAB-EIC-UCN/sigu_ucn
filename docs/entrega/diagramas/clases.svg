@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="500" height="450" preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 450" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="500" height="450"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-450)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="350" width="145" height="85" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="0" y="411" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="9" y="419" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,838) scale(1,-1)">Rol</text>
+			<text x="8" y="395" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,790) scale(1,-1)">id, nombre</text>
+			<rect x="180" y="350" width="145" height="85" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="180" y="411" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="189" y="419" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,838) scale(1,-1)">Usuario</text>
+			<text x="188" y="395" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,790) scale(1,-1)">nombre, correo, passwordHash</text>
+			<text x="188" y="382" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,764) scale(1,-1)">activo, rol</text>
+			<rect x="355" y="350" width="145" height="85" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="355" y="411" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="364" y="419" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,838) scale(1,-1)">Espacio</text>
+			<text x="363" y="395" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,790) scale(1,-1)">nombre, tipo, capacidad</text>
+			<text x="363" y="382" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,764) scale(1,-1)">disponible</text>
+			<rect x="0" y="175" width="145" height="85" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="0" y="236" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="9" y="244" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,488) scale(1,-1)">Categoria</text>
+			<text x="8" y="220" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,440) scale(1,-1)">id, nombre</text>
+			<rect x="180" y="175" width="145" height="100" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="180" y="251" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="189" y="259" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,518) scale(1,-1)">Evento</text>
+			<text x="188" y="235" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,470) scale(1,-1)">titulo, fecha, horas, estado</text>
+			<text x="188" y="222" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,444) scale(1,-1)">cupoMaximo, organizador</text>
+			<text x="188" y="209" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,418) scale(1,-1)">espacio, categoria</text>
+			<rect x="0" y="0" width="145" height="90" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="0" y="66" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="9" y="74" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,148) scale(1,-1)">Inscripcion</text>
+			<text x="8" y="50" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,100) scale(1,-1)">usuario, evento, fecha</text>
+			<text x="8" y="37" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,74) scale(1,-1)">estado, asistencia</text>
+			<rect x="355" y="0" width="145" height="90" rx="5" ry="5" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 0.8; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="355" y="66" width="145" height="24" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
+			<text x="364" y="74" style="font-family: UI; font-size: 10px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,148) scale(1,-1)">Expositor</text>
+			<text x="363" y="50" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,100) scale(1,-1)">nombre, correo, institucion</text>
+			<text x="363" y="37" style="font-family: UI; font-size: 8px;fill: rgb(36%,43%,53%); stroke:none;" transform="translate(0,74) scale(1,-1)">especialidad</text>
+			<path d="M 145,393 L 180,393 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="180 393, 174.4736 395.3365, 174.4736 390.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="155.8294677734375" y="399.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,798) scale(1,-1)">1 : *</text>
+			<path d="M 250,350 L 250,275 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="250 275, 252.3365 280.5264, 247.6635 280.5264" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="229.986572265625" y="318.5" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,637) scale(1,-1)">1 organiza *</text>
+			<path d="M 390,350 L 315,275 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="315 275, 320.5599 277.2556, 317.2556 280.5599" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="345.8294677734375" y="318.5" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,637) scale(1,-1)">1 : *</text>
+			<path d="M 145,218 L 180,218 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="180 218, 174.4736 220.3365, 174.4736 215.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="155.8294677734375" y="224.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,448) scale(1,-1)">1 : *</text>
+			<path d="M 145,75 L 180,175 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="180 175, 175.969 170.5558, 180.3797 169.012" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="143.5284423828125" y="131.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,262) scale(1,-1)">* : 1 evento</text>
+			<path d="M 145,40 L 160,40 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 160,40 L 160,375 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
+			<path d="M 160,375 L 180,375 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="180 375, 174.4736 377.3365, 174.4736 372.6635" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="164" y="310.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,620) scale(1,-1)">* : 1 usuario</text>
+			<path d="M 355,90 L 315,175 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 0.9;"/>
+			<polygon points="315 175, 315.239 169.0048, 319.4672 170.9945" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: rgb(36%,43%,53%); fill-rule: evenodd;"/>
+			<text x="328.9556884765625" y="138.5" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,277) scale(1,-1)">* : *</text>
+			<text x="365" y="120.0" style="font-family: UI; font-size: 7.5px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,240) scale(1,-1)">evento_expositores</text>
+		</g>
+	</g>
+</svg>
