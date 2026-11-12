@@ -93,14 +93,15 @@ class EventosIntegrationTest {
         assertEquals(otro.getId(),eventos.findById(e.getId()).getExpositores().get(0).getId());
     }
     @Test void registraAsistenciaConPermisosYConservaElEstado() {
-        Evento e=nuevo(10);guardar(e);new EventoService(eventos).publicar(e);inscripciones.inscribir(e.getId(),usuario.getId());
+        Usuario docente=new UsuarioRepository().findByCorreo("docente@sigu.cl");
+        Evento e=nuevo(10);e.setOrganizador(docente);guardar(e);new EventoService(eventos).publicar(e);inscripciones.inscribir(e.getId(),usuario.getId());
         Long id=inscripciones.listarPorEvento(e.getId()).get(0).getId();
         assertThrows(SecurityException.class,()->inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ESTUDIANTE",true));
-        inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ADMIN",true);
+        inscripciones.registrarAsistencia(e.getId(),id,docente.getId(),"DOCENTE",true);
         assertTrue(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
         assertEquals("INSCRITO",inscripciones.listarPorEvento(e.getId()).get(0).getEstado());
         inscripciones.cancelarInscripcion(e.getId(),usuario.getId());
-        assertThrows(IllegalStateException.class,()->inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ADMIN",true));
+        assertThrows(IllegalStateException.class,()->inscripciones.registrarAsistencia(e.getId(),id,docente.getId(),"DOCENTE",true));
         inscripciones.inscribir(e.getId(),usuario.getId());assertFalse(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
     }
     @Test void cancelacionFueraDePlazoNoModificaLaInscripcion() {

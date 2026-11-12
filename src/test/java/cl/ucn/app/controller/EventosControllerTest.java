@@ -22,6 +22,17 @@ class EventosControllerTest {
         assertThrows(ForbiddenResponse.class, () -> controller.crearEvento(ctx));
         assertThrows(ForbiddenResponse.class, () -> controller.guardarExpositor(ctx));
     }
+    @Test void adminNoPuedeOrganizarAunqueAntesHayaCreadoEventos() {
+        autenticar();when(ctx.sessionAttribute("usuarioRol")).thenReturn("ADMIN");
+        when(ctx.formParam("csrfToken")).thenReturn("token");
+        assertThrows(ForbiddenResponse.class, () -> controller.mostrarFormulario(ctx));
+        assertThrows(ForbiddenResponse.class, () -> controller.crearEvento(ctx));
+        assertThrows(ForbiddenResponse.class, () -> controller.mostrarFormularioEditar(ctx));
+        assertThrows(ForbiddenResponse.class, () -> controller.actualizarEvento(ctx));
+        assertThrows(ForbiddenResponse.class, () -> controller.publicarEvento(ctx));
+        assertThrows(ForbiddenResponse.class, () -> controller.cancelarEvento(ctx));
+        assertThrows(ForbiddenResponse.class, () -> controller.reactivarEvento(ctx));
+    }
     @Test void detalleRechazaIdentificadorInvalido() {
         autenticar();when(ctx.pathParam("id")).thenReturn("abc");
         assertThrows(io.javalin.http.BadRequestResponse.class,()->controller.detalle(ctx));

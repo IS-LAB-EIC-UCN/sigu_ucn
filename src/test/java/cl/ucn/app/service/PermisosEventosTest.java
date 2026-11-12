@@ -13,8 +13,8 @@ class PermisosEventosTest {
         assertFalse(PermisosEventos.organiza("ESTUDIANTE"));
         assertFalse(PermisosEventos.administra("ESTUDIANTE",1L,1L));
     }
-    @Test void asistenciaOficialRequiereSerOrganizadorInclusoSiEsAdmin() {
-        assertTrue(PermisosEventos.registraAsistencia("ADMIN",1L,1L));
+    @Test void asistenciaOficialRequiereSerDocenteOrganizador() {
+        assertFalse(PermisosEventos.registraAsistencia("ADMIN",1L,1L));
         assertTrue(PermisosEventos.registraAsistencia("DOCENTE",2L,2L));
         assertFalse(PermisosEventos.registraAsistencia("ADMIN",1L,2L));
         assertFalse(PermisosEventos.registraAsistencia("ESTUDIANTE",1L,1L));
@@ -26,7 +26,8 @@ class PermisosEventosTest {
     }
     @Test void adminSupervisaYRechazaAnonimosYRolesDesconocidos() {
         assertFalse(PermisosEventos.administra("ADMIN",1L,2L));
-        assertTrue(PermisosEventos.administra("ADMIN",1L,1L));
+        assertFalse(PermisosEventos.organiza("ADMIN"));
+        assertFalse(PermisosEventos.administra("ADMIN",1L,1L));
         assertTrue(PermisosEventos.consultaInscritos("ADMIN",1L,2L,"PUBLICADO"));
         assertFalse(PermisosEventos.consultaInscritos("ADMIN",1L,2L,"BORRADOR"));
         assertFalse(PermisosEventos.consultaInscritos("ESTUDIANTE",1L,2L,"PUBLICADO"));

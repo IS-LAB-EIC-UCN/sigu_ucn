@@ -29,7 +29,7 @@ public class EventosController {
     private boolean accesoOrganizador(Context ctx, boolean escritura) {
         if (!acceso(ctx, escritura)) return false;
         if (!PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")))
-            throw new ForbiddenResponse("Tu rol solo permite participar en eventos.");
+            throw new ForbiddenResponse("Solo el docente puede organizar eventos.");
         return true;
     }
     private Map<String,Object> modelo(Context ctx) {

@@ -8,9 +8,9 @@ Implementación del proyecto base y ajustes al informe del equipo (RF-01 a RF-12
 | --- | --- | --- |
 | ESTUDIANTE | Participante | Agenda, búsqueda, filtros y detalle; inscripción y cancelación propia antes del inicio. |
 | DOCENTE | Organizador | Creación y administración de sus eventos; registro/edición de expositores; lista y asistencia de sus inscritos. |
-| ADMIN | Administrador y supervisor | Supervisión de eventos publicados/finalizados e inscritos sin modificar eventos ajenos; administración de sus propios eventos, salas y categorías. |
+| ADMIN | Administrador y supervisor | Supervisión de eventos publicados/finalizados e inscritos sin modificar eventos; administración de salas y categorías. |
 
-Los permisos se verifican en el servidor además de ocultar controles en la interfaz. DOCENTE organiza sus eventos y registra la asistencia de sus participantes. La inscripción y su cancelación se reservan a ESTUDIANTE; DOCENTE y ADMIN no disponen de esas acciones. DOCENTE no administra eventos ajenos. ESTUDIANTE no crea eventos, edita expositores, administra salas ni registra asistencia. La reactivación como borrador sigue disponible para organizadores autorizados y conserva el historial.
+Los permisos se verifican en el servidor además de ocultar controles en la interfaz. Solo DOCENTE crea, edita, publica, cancela y reactiva sus propios eventos; ADMIN no organiza eventos ni registra asistencia. DOCENTE organiza sus eventos y registra la asistencia de sus participantes. La inscripción y su cancelación se reservan a ESTUDIANTE; DOCENTE y ADMIN no disponen de esas acciones. DOCENTE no administra eventos ajenos. ESTUDIANTE no crea eventos, edita expositores, administra salas ni registra asistencia. La reactivación como borrador sigue disponible para organizadores autorizados y conserva el historial.
 
 ## Trazabilidad del informe
 

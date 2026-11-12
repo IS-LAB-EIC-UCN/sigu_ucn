@@ -64,8 +64,8 @@ def main():
             # La administración global de usuarios no pertenece al módulo 6.
             try:c.open(base+"/admin/usuarios",timeout=15);raise AssertionError("El panel global de usuarios sigue expuesto")
             except urllib.error.HTTPError as ex:assert ex.code==404
-            if correo.startswith("estudiante"):
-                try:c.open(base+"/eventos/nuevo",timeout=15);raise AssertionError("El estudiante no debe crear eventos")
+            if not correo.startswith("docente"):
+                try:c.open(base+"/eventos/nuevo",timeout=15);raise AssertionError("Solo el docente debe crear eventos")
                 except urllib.error.HTTPError as ex:assert ex.code==403
             else:
                 with c.open(base+"/eventos/nuevo",timeout=15) as r:assert r.status==200;r.read()

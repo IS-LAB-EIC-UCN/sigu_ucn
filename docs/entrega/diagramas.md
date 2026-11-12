@@ -8,7 +8,7 @@ Estas fuentes documentan el diseño actual. Las versiones SVG y PDF se regeneran
 flowchart LR
     A[Administrador] --> S[Administrar salas y categorías]
     A --> V[Supervisar eventos ajenos publicados]
-    O[Organizador: DOCENTE o ADMIN responsable] --> E[Crear, editar, publicar y cancelar su evento]
+    O[Organizador: DOCENTE responsable] --> E[Crear, editar, publicar y cancelar su evento]
     O --> X[Gestionar expositores]
     O --> R[Consultar inscritos y registrar asistencia propia]
     P[Participante autenticado] --> C[Consultar agenda, filtros y detalle]

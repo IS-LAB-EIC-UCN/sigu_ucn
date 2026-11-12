@@ -52,7 +52,7 @@
 @else <span class="badge">Cupos agotados</span> @endif
 @endif
 @endif
-@if(admin && !usuarioId.equals(e.getOrganizador().getId()) && ("PUBLICADO".equals(e.getEstado()) || "FINALIZADO".equals(e.getEstado())))
+@if(admin && ("PUBLICADO".equals(e.getEstado()) || "FINALIZADO".equals(e.getEstado())))
 <a class="eventos-btn secundario" href="/eventos/${e.getId()}/inscritos">Supervisar inscritos</a>
 @endif
 @if(puedeOrganizar && usuarioId.equals(e.getOrganizador().getId()))
