@@ -1,97 +1,32 @@
--- Datos iniciales del modulo 6. No modifica ni duplica eventos ya existentes.
-
--- Se aplica despues de 05_eventos_catalogos.sql.
-
+-- Cuatro eventos de ejemplo del docente. No elimina datos existentes.
+-- Compatible con la inicialización anterior a las migraciones 07 a 10.
 BEGIN;
-
 LOCK TABLE eventos IN SHARE ROW EXCLUSIVE MODE;
-
 DO $$
-DECLARE organizador BIGINT; sala BIGINT; ponente BIGINT;
+DECLARE organizador BIGINT; sala BIGINT; capacidad_sala INTEGER; ponente BIGINT; dato RECORD;
 BEGIN
- SELECT id INTO organizador FROM usuarios WHERE correo = 'admin@sigu.cl';
- SELECT id INTO sala FROM espacios WHERE nombre = 'Auditorio Central' AND disponible = TRUE ORDER BY id LIMIT 1;
- IF organizador IS NULL OR sala IS NULL THEN
-   RAISE EXCEPTION 'No se encontro el organizador o la sala para los eventos iniciales';
- END IF;
- SELECT id INTO ponente FROM expositores WHERE nombre = 'Equipo de Seguridad Digital' ORDER BY id LIMIT 1;
- IF ponente IS NULL THEN
-   INSERT INTO expositores(nombre, correo, especialidad) VALUES ('Equipo de Seguridad Digital', '', 'Tecnología') RETURNING id INTO ponente;
- END IF;
- IF NOT EXISTS (SELECT 1 FROM eventos WHERE titulo = 'Charla de ciberseguridad para la vida universitaria' AND fecha = '2026-11-16'::date AND organizador_id = organizador) THEN
-   IF EXISTS (SELECT 1 FROM eventos WHERE estado <> 'CANCELADO' AND fecha = '2026-11-16'::date
-      AND lower(trim(lugar)) = lower(trim('Auditorio Central')) AND hora_inicio < '11:30:00'::time AND hora_fin > '10:00:00'::time) THEN
-     RAISE EXCEPTION 'Existe un cruce de horario al cargar los eventos iniciales';
-   END IF;
-   INSERT INTO eventos(titulo, descripcion, tematica, fecha, hora_inicio, hora_fin, lugar, cupo_maximo, estado, organizador_id, expositor_id, espacio_id)
-   VALUES ('Charla de ciberseguridad para la vida universitaria', 'Buenas prácticas para proteger cuentas, reconocer fraudes y navegar de forma segura en el entorno universitario.', 'Tecnología', '2026-11-16'::date, '10:00:00'::time, '11:30:00'::time, 'Auditorio Central', 80, 'PUBLICADO', organizador, ponente, sala);
- END IF;
+ SELECT u.id INTO organizador FROM usuarios u JOIN roles r ON r.id=u.rol_id
+ WHERE u.correo='docente@sigu.cl' AND u.activo AND r.nombre='DOCENTE';
+ IF organizador IS NULL THEN RAISE EXCEPTION 'Se requiere la cuenta activa docente@sigu.cl con rol DOCENTE'; END IF;
+ FOR dato IN SELECT * FROM (VALUES
+  ('Taller de desarrollo web con Java', 'Construye una aplicación web sencilla con formularios, validaciones y persistencia. Actividad práctica orientada a estudiantes.', 'Tecnología', 4, '10:00'::time, '12:00'::time, 'Laboratorio L1', 25, 'Equipo de Seguridad Digital'),
+  ('Jornada de proyectos e innovación universitaria', 'Comparte propuestas para resolver problemas de la comunidad universitaria y conoce experiencias de emprendimiento estudiantil.', 'Innovación', 6, '11:00'::time, '13:00'::time, 'Auditorio Central', 100, 'Equipo de Innovación y Emprendimiento'),
+  ('Taller de metodología de investigación', 'Aprende a formular objetivos, seleccionar fuentes confiables y organizar un proyecto de investigación académica.', 'Investigación', 8, '15:00'::time, '17:00'::time, 'Sala A101', 35, 'Equipo de Apoyo a la Investigación'),
+  ('Introducción al análisis y visualización de datos', 'Explora datos de ejemplo, identifica tendencias y prepara gráficos para comunicar resultados de manera clara.', 'Ciencia de datos', 11, '09:00'::time, '11:00'::time, 'Laboratorio L1', 25, 'Equipo de Ciencia de Datos')
+ ) AS datos(titulo,descripcion,categoria,dias,inicio,termino,ubicacion,cupos,expositor)
+ LOOP
+  SELECT id,capacidad INTO sala,capacidad_sala FROM espacios WHERE nombre=dato.ubicacion AND disponible ORDER BY id LIMIT 1;
+  IF sala IS NULL OR capacidad_sala<dato.cupos THEN RAISE EXCEPTION 'Sala no disponible o sin capacidad: %',dato.ubicacion; END IF;
+  IF EXISTS (SELECT 1 FROM eventos WHERE titulo=dato.titulo AND organizador_id=organizador) THEN CONTINUE; END IF;
+  IF EXISTS (SELECT 1 FROM eventos WHERE espacio_id=sala AND fecha=CURRENT_DATE+dato.dias AND estado<>'CANCELADO' AND hora_inicio<dato.termino AND hora_fin>dato.inicio) THEN
+   RAISE EXCEPTION 'Existe un cruce de horario en %',dato.ubicacion;
+  END IF;
+  SELECT id INTO ponente FROM expositores WHERE nombre=dato.expositor ORDER BY id LIMIT 1;
+  IF ponente IS NULL THEN
+   INSERT INTO expositores(nombre,correo,especialidad) VALUES(dato.expositor,'',dato.categoria) RETURNING id INTO ponente;
+  END IF;
+  INSERT INTO eventos(titulo,descripcion,tematica,fecha,hora_inicio,hora_fin,lugar,cupo_maximo,estado,organizador_id,expositor_id,espacio_id)
+  VALUES(dato.titulo,dato.descripcion,dato.categoria,CURRENT_DATE+dato.dias,dato.inicio,dato.termino,dato.ubicacion,dato.cupos,'PUBLICADO',organizador,ponente,sala);
+ END LOOP;
 END $$;
-
-DO $$
-DECLARE organizador BIGINT; sala BIGINT; ponente BIGINT;
-BEGIN
- SELECT id INTO organizador FROM usuarios WHERE correo = 'admin@sigu.cl';
- SELECT id INTO sala FROM espacios WHERE nombre = 'Sala A101' AND disponible = TRUE ORDER BY id LIMIT 1;
- IF organizador IS NULL OR sala IS NULL THEN
-   RAISE EXCEPTION 'No se encontro el organizador o la sala para los eventos iniciales';
- END IF;
- SELECT id INTO ponente FROM expositores WHERE nombre = 'Equipo de Apoyo a la Investigación' ORDER BY id LIMIT 1;
- IF ponente IS NULL THEN
-   INSERT INTO expositores(nombre, correo, especialidad) VALUES ('Equipo de Apoyo a la Investigación', '', 'Investigación') RETURNING id INTO ponente;
- END IF;
- IF NOT EXISTS (SELECT 1 FROM eventos WHERE titulo = 'Taller de investigación y escritura académica' AND fecha = '2026-11-18'::date AND organizador_id = organizador) THEN
-   IF EXISTS (SELECT 1 FROM eventos WHERE estado <> 'CANCELADO' AND fecha = '2026-11-18'::date
-      AND lower(trim(lugar)) = lower(trim('Sala A101')) AND hora_inicio < '17:00:00'::time AND hora_fin > '15:00:00'::time) THEN
-     RAISE EXCEPTION 'Existe un cruce de horario al cargar los eventos iniciales';
-   END IF;
-   INSERT INTO eventos(titulo, descripcion, tematica, fecha, hora_inicio, hora_fin, lugar, cupo_maximo, estado, organizador_id, expositor_id, espacio_id)
-   VALUES ('Taller de investigación y escritura académica', 'Aprende a plantear una pregunta de investigación, organizar fuentes y estructurar un informe académico.', 'Investigación', '2026-11-18'::date, '15:00:00'::time, '17:00:00'::time, 'Sala A101', 35, 'PUBLICADO', organizador, ponente, sala);
- END IF;
-END $$;
-
-DO $$
-DECLARE organizador BIGINT; sala BIGINT; ponente BIGINT;
-BEGIN
- SELECT id INTO organizador FROM usuarios WHERE correo = 'admin@sigu.cl';
- SELECT id INTO sala FROM espacios WHERE nombre = 'Auditorio Central' AND disponible = TRUE ORDER BY id LIMIT 1;
- IF organizador IS NULL OR sala IS NULL THEN
-   RAISE EXCEPTION 'No se encontro el organizador o la sala para los eventos iniciales';
- END IF;
- SELECT id INTO ponente FROM expositores WHERE nombre = 'Equipo de Innovación y Emprendimiento' ORDER BY id LIMIT 1;
- IF ponente IS NULL THEN
-   INSERT INTO expositores(nombre, correo, especialidad) VALUES ('Equipo de Innovación y Emprendimiento', '', 'Innovación') RETURNING id INTO ponente;
- END IF;
- IF NOT EXISTS (SELECT 1 FROM eventos WHERE titulo = 'Encuentro de innovación y emprendimiento estudiantil' AND fecha = '2026-11-23'::date AND organizador_id = organizador) THEN
-   IF EXISTS (SELECT 1 FROM eventos WHERE estado <> 'CANCELADO' AND fecha = '2026-11-23'::date
-      AND lower(trim(lugar)) = lower(trim('Auditorio Central')) AND hora_inicio < '13:00:00'::time AND hora_fin > '11:00:00'::time) THEN
-     RAISE EXCEPTION 'Existe un cruce de horario al cargar los eventos iniciales';
-   END IF;
-   INSERT INTO eventos(titulo, descripcion, tematica, fecha, hora_inicio, hora_fin, lugar, cupo_maximo, estado, organizador_id, expositor_id, espacio_id)
-   VALUES ('Encuentro de innovación y emprendimiento estudiantil', 'Espacio para compartir ideas, conocer herramientas para desarrollar proyectos y conectar con otros estudiantes.', 'Innovación', '2026-11-23'::date, '11:00:00'::time, '13:00:00'::time, 'Auditorio Central', 100, 'PUBLICADO', organizador, ponente, sala);
- END IF;
-END $$;
-
-DO $$
-DECLARE organizador BIGINT; sala BIGINT; ponente BIGINT;
-BEGIN
- SELECT id INTO organizador FROM usuarios WHERE correo = 'admin@sigu.cl';
- SELECT id INTO sala FROM espacios WHERE nombre = 'Laboratorio L1' AND disponible = TRUE ORDER BY id LIMIT 1;
- IF organizador IS NULL OR sala IS NULL THEN
-   RAISE EXCEPTION 'No se encontro el organizador o la sala para los eventos iniciales';
- END IF;
- SELECT id INTO ponente FROM expositores WHERE nombre = 'Equipo de Ciencia de Datos' ORDER BY id LIMIT 1;
- IF ponente IS NULL THEN
-   INSERT INTO expositores(nombre, correo, especialidad) VALUES ('Equipo de Ciencia de Datos', '', 'Ciencia de datos') RETURNING id INTO ponente;
- END IF;
- IF NOT EXISTS (SELECT 1 FROM eventos WHERE titulo = 'Taller práctico de análisis de datos' AND fecha = '2026-11-26'::date AND organizador_id = organizador) THEN
-   IF EXISTS (SELECT 1 FROM eventos WHERE estado <> 'CANCELADO' AND fecha = '2026-11-26'::date
-      AND lower(trim(lugar)) = lower(trim('Laboratorio L1')) AND hora_inicio < '11:00:00'::time AND hora_fin > '09:00:00'::time) THEN
-     RAISE EXCEPTION 'Existe un cruce de horario al cargar los eventos iniciales';
-   END IF;
-   INSERT INTO eventos(titulo, descripcion, tematica, fecha, hora_inicio, hora_fin, lugar, cupo_maximo, estado, organizador_id, expositor_id, espacio_id)
-   VALUES ('Taller práctico de análisis de datos', 'Introducción práctica a la limpieza, exploración y visualización de datos mediante ejercicios guiados.', 'Ciencia de datos', '2026-11-26'::date, '09:00:00'::time, '11:00:00'::time, 'Laboratorio L1', 25, 'PUBLICADO', organizador, ponente, sala);
- END IF;
-END $$;
-
 COMMIT;
