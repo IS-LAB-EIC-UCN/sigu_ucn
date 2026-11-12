@@ -1,5 +1,6 @@
 @import gg.jte.Content
 
+@param boolean administrador = false
 @param String title
 @param String usuarioNombre
 @param Content content
@@ -33,6 +34,7 @@
             <h3>Módulos</h3>
             <ul class="menu-list">
                 <li><a href="/home">Inicio</a></li>
+                @if(administrador)<li><a href="/admin/usuarios">Usuarios y roles</a></li>@endif
                 <li><a href="#">Grupo 1 - Reservas de salas</a></li>
                 <li><a href="#">Grupo 2 - Biblioteca</a></li>
                 <li><a href="#">Grupo 3 - Talleres</a></li>

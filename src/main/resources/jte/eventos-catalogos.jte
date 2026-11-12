@@ -8,7 +8,7 @@
 @param boolean admin
 @param java.util.List<cl.ucn.app.model.Expositor> expositores
 @param java.util.List<cl.ucn.app.model.Espacio> espacios
-@template.layout.main(title=title,usuarioNombre=usuarioNombre,content=@`
+@template.layout.main(administrador=admin,title=title,usuarioNombre=usuarioNombre,content=@`
 <section class="eventos-panel"><header class="eventos-cabecera"><div><p class="eyebrow">RECURSOS PARA TUS ACTIVIDADES</p><h1>Expositores y ubicaciones</h1><p>Prepara las personas y los espacios de tus próximos eventos.</p></div>@if(puedeOrganizar)<a href="/eventos/nuevo" class="eventos-btn">Crear evento</a>@endif</header>
 <nav class="eventos-nav" aria-label="Secciones de eventos"><a href="/eventos">Todos los eventos</a><a href="/eventos?vista=agenda">Agenda</a><a href="/eventos?vista=mios">Mis actividades</a><a href="/eventos/catalogos">Expositores y ubicaciones</a></nav>@if(!aviso.isBlank())<div class="evento-alerta exito" role="status">${aviso}</div>@endif
 @if(!error.isBlank())<div class="evento-alerta error" role="alert">${error}</div>@endif

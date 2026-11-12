@@ -1,7 +1,8 @@
+@param boolean admin = false
 @param String title
 @param String usuarioNombre
 
-@template.layout.main(
+@template.layout.main(administrador=admin,
 title = title,
 usuarioNombre = usuarioNombre,
 content = @`

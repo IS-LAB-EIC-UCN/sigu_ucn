@@ -147,6 +147,7 @@ public class InscripcionesController {
         if ("true".equals(ctx.queryParam("activos"))) inscripciones = inscripciones.stream().filter(i -> "INSCRITO".equals(i.getEstado())).toList();
 
         ctx.render("eventos-inscritos.jte", Map.of(
+                "admin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")),
                 "title", "Participantes del evento",
                 "usuarioNombre", usuarioNombre,
                 "evento", evento,
@@ -175,6 +176,7 @@ public class InscripcionesController {
     private void mostrarError(Context ctx, int estado, String mensaje) {
         ctx.status(estado);
         ctx.render("eventos-error.jte", Map.of(
+            "admin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")),
             "title", "Eventos acad\u00e9micos", "usuarioNombre", ctx.sessionAttribute("usuarioNombre"),
             "csrfToken", ctx.sessionAttribute("csrfToken"), "error", mensaje, "aviso", ""));
     }

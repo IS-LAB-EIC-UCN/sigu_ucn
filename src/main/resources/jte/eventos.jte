@@ -16,7 +16,7 @@
 @param long proximos
 @param long misInscripciones
 @param long organizados
-@template.layout.main(title=title, usuarioNombre=usuarioNombre, content=@`
+@template.layout.main(administrador=admin,title=title, usuarioNombre=usuarioNombre, content=@`
 <section class="eventos-panel">
 <header class="eventos-cabecera"><div><p class="eyebrow">VIDA UNIVERSITARIA / MÓDULO 06</p><h1>Eventos académicos</h1><p>Conecta con nuevas ideas. Encuentra tu próxima actividad.</p></div>@if(puedeOrganizar)<a class="eventos-btn" href="/eventos/nuevo"><span aria-hidden="true">+</span> Crear evento</a>@endif</header>
 <nav class="eventos-nav" aria-label="Secciones de eventos"><a href="/eventos">Todos los eventos</a><a href="/eventos?vista=agenda">Agenda</a><a href="/eventos?vista=mios">Mis actividades</a><a href="/eventos/catalogos">Expositores y ubicaciones</a></nav>@if(!aviso.isBlank())<div class="evento-alerta exito" role="status">${aviso}</div>@endif

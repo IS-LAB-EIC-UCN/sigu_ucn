@@ -1,3 +1,4 @@
+@param boolean admin = false
 @param String title
 @param String usuarioNombre
 @param String csrfToken
@@ -8,7 +9,7 @@
 @param java.util.List<cl.ucn.app.model.Categoria> categorias
 @param java.util.List<cl.ucn.app.model.Expositor> expositores
 @param java.util.List<cl.ucn.app.model.Espacio> espacios
-@template.layout.main(title=title,usuarioNombre=usuarioNombre,content=@`
+@template.layout.main(administrador=admin,title=title,usuarioNombre=usuarioNombre,content=@`
 <section class="eventos-panel"><a href="/eventos" class="enlace-suave">← Volver a eventos</a>
 <header class="eventos-cabecera"><div><p class="eyebrow">ORGANIZACIÓN ACADÉMICA</p><h1>${evento==null ? "Crear un evento" : "Editar evento"}</h1><p>Define los detalles. Podrás publicar la actividad cuando esté lista.</p></div><span class="badge">${evento==null ? "Nuevo borrador" : evento.getEstado()}</span></header>
 @if(!aviso.isBlank())<div class="evento-alerta exito" role="status">${aviso}</div>@endif

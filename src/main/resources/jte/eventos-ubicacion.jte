@@ -1,9 +1,10 @@
+@param boolean admin = false
 @param String title
 @param String usuarioNombre
 @param String csrfToken
 @param String error
 @param cl.ucn.app.model.Espacio espacio
-@template.layout.main(title=title,usuarioNombre=usuarioNombre,content=@`
+@template.layout.main(administrador=admin,title=title,usuarioNombre=usuarioNombre,content=@`
 <section class="eventos-panel"><a class="enlace-suave" href="/eventos/catalogos">← Volver al catálogo</a><header class="eventos-cabecera"><div><p class="eyebrow">ADMINISTRACIÓN</p><h1>Editar ubicación</h1><p>Actualiza sus datos sin comprometer los cupos de los eventos programados.</p></div></header>
 @if(!error.isBlank())<div class="evento-alerta error" role="alert">${error}</div>@endif
 <form class="eventos-formulario" action="/eventos/ubicaciones/${espacio.getId()}/editar" method="post"><input type="hidden" name="csrfToken" value="${csrfToken}"><div class="eventos-form-grid">
