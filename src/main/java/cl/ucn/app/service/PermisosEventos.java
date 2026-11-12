@@ -3,6 +3,7 @@ import java.util.Objects;
 /** Permisos del módulo: estudiante participante; docente organizador; administrador supervisor. */
 public final class PermisosEventos {
     private PermisosEventos() {}
+    public static boolean participa(String rol) { return "ESTUDIANTE".equals(rol); }
     public static boolean organiza(String rol) { return "ADMIN".equals(rol) || "DOCENTE".equals(rol); }
     public static boolean registraAsistencia(String rol, Long usuario, Long organizador) {
         return organiza(rol) && usuario != null && Objects.equals(usuario, organizador);

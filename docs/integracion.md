@@ -22,7 +22,7 @@ Base nueva: Docker ejecuta db/init en orden. Base existente: aplicar 05 y 07 a 1
 
 ## Verificación realizada
 
-- Suite actual de eventos/autenticación: 42 pruebas correctas. La evidencia de instalación limpia se actualiza en docs/instalacion-limpia.md.
+- Suite actual de eventos/autenticación: 44 pruebas correctas. La evidencia de instalación limpia se actualiza en docs/instalacion-limpia.md.
 - Acceso de los tres roles y permisos de eventos comprobados por HTTP; las rutas del panel retirado responden 404.
 - Chrome y HTTP: agenda, detalle, expositores, inscritos y permisos; escritorio y móvil.
 - Pruebas concurrentes de cupos, duplicados y conflictos de sala.

@@ -1,5 +1,6 @@
 @param String title
 @param String usuarioNombre
+@param boolean puedeInscribirse
 @param String csrfToken
 @param String error
 @param String aviso
@@ -42,7 +43,7 @@
 <div class="evento-detalles"><span>Horario · ${e.getHoraInicio().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}–${e.getHoraFin().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}</span><span>Cancelación hasta · ${e.getFecha().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))} ${e.getHoraInicio().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}</span><span>Ubicación · ${e.getLugar()}</span><span>Expositores · ${e.getExpositores().isEmpty() ? "Por confirmar" : e.getNombresExpositores()}</span></div>
 <div class="evento-pie"><span class="evento-cupo"><strong>${Math.max(0,e.getCupoMaximo()-resumen.getOrDefault(e.getId(),new long[]{0,0})[0])}</strong> de ${e.getCupoMaximo()} cupos disponibles</span>
 <div class="eventos-acciones">
-@if(e.isDisponible())
+@if(puedeInscribirse && e.isDisponible())
 @if(resumen.getOrDefault(e.getId(),new long[]{0,0})[1]>0)
 <form method="post" action="/eventos/${e.getId()}/cancelar-inscripcion" onsubmit="return confirm('¿Cancelar tu inscripción?');"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn secundario" type="submit">Cancelar inscripción</button></form>
 @else

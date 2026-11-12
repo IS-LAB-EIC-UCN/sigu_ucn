@@ -18,7 +18,7 @@ Incluye usuarios autenticados, eventos, expositores, categorías, salas comparti
 | Rol | Actor | Responsabilidades |
 | --- | --- | --- |
 | ESTUDIANTE | Participante | Consultar, buscar, filtrar, revisar detalle, inscribirse y cancelar antes del inicio. |
-| DOCENTE | Organizador | Administrar sus eventos y expositores; listar participantes y registrar asistencia oficial propia. |
+| DOCENTE | Organizador | Administrar sus eventos y expositores; listar participantes y registrar asistencia de sus participantes; no se inscribe. |
 | ADMIN | Administrador | Gestionar salas y categorías; supervisar eventos ajenos publicados o finalizados sin modificarlos. |
 
 La equivalencia de los roles compartidos con los actores es una decisión de diseño del equipo. ADMIN puede organizar sus propios eventos para conservar la responsabilidad de los existentes. No puede editar, cancelar, reactivar ni registrar asistencia de un evento ajeno. Un borrador es privado de su organizador autorizado.
@@ -120,7 +120,7 @@ Las inscripciones bloquean la fila del evento y conservan su unicidad. La agenda
 
 ## 13. Pruebas y resultados
 
-La suite actual ejecutó 42 pruebas con cero fallos y cero errores. Incluye validaciones de servicios y controladores, persistencia real, roles, asistencia, plazos y varios expositores. La configuración externa permite aislar la base usada por las pruebas.
+La suite actual ejecutó 44 pruebas con cero fallos y cero errores. Incluye validaciones de servicios y controladores, persistencia real, roles, asistencia, plazos y varios expositores. La configuración externa permite aislar la base usada por las pruebas.
 
 Concurrencia: ocho peticiones del mismo usuario generan una inscripción; ocho usuarios que compiten por dos cupos aceptan exactamente dos; cuatro eventos que compiten por la misma sala y horario aceptan exactamente uno.
 

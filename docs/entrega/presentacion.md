@@ -11,7 +11,7 @@ Material de apoyo para revisión y ensayo del equipo
 ---
 # Actores y permisos
 - ESTUDIANTE: consulta, filtros, detalle e inscripción propia.
-- DOCENTE: organiza sus eventos y registra asistencia de sus participantes.
+- DOCENTE: organiza sus eventos y registra asistencia de sus participantes; no se inscribe.
 - ADMIN: gestiona salas, categorías y supervisa eventos.
 - Supervisar un evento ajeno permite consultar, no modificarlo.
 ---
@@ -37,7 +37,7 @@ Material de apoyo para revisión y ensayo del equipo
 - Solo el organizador registra la asistencia oficial de su evento.
 ---
 # Verificación reproducible
-- 42 pruebas de eventos y autenticación correctas.
+- 44 pruebas de eventos y autenticación correctas.
 - Los tres roles acceden a sus funciones y reciben los rechazos esperados.
 - Chrome y HTTP: eventos, permisos y pantallas móviles.
 - 100 sesiones y 300 consultas: cero errores, máximo local 0.619 s.

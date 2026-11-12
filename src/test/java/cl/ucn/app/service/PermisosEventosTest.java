@@ -2,6 +2,13 @@ package cl.ucn.app.service;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 class PermisosEventosTest {
+    @Test void soloEstudiantesPuedenInscribirse() {
+        assertTrue(PermisosEventos.participa("ESTUDIANTE"));
+        assertFalse(PermisosEventos.participa("DOCENTE"));
+        assertFalse(PermisosEventos.participa("ADMIN"));
+        assertFalse(PermisosEventos.participa("OTRO"));
+        assertFalse(PermisosEventos.participa(null));
+    }
     @Test void estudianteNoOrganizaNiAdministraAunqueSeaCreadorAntiguo() {
         assertFalse(PermisosEventos.organiza("ESTUDIANTE"));
         assertFalse(PermisosEventos.administra("ESTUDIANTE",1L,1L));

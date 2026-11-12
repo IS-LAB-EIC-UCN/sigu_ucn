@@ -29,6 +29,11 @@ public class InscripcionesController {
             return;
         }
 
+        if (!cl.ucn.app.service.PermisosEventos.participa(ctx.sessionAttribute("usuarioRol"))) {
+            ctx.status(403).result("Solo los estudiantes pueden inscribirse o cancelar su inscripción.");
+            return;
+        }
+
         String tokenSesion = ctx.sessionAttribute("csrfToken");
         String tokenFormulario = ctx.formParam("csrfToken");
 
@@ -74,6 +79,11 @@ public class InscripcionesController {
         }
 
         // Validar token CSRF
+        if (!cl.ucn.app.service.PermisosEventos.participa(ctx.sessionAttribute("usuarioRol"))) {
+            ctx.status(403).result("Solo los estudiantes pueden inscribirse o cancelar su inscripción.");
+            return;
+        }
+
         String tokenSesion = ctx.sessionAttribute("csrfToken");
         String tokenFormulario = ctx.formParam("csrfToken");
 

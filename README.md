@@ -23,7 +23,7 @@ Esperar a que PostgreSQL finalice la inicialización antes de iniciar Java. Abri
 | Usuario demo | Contraseña | Función |
 | --- | --- | --- |
 | admin@sigu.cl | admin123 | Salas, categorías y supervisión de eventos. |
-| docente@sigu.cl | docente123 | Organiza sus eventos y registra su asistencia. |
+| docente@sigu.cl | docente123 | Organiza sus eventos y registra la asistencia de sus participantes. |
 | estudiante@sigu.cl | estudiante123 | Consulta, se inscribe y cancela antes del inicio. |
 
 Las contraseñas de las semillas están protegidas con PBKDF2. Los usuarios antiguos se migran al iniciar sin cambiar su clave de acceso.

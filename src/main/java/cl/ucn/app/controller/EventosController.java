@@ -38,6 +38,7 @@ public class EventosController {
         m.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
         m.put("usuarioId", ctx.sessionAttribute("usuarioId"));
         m.put("csrfToken", ctx.sessionAttribute("csrfToken"));
+        m.put("puedeInscribirse", PermisosEventos.participa(ctx.sessionAttribute("usuarioRol")));
         m.put("puedeOrganizar", PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")));
         m.put("admin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")));
         m.put("error", "");
