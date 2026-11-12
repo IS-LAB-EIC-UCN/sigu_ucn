@@ -64,6 +64,13 @@ def main():
             # La administración global de usuarios no pertenece al módulo 6.
             try:c.open(base+"/admin/usuarios",timeout=15);raise AssertionError("El panel global de usuarios sigue expuesto")
             except urllib.error.HTTPError as ex:assert ex.code==404
+            # Administración integrada en Eventos, sobre las tablas compartidas.
+            for ruta in ["/eventos/usuarios", "/eventos/roles", "/eventos/catalogos"]:
+                if correo.startswith("admin") or (ruta.endswith("catalogos") and correo.startswith("docente")):
+                    with c.open(base+ruta,timeout=15) as r:assert r.status==200;r.read()
+                else:
+                    try:c.open(base+ruta,timeout=15);raise AssertionError("Acceso indebido a "+ruta)
+                    except urllib.error.HTTPError as ex:assert ex.code==403
             if not correo.startswith("docente"):
                 try:c.open(base+"/eventos/nuevo",timeout=15);raise AssertionError("Solo el docente debe crear eventos")
                 except urllib.error.HTTPError as ex:assert ex.code==403
@@ -72,6 +79,9 @@ def main():
             verificaciones.append(correo)
         datos=ejecutar(["docker","exec",nombre,"psql","-U","postgres","-d","sigu_ucn","-At","-c","SELECT (SELECT count(*) FROM eventos)||'|'||(SELECT count(*) FROM usuarios)||'|'||(SELECT count(*) FROM usuarios WHERE password LIKE 'pbkdf2-sha256$%');"]).decode().strip()
         assert datos=="8|3|3",datos
+        print("Ensayando recorridos completos en la base temporal...",flush=True)
+        from verificar_flujos import verificar
+        informe["flujos_verificados"] = verificar(base)
         import xml.etree.ElementTree as ET
         tests=sum(int(ET.parse(f).getroot().attrib.get("tests",0)) for f in (clon/"target/surefire-reports").glob("TEST-*.xml"))
         informe.update({"correcta":True,"pruebas":tests,"eventos_iniciales":8,"usuarios":3,"passwords_protegidos":3,"cuentas_verificadas":verificaciones,"fuente":str(clon),"base_aislada":True})
