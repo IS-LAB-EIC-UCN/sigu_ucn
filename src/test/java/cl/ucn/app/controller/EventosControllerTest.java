@@ -33,6 +33,11 @@ class EventosControllerTest {
         assertThrows(ForbiddenResponse.class, () -> controller.cancelarEvento(ctx));
         assertThrows(ForbiddenResponse.class, () -> controller.reactivarEvento(ctx));
     }
+    @Test void estudianteNoAccedeAlCatalogoPorUrlDirecta() {
+        autenticar();when(ctx.sessionAttribute("usuarioRol")).thenReturn("ESTUDIANTE");
+        assertThrows(ForbiddenResponse.class, () -> controller.catalogos(ctx));
+        verify(ctx,never()).render(anyString(),anyMap());
+    }
     @Test void detalleRechazaIdentificadorInvalido() {
         autenticar();when(ctx.pathParam("id")).thenReturn("abc");
         assertThrows(io.javalin.http.BadRequestResponse.class,()->controller.detalle(ctx));

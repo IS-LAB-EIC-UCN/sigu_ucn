@@ -55,6 +55,7 @@ public class EventosController {
         Map<String,Object> m = modelo(ctx);
         String q = parametro(ctx,"q"), tema = parametro(ctx,"tematica"), fecha = parametro(ctx,"fecha");
         String vista = parametro(ctx,"vista");
+        if ("ADMIN".equals(ctx.sessionAttribute("usuarioRol")) && "mios".equals(vista)) { ctx.redirect("/eventos"); return; }
         Long usuarioId = ctx.sessionAttribute("usuarioId");
         List<Evento> todos = eventos.findAll();
         Map<Long,long[]> resumen = inscripciones.resumenPorEvento(usuarioId);
@@ -104,7 +105,7 @@ public class EventosController {
         Map<String,Object> m=modelo(ctx);
         m.put("evento",e); m.put("datos",datos); m.put("error",error);
         m.put("categorias",catalogo.categorias());
-        m.put("expositores",catalogo.expositores()); m.put("espacios",catalogo.espacios());
+        m.put("expositores",PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")) ? catalogo.expositores() : List.of()); m.put("espacios",catalogo.espacios());
         ctx.render("eventos-formulario.jte",m);
     }
     private Map<String,String> datos(Evento e) {
@@ -183,12 +184,14 @@ public class EventosController {
     private void exito(Context ctx,String mensaje) { ctx.sessionAttribute("eventosAviso",mensaje);ctx.redirect("/eventos"); }
     public void catalogos(Context ctx) {
         if(!acceso(ctx,false)) return;
+        if (!PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")) && !"ADMIN".equals(ctx.sessionAttribute("usuarioRol")))
+            throw new ForbiddenResponse("Los catálogos son exclusivos del docente y del administrador.");
         catalogos(ctx,"");
     }
     private void catalogos(Context ctx,String error) {
         Map<String,Object> m=modelo(ctx);m.put("error",error);
         m.put("categorias",catalogo.categorias());
-        m.put("expositores",catalogo.expositores());m.put("espacios",catalogo.espacios());
+        m.put("expositores",PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")) ? catalogo.expositores() : List.of());m.put("espacios",catalogo.espacios());
         ctx.render("eventos-catalogos.jte",m);
     }
     public void guardarCategoria(Context ctx) {
