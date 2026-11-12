@@ -26,6 +26,10 @@ public class Inscripcion {
     @Column(nullable = false, length = 20)
     private String estado = "INSCRITO";
 
+    @Column(nullable = false)
+    private Boolean asistencia = false;
+    public Boolean getAsistencia() { return asistencia; }
+    public void setAsistencia(Boolean asistencia) { this.asistencia = asistencia; }
     public Inscripcion() {
     }
 

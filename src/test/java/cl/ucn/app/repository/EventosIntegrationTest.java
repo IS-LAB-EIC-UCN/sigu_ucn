@@ -87,6 +87,17 @@ class EventosIntegrationTest {
         assertEquals(1,eventos.findById(e.getId()).getExpositores().size());
         assertEquals(otro.getId(),eventos.findById(e.getId()).getExpositores().get(0).getId());
     }
+    @Test void registraAsistenciaConPermisosYConservaElEstado() {
+        Evento e=nuevo(10);guardar(e);new EventoService(eventos).publicar(e);inscripciones.inscribir(e.getId(),usuario.getId());
+        Long id=inscripciones.listarPorEvento(e.getId()).get(0).getId();
+        assertThrows(SecurityException.class,()->inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ESTUDIANTE",true));
+        inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ADMIN",true);
+        assertTrue(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
+        assertEquals("INSCRITO",inscripciones.listarPorEvento(e.getId()).get(0).getEstado());
+        inscripciones.cancelarInscripcion(e.getId(),usuario.getId());
+        assertThrows(IllegalStateException.class,()->inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ADMIN",true));
+        inscripciones.inscribir(e.getId(),usuario.getId());assertFalse(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
+    }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
         assertEquals("Ciencia",leido.getTematica());assertEquals(sala.getNombre(),leido.getEspacio().getNombre());

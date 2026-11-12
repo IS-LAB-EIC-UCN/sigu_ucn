@@ -102,7 +102,7 @@ public class EventoRepository implements EventoStore {
                 if (evento == null) throw new IllegalArgumentException("Evento no encontrado.");
                 if (!"CANCELADO".equals(evento.getEstado()))
                     throw new IllegalArgumentException("Solo se pueden reactivar eventos cancelados.");
-                em.createQuery("UPDATE Inscripcion SET estado = 'CANCELADO' WHERE evento.id = :id AND estado = 'INSCRITO'")
+                em.createQuery("UPDATE Inscripcion SET estado = 'CANCELADO', asistencia = false WHERE evento.id = :id AND estado = 'INSCRITO'")
                     .setParameter("id", id).executeUpdate();
                 evento.setEstado("BORRADOR");
                 em.getTransaction().commit();

@@ -144,9 +144,27 @@ public class InscripcionesController {
                 "title", "Participantes del evento",
                 "usuarioNombre", usuarioNombre,
                 "evento", evento,
-                "inscripciones", inscripciones));
+                "inscripciones", inscripciones,
+                "csrfToken", ctx.sessionAttribute("csrfToken")));
     }
 
+    public void registrarAsistencia(Context ctx) {
+        Long usuarioId=ctx.sessionAttribute("usuarioId");
+        if(usuarioId==null) { ctx.redirect("/login");return; }
+        String token=ctx.sessionAttribute("csrfToken"), recibido=ctx.formParam("csrfToken");
+        if(token==null || recibido==null || !MessageDigest.isEqual(token.getBytes(StandardCharsets.UTF_8),recibido.getBytes(StandardCharsets.UTF_8))) {
+            ctx.status(403).result("Token de seguridad inválido");return;
+        }
+        try {
+            Long evento=Long.valueOf(ctx.pathParam("id")), inscripcion=Long.valueOf(ctx.pathParam("inscripcionId"));
+            String valor=ctx.formParam("asistencia");
+            if(!"true".equals(valor) && !"false".equals(valor)) throw new IllegalArgumentException("Selecciona un valor válido de asistencia.");
+            repository.registrarAsistencia(evento,inscripcion,usuarioId,ctx.sessionAttribute("usuarioRol"),Boolean.parseBoolean(valor));
+            ctx.redirect("/eventos/"+evento+"/inscritos");
+        } catch(SecurityException ex) { ctx.status(403).result(ex.getMessage()); }
+        catch(IllegalArgumentException ex) { mostrarError(ctx,400,ex.getMessage()); }
+        catch(IllegalStateException ex) { mostrarError(ctx,409,ex.getMessage()); }
+    }
     private void mostrarError(Context ctx, int estado, String mensaje) {
         ctx.status(estado);
         ctx.render("eventos-error.jte", Map.of(

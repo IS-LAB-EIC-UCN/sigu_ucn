@@ -84,6 +84,7 @@ public class InscripcionRepository {
 
                 // Reactivar una inscripción previamente cancelada
                 anterior.setEstado("INSCRITO");
+                anterior.setAsistencia(false);
                 anterior.setFechaInscripcion(LocalDateTime.now());
 
             } else {
@@ -229,6 +230,27 @@ public class InscripcionRepository {
         }
     }
 
+    public void registrarAsistencia(Long eventoId, Long inscripcionId, Long usuarioId, String rol, boolean asistio) {
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            try {
+                em.getTransaction().begin();
+                Evento evento=em.find(Evento.class,eventoId,LockModeType.PESSIMISTIC_WRITE);
+                if(evento==null) throw new IllegalArgumentException("Evento no encontrado.");
+                if(!cl.ucn.app.service.PermisosEventos.administra(rol,usuarioId,evento.getOrganizador().getId()))
+                    throw new SecurityException("No tienes permisos para registrar asistencia.");
+                if(!"PUBLICADO".equals(evento.getEstado()) && !"FINALIZADO".equals(evento.getEstado()))
+                    throw new IllegalStateException("Solo se registra asistencia en eventos publicados o finalizados.");
+                Inscripcion inscripcion=em.find(Inscripcion.class,inscripcionId,LockModeType.PESSIMISTIC_WRITE);
+                if(inscripcion==null || !eventoId.equals(inscripcion.getEvento().getId()))
+                    throw new IllegalArgumentException("La inscripción no pertenece al evento.");
+                if(!"INSCRITO".equals(inscripcion.getEstado())) throw new IllegalStateException("La inscripción está cancelada.");
+                inscripcion.setAsistencia(asistio);em.getTransaction().commit();
+            } catch(RuntimeException ex) {
+                if(em.getTransaction().isActive()) em.getTransaction().rollback();
+                throw ex;
+            }
+        }
+    }
     public java.util.List<Inscripcion> listarPorEvento(Long eventoId) {
 
         EntityManager em = JPAUtil.getEntityManager();
