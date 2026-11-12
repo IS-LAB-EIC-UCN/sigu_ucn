@@ -38,4 +38,4 @@ Base nueva: Docker ejecuta db/init en orden. Base existente: aplicar 05 y 07 a 1
 - [ ] Se actualiza el tablero GitHub Projects con los estados acordados.
 - [ ] El responsable del repositorio aprueba y realiza el merge.
 
-La conexión disponible permite repositorio/PR, pero carece de read:project/project para el tablero. El backlog local está en docs/entrega/backlog.md y no se presenta como un tablero remoto actualizado.
+La actualización del tablero GitHub Projects debe realizarla un responsable con permisos sobre ese proyecto.

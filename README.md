@@ -77,7 +77,6 @@ El organizador es el único que modifica sus eventos y registra su asistencia of
 - [Guía del módulo y trazabilidad](docs/modulo-6.md).
 - [Evidencia de instalación limpia](docs/instalacion-limpia.md).
 - [Evidencia de rendimiento](docs/rendimiento-eventos.md).
-- [Material de entrega y demostración](docs/entrega/README.md).
 
 ## Trabajo con los otros grupos
 

@@ -34,4 +34,4 @@ La suite actual de 54 pruebas conserva las verificaciones de duplicados, usuario
 
 Esta prueba local utiliza una base pequeña y una identidad de prueba repetida en sesiones distintas. No garantiza la latencia con una base grande, otra red o una carga sostenida; esos escenarios requieren mediciones específicas.
 
-Resumen versionado: [evidencias/rendimiento.json](entrega/evidencias/rendimiento.json).
+La salida local de la medición se conserva en target/carga_eventos_entrega.json, excluido de Git.

@@ -13,6 +13,6 @@ Se ejecutó `python scripts/verificar_instalacion.py` desde un clon del commit c
 - Nueve recorridos HTTP correctos: eventos, inscripción, duplicados, supervisión, asistencia, cancelaciones y administración de cuentas con cambio de rol y desactivación de sesión abierta.
 - Los datos adicionales del ensayo solo existieron en la base temporal. Aplicación y contenedor temporales retirados al finalizar.
 
-Resumen versionado: [evidencias/instalacion-limpia.json](entrega/evidencias/instalacion-limpia.json). Los logs locales están en target/sigu-ucn-verificacion-7515c36edd81/maven.log y aplicacion.log. Se usó la caché Maven disponible; no se afirma una prueba sin acceso a Maven Central.
+El resumen local está en target/instalacion-limpia.json, excluido de Git. Los logs locales están en target/sigu-ucn-verificacion-7515c36edd81/maven.log y aplicacion.log. Se usó la caché Maven disponible; no se afirma una prueba sin acceso a Maven Central.
 
-Las capturas de escritorio y móvil se documentan en [capturas](entrega/capturas.md). La exposición oral, aprobación del equipo e integración con otros grupos requieren la revisión de sus responsables.
+La exposición oral, aprobación del equipo e integración con otros grupos requieren la revisión de sus responsables.
