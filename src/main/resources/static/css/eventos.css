@@ -16,7 +16,7 @@
 .eventos-nav { display:flex; gap:26px; border-bottom:1px solid var(--ev-borde); margin-bottom:25px; overflow-x:auto; }
 .eventos-nav a { padding:0 0 14px; color:var(--ev-gris); text-decoration:none; font-size:13px; white-space:nowrap; border-bottom:2px solid transparent; }
 .eventos-nav a:hover,.eventos-nav a.activo { border-color:var(--ev-azul); color:var(--ev-azul); }
-.eventos-metricas { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:24px 0; }
+.eventos-metricas { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:24px 0; }
 .eventos-metricas article { border:1px solid var(--ev-borde); border-radius:10px; background:white; padding:21px 24px; border-top:3px solid #315989; }
 .eventos-metricas span { display:block; font-size:10px; color:var(--ev-gris); letter-spacing:1px; font-weight:700; }
 .eventos-metricas strong { display:block; margin:12px 0 6px; font-size:30px; }
