@@ -71,11 +71,11 @@ def main():
                 with c.open(base+"/eventos/nuevo",timeout=15) as r:assert r.status==200;r.read()
             verificaciones.append(correo)
         datos=ejecutar(["docker","exec",nombre,"psql","-U","postgres","-d","sigu_ucn","-At","-c","SELECT (SELECT count(*) FROM eventos)||'|'||(SELECT count(*) FROM usuarios)||'|'||(SELECT count(*) FROM usuarios WHERE password LIKE 'pbkdf2-sha256$%');"]).decode().strip()
-        assert datos=="4|3|3",datos
+        assert datos=="8|3|3",datos
         import xml.etree.ElementTree as ET
         tests=sum(int(ET.parse(f).getroot().attrib.get("tests",0)) for f in (clon/"target/surefire-reports").glob("TEST-*.xml"))
-        informe.update({"correcta":True,"pruebas":tests,"eventos_iniciales":4,"usuarios":3,"passwords_protegidos":3,"cuentas_verificadas":verificaciones,"fuente":str(clon),"base_aislada":True})
-        print("Instalacion limpia verificada:",tests,"pruebas, tres cuentas y cuatro eventos iniciales",flush=True)
+        informe.update({"correcta":True,"pruebas":tests,"eventos_iniciales":8,"usuarios":3,"passwords_protegidos":3,"cuentas_verificadas":verificaciones,"fuente":str(clon),"base_aislada":True})
+        print("Instalacion limpia verificada:",tests,"pruebas, tres cuentas y ocho eventos iniciales",flush=True)
     finally:
         if proceso is not None and proceso.poll() is None:
             if os.name=="nt":subprocess.run(["taskkill","/PID",str(proceso.pid),"/T","/F"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

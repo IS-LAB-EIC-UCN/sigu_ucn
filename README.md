@@ -41,7 +41,7 @@ foreach ($archivo in $archivos) {
 }
 ```
 
-06_eventos_demo.sql es opcional para cargar los cuatro eventos de ejemplo. Puede repetirse sin duplicarlos. Detener Docker con `docker compose down` conserva el volumen; no es necesario eliminarlo para actualizar el módulo.
+06_eventos_demo.sql es opcional para cargar los ocho eventos de ejemplo. Puede repetirse sin duplicarlos. Detener Docker con `docker compose down` conserva el volumen; no es necesario eliminarlo para actualizar el módulo.
 
 ## Configuración alternativa
 

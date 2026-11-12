@@ -1,4 +1,4 @@
--- Cuatro eventos de ejemplo del docente. No elimina datos existentes.
+-- Ocho eventos de ejemplo del docente. No elimina datos existentes.
 -- Compatible con la inicialización anterior a las migraciones 07 a 10.
 BEGIN;
 LOCK TABLE eventos IN SHARE ROW EXCLUSIVE MODE;
@@ -12,7 +12,11 @@ BEGIN
   ('Taller de desarrollo web con Java', 'Construye una aplicación web sencilla con formularios, validaciones y persistencia. Actividad práctica orientada a estudiantes.', 'Tecnología', 4, '10:00'::time, '12:00'::time, 'Laboratorio L1', 25, 'Equipo de Seguridad Digital'),
   ('Jornada de proyectos e innovación universitaria', 'Comparte propuestas para resolver problemas de la comunidad universitaria y conoce experiencias de emprendimiento estudiantil.', 'Innovación', 6, '11:00'::time, '13:00'::time, 'Auditorio Central', 100, 'Equipo de Innovación y Emprendimiento'),
   ('Taller de metodología de investigación', 'Aprende a formular objetivos, seleccionar fuentes confiables y organizar un proyecto de investigación académica.', 'Investigación', 8, '15:00'::time, '17:00'::time, 'Sala A101', 35, 'Equipo de Apoyo a la Investigación'),
-  ('Introducción al análisis y visualización de datos', 'Explora datos de ejemplo, identifica tendencias y prepara gráficos para comunicar resultados de manera clara.', 'Ciencia de datos', 11, '09:00'::time, '11:00'::time, 'Laboratorio L1', 25, 'Equipo de Ciencia de Datos')
+  ('Introducción al análisis y visualización de datos', 'Explora datos de ejemplo, identifica tendencias y prepara gráficos para comunicar resultados de manera clara.', 'Ciencia de datos', 11, '09:00'::time, '11:00'::time, 'Laboratorio L1', 25, 'Equipo de Ciencia de Datos'),
+  ('Charla de seguridad digital y protección de cuentas', 'Reconoce intentos de fraude, configura contraseñas seguras y aprende a proteger tus cuentas y archivos académicos.', 'Tecnología', 12, '10:00'::time, '11:30'::time, 'Auditorio Central', 80, 'Equipo de Seguridad Digital'),
+  ('Taller de diseño de soluciones para el campus', 'Trabaja en equipo para identificar necesidades del campus y elaborar una propuesta de solución con objetivos y alcance claros.', 'Innovación', 13, '15:00'::time, '17:00'::time, 'Sala A101', 35, 'Equipo de Innovación y Emprendimiento'),
+  ('Seminario de presentación de investigaciones', 'Conoce recomendaciones para preparar una exposición académica, organizar resultados y responder preguntas del público.', 'Investigación', 14, '11:00'::time, '13:00'::time, 'Auditorio Central', 100, 'Equipo de Apoyo a la Investigación'),
+  ('Laboratorio de limpieza y preparación de datos', 'Practica la detección de datos faltantes, la corrección de formatos y la organización de conjuntos de datos para su análisis.', 'Ciencia de datos', 15, '09:00'::time, '11:00'::time, 'Laboratorio L1', 25, 'Equipo de Ciencia de Datos')
  ) AS datos(titulo,descripcion,categoria,dias,inicio,termino,ubicacion,cupos,expositor)
  LOOP
   SELECT id,capacidad INTO sala,capacidad_sala FROM espacios WHERE nombre=dato.ubicacion AND disponible ORDER BY id LIMIT 1;
