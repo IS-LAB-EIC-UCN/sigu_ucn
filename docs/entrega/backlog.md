@@ -19,7 +19,7 @@ Estado técnico local, respaldado por commits y pruebas. No representa una actua
 | QA-01 | Instalación limpia | Verificado | Clon b7af1b3, PostgreSQL temporal y 50 pruebas. |
 | QA-02 | Carga de 100 sesiones | Verificado en condiciones locales | 300 consultas, sin errores; evidencia de rendimiento. |
 | DOC-01 | Informe y diagramas | Preparado para revisión del equipo | PDF, Markdown, seis SVG y fuentes Mermaid. |
-| DOC-02 | Demostración y defensa | Guion preparado; ensayo pendiente del equipo | demostracion.md. |
+| DOC-02 | Demostración y defensa | Guion y presentación preparados; ensayo pendiente del equipo | demostracion.md. |
 | INT-01 | PR hacia develop | Borrador publicado; revisión pendiente | [PR #1](https://github.com/IS-LAB-EIC-UCN/sigu_ucn/pull/1). |
 | INT-02 | Coordinar usuarios/hash y espacios con otros equipos | Pendiente de revisión humana | Notas de compatibilidad del PR. |
 | INT-03 | Actualizar GitHub Project | Pendiente de permiso externo | La conexión actual carece de read:project/project. |
