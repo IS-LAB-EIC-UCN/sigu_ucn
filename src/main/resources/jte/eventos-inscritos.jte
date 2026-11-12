@@ -1,4 +1,5 @@
 
+@param boolean puedeRegistrarAsistencia
 @param String csrfToken
 @param String title
 @param String usuarioNombre
@@ -45,7 +46,7 @@
                                     )}</td>
                                 <td>${inscripcion.getEstado()}</td><td>
 <span>${Boolean.TRUE.equals(inscripcion.getAsistencia()) ? "Asistió" : "Sin asistencia registrada"}</span>
-@if("INSCRITO".equals(inscripcion.getEstado()) && ("PUBLICADO".equals(evento.getEstado()) || "FINALIZADO".equals(evento.getEstado())))
+@if(puedeRegistrarAsistencia && "INSCRITO".equals(inscripcion.getEstado()) && ("PUBLICADO".equals(evento.getEstado()) || "FINALIZADO".equals(evento.getEstado())))
 <form class="no-imprimir" method="post" action="/eventos/${evento.getId()}/inscripciones/${inscripcion.getId()}/asistencia"><input type="hidden" name="csrfToken" value="${csrfToken}"><input type="hidden" name="asistencia" value="${!Boolean.TRUE.equals(inscripcion.getAsistencia())}"><button type="submit" class="boton-texto">${Boolean.TRUE.equals(inscripcion.getAsistencia()) ? "Quitar marca" : "Marcar asistencia"}</button></form>
 @endif</td>
                             </tr>

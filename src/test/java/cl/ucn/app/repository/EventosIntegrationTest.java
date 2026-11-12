@@ -107,6 +107,15 @@ class EventosIntegrationTest {
         assertThrows(IllegalStateException.class,()->new InscripcionRepository(inicio).cancelarInscripcion(e.getId(),usuario.getId()));
         assertTrue(inscripciones.estaInscrito(e.getId(),usuario.getId()));
     }
+    @Test void administradorAjenoNoRegistraLaAsistenciaOficial() {
+        Usuario docente=new UsuarioRepository().findByCorreo("docente@sigu.cl");
+        Evento e=nuevo(10);e.setOrganizador(docente);guardar(e);new EventoService(eventos).publicar(e);
+        inscripciones.inscribir(e.getId(),usuario.getId());Long id=inscripciones.listarPorEvento(e.getId()).get(0).getId();
+        assertThrows(SecurityException.class,()->inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ADMIN",true));
+        assertFalse(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
+        inscripciones.registrarAsistencia(e.getId(),id,docente.getId(),"DOCENTE",true);
+        assertTrue(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
+    }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
         assertEquals(categoria.getNombre(),leido.getTematica());

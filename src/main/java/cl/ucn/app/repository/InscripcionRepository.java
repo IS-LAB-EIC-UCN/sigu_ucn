@@ -242,7 +242,7 @@ public class InscripcionRepository {
                 em.getTransaction().begin();
                 Evento evento=em.find(Evento.class,eventoId,LockModeType.PESSIMISTIC_WRITE);
                 if(evento==null) throw new IllegalArgumentException("Evento no encontrado.");
-                if(!cl.ucn.app.service.PermisosEventos.administra(rol,usuarioId,evento.getOrganizador().getId()))
+                if(!cl.ucn.app.service.PermisosEventos.registraAsistencia(rol,usuarioId,evento.getOrganizador().getId()))
                     throw new SecurityException("No tienes permisos para registrar asistencia.");
                 if(!"PUBLICADO".equals(evento.getEstado()) && !"FINALIZADO".equals(evento.getEstado()))
                     throw new IllegalStateException("Solo se registra asistencia en eventos publicados o finalizados.");

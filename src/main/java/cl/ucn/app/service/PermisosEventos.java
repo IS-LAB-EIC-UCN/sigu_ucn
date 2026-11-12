@@ -4,6 +4,9 @@ import java.util.Objects;
 public final class PermisosEventos {
     private PermisosEventos() {}
     public static boolean organiza(String rol) { return "ADMIN".equals(rol) || "DOCENTE".equals(rol); }
+    public static boolean registraAsistencia(String rol, Long usuario, Long organizador) {
+        return organiza(rol) && usuario != null && Objects.equals(usuario, organizador);
+    }
     public static boolean administra(String rol, Long usuario, Long organizador) {
         return usuario != null && ("ADMIN".equals(rol) || ("DOCENTE".equals(rol) && Objects.equals(usuario, organizador)));
     }

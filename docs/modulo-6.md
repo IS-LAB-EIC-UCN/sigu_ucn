@@ -32,7 +32,7 @@ Los permisos se verifican en el servidor además de ocultar controles en la inte
 ## Reglas y decisiones del equipo
 
 - El plazo de cancelación cierra exactamente al iniciar el evento. El servidor rechaza intentos posteriores sin modificar la inscripción.
-- La asistencia se modifica únicamente en inscripciones activas de eventos publicados o finalizados. Se puede quitar una marca errónea. No se usa para alterar el estado de inscripción.
+- La asistencia oficial la registra únicamente el organizador responsable del evento, incluso si otro usuario tiene rol ADMIN. El administrador supervisor puede consultar la lista sin modificar asistencia ajena. La asistencia se modifica únicamente en inscripciones activas de eventos publicados o finalizados. Se puede quitar una marca errónea. No se usa para alterar el estado de inscripción.
 - Las ubicaciones y expositores son catálogos compartidos. Solo ADMIN registra categorías; los otros roles pueden consultarlas y los docentes seleccionarlas en sus eventos. Editar un expositor se refleja en los eventos donde participa. Renombrar una sala actualiza las ubicaciones de sus eventos.
 - Los eventos cancelados no admiten nuevas inscripciones. Recuperarlos como borrador cancela sus inscripciones todavía activas y permite revisar sus datos antes de publicar. No se reactiva a asistentes automáticamente.
 - Los borradores son visibles solo para su organizador autorizado y ADMIN.

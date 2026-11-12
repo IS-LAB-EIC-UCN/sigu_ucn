@@ -145,7 +145,8 @@ public class InscripcionesController {
                 "usuarioNombre", usuarioNombre,
                 "evento", evento,
                 "inscripciones", inscripciones,
-                "csrfToken", ctx.sessionAttribute("csrfToken")));
+                "csrfToken", ctx.sessionAttribute("csrfToken"),
+                "puedeRegistrarAsistencia", cl.ucn.app.service.PermisosEventos.registraAsistencia(ctx.sessionAttribute("usuarioRol"),usuarioId,evento.getOrganizador().getId())));
     }
 
     public void registrarAsistencia(Context ctx) {
