@@ -101,6 +101,12 @@ class EventosIntegrationTest {
         assertThrows(IllegalStateException.class,()->inscripciones.registrarAsistencia(e.getId(),id,usuario.getId(),"ADMIN",true));
         inscripciones.inscribir(e.getId(),usuario.getId());assertFalse(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
     }
+    @Test void cancelacionFueraDePlazoNoModificaLaInscripcion() {
+        Evento e=nuevo(10);guardar(e);new EventoService(eventos).publicar(e);inscripciones.inscribir(e.getId(),usuario.getId());
+        Clock inicio=Clock.fixed(e.getFecha().atTime(e.getHoraInicio()).toInstant(ZoneOffset.UTC),ZoneOffset.UTC);
+        assertThrows(IllegalStateException.class,()->new InscripcionRepository(inicio).cancelarInscripcion(e.getId(),usuario.getId()));
+        assertTrue(inscripciones.estaInscrito(e.getId(),usuario.getId()));
+    }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
         assertEquals(categoria.getNombre(),leido.getTematica());

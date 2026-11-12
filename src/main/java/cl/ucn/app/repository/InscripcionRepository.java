@@ -11,6 +11,10 @@ import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 
 public class InscripcionRepository {
+    private final java.time.Clock reloj;
+    public InscripcionRepository() { this(java.time.Clock.systemDefaultZone()); }
+    public InscripcionRepository(java.time.Clock reloj) { this.reloj=reloj; }
+
 
     public void inscribir(Long eventoId, Long usuarioId) {
 
@@ -194,6 +198,8 @@ public class InscripcionRepository {
                 throw new IllegalStateException(
                         "El evento no está disponible para cancelar inscripciones");
             }
+
+            cl.ucn.app.service.PlazoCancelacion.validar(evento, reloj);
 
             // Buscar la inscripción activa del usuario
             java.util.List<Inscripcion> inscripciones = em.createQuery(
