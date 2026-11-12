@@ -59,6 +59,14 @@ class EventosIntegrationTest {
         assertThrows(IllegalArgumentException.class,()->eventos.reactivar(e.getId()));
         assertThrows(IllegalStateException.class,()->inscripciones.inscribir(e.getId(),usuario.getId()));
     }
+    @Test void editarSalaConservaEventosYProtegeCapacidad() {
+        Evento e=nuevo(10);e.setCupoMaximo(4);guardar(e);
+        CatalogoEventosRepository catalogo=new CatalogoEventosRepository();
+        sala.setCapacidad(2);assertThrows(IllegalArgumentException.class,()->catalogo.actualizarEspacio(sala));
+        assertEquals(5,catalogo.buscar(Espacio.class,sala.getId()).getCapacidad());
+        sala.setCapacidad(4);sala.setNombre(sala.getNombre()+" editada");catalogo.actualizarEspacio(sala);
+        assertEquals(sala.getNombre(),eventos.findById(e.getId()).getLugar());
+    }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
         assertEquals("Ciencia",leido.getTematica());assertEquals(sala.getNombre(),leido.getEspacio().getNombre());

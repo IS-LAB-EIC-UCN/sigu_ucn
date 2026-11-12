@@ -184,6 +184,37 @@ public class EventosController {
             catalogo.guardar(new Espacio(nombre,"EVENTOS",capacidad,true));ctx.sessionAttribute("eventosAviso","Ubicación registrada.");ctx.redirect("/eventos/catalogos");
         } catch(IllegalArgumentException e) { ctx.status(400);catalogos(ctx,e instanceof NumberFormatException?"Ingresa una capacidad válida.":e.getMessage()); }
     }
+    public void mostrarUbicacionEditar(Context ctx) {
+        if (!acceso(ctx, false)) return;
+        if (!"ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) throw new ForbiddenResponse();
+        formularioUbicacion(ctx, ubicacion(ctx), "");
+    }
+    private Espacio ubicacion(Context ctx) {
+        try {
+            Espacio e = catalogo.buscar(Espacio.class, Long.valueOf(ctx.pathParam("id")));
+            if(e == null) throw new NotFoundResponse("Ubicación no encontrada");
+            return e;
+        } catch(NumberFormatException ex) { throw new BadRequestResponse("ID inválido"); }
+    }
+    private void formularioUbicacion(Context ctx, Espacio e, String error) {
+        Map<String,Object> m = modelo(ctx);m.put("espacio",e);m.put("error",error);
+        ctx.render("eventos-ubicacion.jte",m);
+    }
+    public void actualizarUbicacion(Context ctx) {
+        if (!acceso(ctx, true)) return;
+        if (!"ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) throw new ForbiddenResponse();
+        Espacio e = ubicacion(ctx);
+        try {
+            e.setNombre(texto(ctx,"nombre",100,true));e.setTipo(texto(ctx,"tipo",50,true));
+            e.setCapacidad(Integer.parseInt(texto(ctx,"capacidad",9,true)));
+            String disponible=ctx.formParam("disponible");
+            if (!"true".equals(disponible) && !"false".equals(disponible)) throw new IllegalArgumentException("Selecciona la disponibilidad.");
+            e.setDisponible(Boolean.valueOf(disponible));catalogo.actualizarEspacio(e);
+            ctx.sessionAttribute("eventosAviso","Ubicación actualizada.");ctx.redirect("/eventos/catalogos");
+        } catch(IllegalArgumentException ex) {
+            ctx.status(400);formularioUbicacion(ctx,e,ex instanceof NumberFormatException?"La capacidad debe ser un número entero.":ex.getMessage());
+        }
+    }
     public void cambiarUbicacion(Context ctx) {
         if(!acceso(ctx,true)) return;
         if(!"ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) throw new ForbiddenResponse();
