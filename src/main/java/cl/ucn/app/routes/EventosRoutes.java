@@ -11,6 +11,11 @@ public final class EventosRoutes {
 
         public static void register(JavalinConfig config) {
 
+                var sesiones = new cl.ucn.app.service.SesionActualizada(new cl.ucn.app.repository.UsuarioRepository());
+                config.routes.beforeMatched(ctx -> {
+                        if (ctx.path().equals("/eventos") || ctx.path().startsWith("/eventos/")) sesiones.verificar(ctx);
+                });
+                EventosUsuariosRoutes.register(config);
                 EventosController controller = new EventosController();
 
                 config.routes.get("/eventos/catalogos", controller::catalogos);
