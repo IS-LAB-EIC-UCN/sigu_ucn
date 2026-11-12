@@ -11,7 +11,7 @@ Versión técnica: 12 de noviembre de 2026. Documento de apoyo para revisión y 
 
 La información de eventos distribuida entre correos, afiches y redes dificulta la consulta de horarios y ubicaciones. Las inscripciones manuales favorecen duplicados, exceso de cupos y problemas de trazabilidad. El módulo centraliza programación, difusión, inscripción y asistencia.
 
-Incluye usuarios autenticados, eventos, expositores, categorías, salas compartidas, control de cupos y asistencia. La administración global de cuentas y roles permanece a cargo del sistema base, fuera del alcance del Grupo 6. Excluye presupuestos, proveedores, inventario, externos e integración automatizada con sistemas universitarios. Las reservas generales pertenecen al equipo responsable de ese módulo.
+Incluye usuarios autenticados, eventos, expositores, categorías, salas compartidas, control de cupos y asistencia. La gestión de cuentas y asignación de roles del diagrama se integra desde Eventos sobre las tablas compartidas. Excluye presupuestos, proveedores, inventario, externos e integración automatizada con sistemas universitarios. Las reservas generales pertenecen al equipo responsable de ese módulo.
 
 ## 2. Actores y permisos
 
@@ -19,7 +19,7 @@ Incluye usuarios autenticados, eventos, expositores, categorías, salas comparti
 | --- | --- | --- |
 | ESTUDIANTE | Participante | Consultar, buscar, filtrar, revisar detalle, inscribirse y cancelar antes del inicio. |
 | DOCENTE | Organizador | Administrar sus eventos y expositores; listar participantes y registrar asistencia de sus participantes; no se inscribe. |
-| ADMIN | Administrador | Gestionar salas y categorías; supervisar eventos ajenos publicados o finalizados sin modificarlos. |
+| ADMIN | Administrador | Gestionar usuarios, roles asignados, salas y categorías; supervisar eventos publicados o finalizados sin modificarlos. |
 
 La equivalencia de los roles compartidos con los actores es una decisión de diseño del equipo. Solo DOCENTE puede crear y administrar sus propios eventos y registrar asistencia. ADMIN supervisa y gestiona salas y categorías; no crea, edita, publica, cancela ni reactiva eventos, aunque figure como organizador en registros anteriores. Un borrador es privado de su organizador autorizado.
 
@@ -68,7 +68,7 @@ Las reglas que requieren atomicidad, como comprobar cupos o solapamientos antes 
 
 | Tabla | Propósito y alcance |
 | --- | --- |
-| usuarios, roles | Compartidas. Se reutilizan para autenticación y permisos de eventos. Su gestión global pertenece al sistema base. |
+| usuarios, roles | Compartidas. Se reutilizan para autenticación y permisos de eventos. ADMIN administra las cuentas compartidas desde /eventos/usuarios. |
 | espacios | Compartida. Nombre, tipo, capacidad y disponibilidad. |
 | eventos | Programación, estado, organizador, ubicación y categoría. |
 | expositores | Nombre, correo, especialidad e institución. |
@@ -114,29 +114,29 @@ El organizador puede corregir una marca errónea. Un supervisor ajeno puede cons
 
 Las contraseñas usan PBKDF2-HMAC-SHA256 con sal aleatoria y 600.000 iteraciones, mediante la API estándar de Java. El login no compara texto plano. Las semillas contienen hashes y una migración idempotente convierte cuentas anteriores sin cambiar su clave de acceso.
 
-Las escrituras del módulo validan sesión, rol y CSRF. La administración de cuentas y sus sesiones pertenece a la base común del sistema. La autorización no depende de ocultar botones: se verifica en el servidor. Las vistas JTE escapan los datos de usuario.
+Las escrituras del módulo validan sesión, rol y CSRF. La administración reutiliza las tablas comunes; las rutas de Eventos actualizan el estado y rol de las sesiones. La autorización no depende de ocultar botones: se verifica en el servidor. Las vistas JTE escapan los datos de usuario.
 
 Las inscripciones bloquean la fila del evento y conservan su unicidad. La agenda serializa sus escrituras. La edición no elimina registros con historial.
 
 ## 13. Pruebas y resultados
 
-La suite actual ejecutó 45 pruebas con cero fallos y cero errores. Incluye validaciones de servicios y controladores, persistencia real, roles, asistencia, plazos y varios expositores. La configuración externa permite aislar la base usada por las pruebas.
+La suite actual ejecutó 54 pruebas con cero fallos y cero errores. Incluye validaciones de servicios y controladores, persistencia real, roles, asistencia, plazos y varios expositores. La configuración externa permite aislar la base usada por las pruebas.
 
 Concurrencia: ocho peticiones del mismo usuario generan una inscripción; ocho usuarios que compiten por dos cupos aceptan exactamente dos; cuatro eventos que compiten por la misma sala y horario aceptan exactamente uno.
 
-Rendimiento revalidado el 12/11/2026: 100 sesiones independientes, tres rondas y 300 consultas; cero errores, máximo 0.619212 s y P95 0.567522 s. La identidad de prueba es compartida, con cookies distintas, y la base contiene seis eventos y dos inscripciones. El login y calentamiento no forman parte del cronómetro. Esta medición local no garantiza el rendimiento con otra red, volumen de datos o carga sostenida.
+Rendimiento revalidado el 12/11/2026: 100 sesiones independientes, tres rondas y 300 consultas; cero errores, máximo 0.751096 s y P95 0.702972 s. La identidad de prueba es compartida, con cookies distintas, y la base contiene ocho eventos de demostración. El login y calentamiento no forman parte del cronómetro. Esta medición local no garantiza el rendimiento con otra red, volumen de datos o carga sostenida.
 
-Se verificó en Chrome el flujo de las tres cuentas, pantallas de escritorio y móvil, varios expositores, filtros, asistencia, confirmaciones. Los registros temporales fueron retirados.
+Se verificaron en Chrome los menús y catálogos de los tres roles, escritorio de 1366 px y móvil de 390 px sin desbordamiento horizontal. Las capturas se incluyen en docs/entrega/capturas. El ensayo HTTP aislado recorrió eventos, inscripción, duplicados, asistencia, cancelaciones y administración de cuentas, incluidos cambios de rol y desactivación de sesiones abiertas. Los datos de ensayo se retiraron con el contenedor temporal.
 
 ## 14. Instalación limpia
 
-Se clonó el commit e4c8a3d0e66cbf602a93f68c45786dd0de171788 sin archivos generados del directorio original. Un PostgreSQL 16 temporal aplicó los scripts desde cero. Maven compiló, generó JTE y ejecutó 42 pruebas. La aplicación inició y validó las tres cuentas y cuatro eventos iniciales. Las rutas del panel global retirado devolvieron 404 para los tres roles, mientras los permisos de eventos se conservaron.
+Se clonó el commit ea01ecf9f3f473b933137ff752dc31202591d803 sin archivos generados del directorio original. Un PostgreSQL 16 temporal aplicó las semillas y migraciones desde cero. Maven compiló JTE y ejecutó 54 pruebas, todas correctas. Se validaron las tres cuentas, ocho eventos iniciales y nueve recorridos funcionales. El estudiante no accede a catálogos; solo DOCENTE crea eventos y solo ADMIN administra cuentas.
 
 Se retiraron únicamente la aplicación y contenedor temporales. El volumen y servidor habituales se conservaron. El README incluye inicio desde GitHub, migraciones para una base existente y configuración por entorno. La caché Maven del usuario estaba disponible; no se afirma una prueba sin conexión a Maven Central.
 
 ## 15. Integración y decisiones compartidas
 
-Los nombres ADMIN, DOCENTE y ESTUDIANTE se mantienen porque sus tablas son comunes. El módulo no crea, edita ni desactiva usuarios ni administra roles; utiliza los valores definidos por el proyecto base. La migración a hashes exige que los módulos que autentican usuarios utilicen el verificador común. No se altera la estructura de las tablas de usuarios y roles.
+ADMIN administra las cuentas compartidas desde /eventos/usuarios: crea y edita usuarios, asigna uno de los tres roles existentes y activa o desactiva cuentas conservando el historial. No se crean tablas ni roles paralelos. El estado y rol se actualizan al acceder a las rutas de Eventos; la integración con otros módulos debe coordinarse con sus responsables. La migración a hashes exige usar el verificador común. No se altera la estructura de las tablas de usuarios y roles.
 
 Las ubicaciones reutilizan espacios; sus cambios afectan al catálogo compartido. La coordinación con reservas generales debe confirmarse en revisión con ese equipo. Este módulo comprueba la agenda de eventos; no implementa las reservas generales del grupo responsable.
 
@@ -144,7 +144,7 @@ La implementación se entrega en commits progresivos de grupo-6. La revisión ha
 
 ## 16. Balance y defensa
 
-El módulo implementa los doce requisitos funcionales de eventos del informe. La mención de usuarios/roles del actor administrativo se integra con el sistema base y no se desarrolla como un módulo adicional. La trazabilidad conecta requisitos, casos, modelo, código y pruebas. La combinación de pruebas de frontera, integración y concurrencia detectó problemas que no aparecían al compilar, como el agotamiento del pool básico bajo carga.
+El módulo implementa los doce requisitos funcionales de eventos del informe. La administración de usuarios y roles del actor ADMIN se integra en las rutas de Eventos reutilizando el sistema base. La trazabilidad conecta requisitos, casos, modelo, código y pruebas. La combinación de pruebas de frontera, integración y concurrencia detectó problemas que no aparecían al compilar, como el agotamiento del pool básico bajo carga.
 
 La entrega debe ser revisada por el equipo antes de presentarse. La aprobación académica, la coordinación con los otros grupos y la aceptación del PR son actividades humanas pendientes de validación, no resultados que este documento dé por realizados.
 

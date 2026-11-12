@@ -14,14 +14,14 @@ Estado técnico local, respaldado por commits y pruebas. No representa una actua
 | HU-08 | Catálogo de expositores | Implementado y probado | Institución, edición y selección múltiple. |
 | HU-09 | Inscritos y asistencia oficial | Implementado y probado | Lista imprimible y autorización del responsable. |
 | HU-10 | Conflictos de sala | Implementado y probado | Bloqueo transaccional y escrituras simultáneas. |
-| ALC-01 | Administración global de usuarios y roles | Fuera del alcance del Grupo 6; retirada | Se reutiliza la autenticación base, sin panel paralelo. |
+| ALC-01 | Integración de usuarios y roles | Implementada y probada dentro de Eventos | /eventos/usuarios y /eventos/roles; tablas compartidas, asignación de roles y sesiones actualizadas. |
 | QA-01 | Instalación limpia | Verificado | Ver evidencia actualizada en docs/instalacion-limpia.md. |
 | QA-02 | Carga de 100 sesiones | Verificado en condiciones locales | 300 consultas, sin errores; evidencia de rendimiento. |
 | DOC-01 | Informe y diagramas | Preparado para revisión del equipo | PDF, Markdown, seis SVG y fuentes Mermaid. |
-| DOC-02 | Demostración y defensa | Guion y presentación preparados; ensayo pendiente del equipo | demostracion.md. |
+| DOC-02 | Demostración y defensa | Ensayo funcional automatizado completado; exposición oral pendiente del equipo | demostracion.md. |
 | INT-01 | PR hacia develop | Borrador publicado; revisión pendiente | [PR #1](https://github.com/IS-LAB-EIC-UCN/sigu_ucn/pull/1). |
 | INT-02 | Coordinar usuarios/hash y espacios con otros equipos | Pendiente de revisión humana | Notas de compatibilidad del PR. |
 | INT-03 | Actualizar GitHub Project | Pendiente de permiso externo | La conexión actual carece de read:project/project. |
 | INT-04 | Aprobación y merge | Pendiente del responsable del repositorio | No se fusiona automáticamente. |
 
-La implementación técnica y sus verificaciones están completadas en esta versión; la aprobación, coordinación, tablero y exposición se distinguen expresamente de los cambios de código.
+La instalación limpia y sus 54 pruebas, los nueve recorridos funcionales y las capturas de escritorio/móvil están verificados en esta versión; la aprobación, coordinación, tablero y exposición se distinguen expresamente de los cambios de código.

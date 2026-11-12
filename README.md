@@ -22,7 +22,7 @@ Esperar a que PostgreSQL finalice la inicialización antes de iniciar Java. Abri
 
 | Usuario demo | Contraseña | Función |
 | --- | --- | --- |
-| admin@sigu.cl | admin123 | Salas, categorías y supervisión de eventos. |
+| admin@sigu.cl | admin123 | Usuarios y roles asignados, salas, categorías y supervisión de eventos. |
 | docente@sigu.cl | docente123 | Organiza sus eventos y registra la asistencia de sus participantes. |
 | estudiante@sigu.cl | estudiante123 | Consulta, se inscribe y cancela antes del inicio. |
 
@@ -68,7 +68,7 @@ Para reproducir la prueba de 100 sesiones, ver [rendimiento](docs/rendimiento-ev
 
 ## Administración y permisos
 
-El módulo 6 reutiliza el inicio de sesión y los tres roles del sistema base. ADMIN gestiona únicamente salas, categorías y supervisión de eventos dentro de este módulo. La creación, edición y asignación global de usuarios/roles queda a cargo del sistema base y de su equipo responsable; no se incluye un panel paralelo.
+ADMIN administra las cuentas compartidas desde /eventos/usuarios: crea y edita usuarios, asigna uno de los tres roles existentes y activa o desactiva cuentas conservando el historial. No se crean tablas ni roles paralelos. El estado y rol se actualizan al acceder a las rutas de Eventos; la integración con otros módulos debe coordinarse con sus responsables.
 
 El organizador es el único que modifica sus eventos y registra su asistencia oficial. ADMIN puede consultar eventos ajenos publicados/finalizados e inscritos; esa supervisión no concede edición, cancelación ni acceso a borradores ajenos. Los tres nombres de rol se mantienen porque son compartidos por los demás módulos.
 

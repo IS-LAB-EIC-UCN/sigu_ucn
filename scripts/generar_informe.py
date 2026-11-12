@@ -53,7 +53,7 @@ def clases():
 
 def casos():
     d=Drawing(500,410);d.add(Rect(125,5,370,400,rx=6,ry=6,fillColor=colors.white,strokeColor=AZUL));label(d,310,388,"Módulo 6 — usuarios autenticados",11)
-    actors=[("ADMIN",345,["Salas y categorías","Supervisar eventos publicados"]),("ORGANIZADOR",220,["Programar y publicar eventos","Expositores, inscritos y asistencia"]),("PARTICIPANTE",95,["Consultar agenda e inscribirse","Cancelar inscripción en plazo"])]
+    actors=[("ADMIN",345,["Usuarios, roles, salas y categorías","Supervisar eventos publicados"]),("DOCENTE",220,["Programar y publicar eventos","Expositores, inscritos y asistencia"]),("ESTUDIANTE",95,["Consultar agenda e inscribirse","Cancelar inscripción en plazo"])]
     for actor,y,items in actors:
         d.add(Circle(50,y+13,8,fillColor=None,strokeColor=GRIS));d.add(Line(50,y+5,50,y-18,strokeColor=GRIS));d.add(Line(33,y-2,67,y-2,strokeColor=GRIS));d.add(Line(50,y-18,35,y-33,strokeColor=GRIS));d.add(Line(50,y-18,65,y-33,strokeColor=GRIS));label(d,55,y-48,actor,8)
         for j,item in enumerate(items):

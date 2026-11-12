@@ -1,0 +1,2113 @@
+{
+  "fecha": "2026-11-12T16:39:11.514516-03:00",
+  "entorno": "Windows-11-10.0.26300-SP0",
+  "sesiones_independientes": 100,
+  "identidad": "Una cuenta de prueba, con cookies distintas por sesion",
+  "peticiones": 300,
+  "errores": 0,
+  "max_segundos": 0.751096,
+  "p95_segundos": 0.702972,
+  "cumple_menos_de_2s": true,
+  "muestras": [
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.738376,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.189575,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.336268,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.217309,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.18431,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.157291,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.124082,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.164975,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.230752,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.126893,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.062387,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.732969,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.295992,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.126332,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.13302,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.708431,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.174953,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.748981,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.123273,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.291919,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.741411,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.122524,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.26809,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.078769,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.292327,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.111808,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.060866,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.176389,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.203391,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.701658,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.331877,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.190466,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.188159,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.32301,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.143546,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.262049,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.055217,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.063784,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.195843,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.287329,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.050644,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.22347,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.268754,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.231598,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.274922,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.185786,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.739268,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.146301,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.700004,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.344597,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.275833,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.315724,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.135502,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.738648,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.30975,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.208195,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.127079,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.316184,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.204713,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.331399,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.271095,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.068409,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.212594,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.191308,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.32811,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.324034,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.165407,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.340413,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.64471,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.306893,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.265049,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.686212,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.706891,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.192907,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.74982,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.238473,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.13517,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.332067,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.169187,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.702972,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.268461,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.182186,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.243788,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.657369,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.249236,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.213664,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.739018,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.300852,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.729949,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.250825,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.698129,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.693725,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.712172,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.124668,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.748541,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.249201,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.695617,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.751096,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.266941,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 1,
+      "ruta": "/eventos",
+      "segundos": 0.148647,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.068797,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.088894,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.256519,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.148727,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.166582,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.158658,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.258263,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.134538,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.231976,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.1644,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.225078,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.249423,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.117829,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.127852,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.083884,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.267274,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.172564,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.127191,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.061333,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.044646,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.140405,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.109502,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.240424,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.524301,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.255156,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.045,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.061017,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.074215,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.627329,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.234028,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.227774,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.299556,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.094789,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.158953,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.059011,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.132867,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.193695,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.124517,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.140371,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.13425,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.297909,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.203102,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.24596,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.178255,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.294338,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.085436,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.238568,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.626522,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.626556,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.197836,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.24224,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.307278,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.626191,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.113748,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.220548,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.625401,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.625867,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.054233,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.135689,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.225123,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.205876,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.24547,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.227182,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.20041,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.09432,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.176776,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.160107,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.244644,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.102894,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.163256,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.202136,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.637187,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.214643,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.185799,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.195901,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.654213,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.223267,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.254815,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.198845,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.130895,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.636541,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.061059,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.106763,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.290488,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.521286,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.274906,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.111166,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.572831,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.292866,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.246795,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.220205,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.652967,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.270389,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.22203,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.030346,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.266393,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.209931,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.137946,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos",
+      "segundos": 0.120226,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 2,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.277457,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.044655,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.207177,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.078466,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.110863,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.102496,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.100642,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.093223,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.109766,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.081854,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.180436,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.077381,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.205667,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.19828,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.086836,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.080129,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.610977,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.204423,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.048196,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.153408,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.094159,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.045878,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.122766,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.129416,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.105141,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.148799,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.091087,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.156978,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.140482,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.106007,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.055506,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.061371,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.129488,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.120405,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.052193,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.588664,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.062207,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.156071,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.10834,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.093232,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.095646,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.203543,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.138053,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.584528,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.120836,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.619645,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.089249,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.047507,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.166784,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.213191,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.614661,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.628439,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.105986,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.037015,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.614984,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.61498,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.205679,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.069248,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.120729,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.608951,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.210469,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.217528,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.074518,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.204755,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.204939,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.136992,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.617756,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.124389,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.213016,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.122699,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.626684,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.046605,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.119895,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.158062,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.082907,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.095741,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.137871,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.15041,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.105493,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.107891,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.195672,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.196003,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.054126,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.611527,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.174955,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.122044,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.610598,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.106776,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.192756,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.051842,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.163004,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.590349,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.173931,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.102053,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.094045,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.610004,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.082154,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.19383,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos",
+      "segundos": 0.085625,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=agenda",
+      "segundos": 0.526067,
+      "correcta": true,
+      "estado": 200
+    },
+    {
+      "ronda": 3,
+      "ruta": "/eventos?vista=mios",
+      "segundos": 0.174929,
+      "correcta": true,
+      "estado": 200
+    }
+  ]
+}

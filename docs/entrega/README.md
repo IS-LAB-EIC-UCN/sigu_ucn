@@ -6,6 +6,9 @@
 - [Presentación PDF](presentacion.pdf) y [fuente editable](presentacion.md).
 - [Guion de demostración](demostracion.md).
 - [Backlog y estado de integración](backlog.md).
+- [Capturas por rol, escritorio y móvil](capturas.md).
+- [Resultado de instalación limpia y ensayo](evidencias/instalacion-limpia.json).
+- [Resultado de rendimiento](evidencias/rendimiento.json).
 
 El PDF es material preparado para revisión del equipo, no una constancia de aprobación del profesor. Revisar nombres, formato solicitado y conclusiones propias antes de entregar.
 

@@ -1,19 +1,18 @@
-# Evidencia de instalación limpia · alcance de eventos
+# Evidencia de instalación limpia
 
-Fecha: 2026-11-12T14:47:10.709096-03:00. Commit verificado: e4c8a3d0e66cbf602a93f68c45786dd0de171788.
+Fecha: 2026-11-12T16:36:45.335744-03:00. Commit verificado: ea01ecf9f3f473b933137ff752dc31202591d803.
 
-Se ejecutó `python scripts/verificar_instalacion.py` desde la raíz del proyecto. Se creó un clon sin archivos generados del directorio original y un PostgreSQL 16 temporal, con puertos aleatorios y sin utilizar el volumen postgres_data habitual.
+Se ejecutó `python scripts/verificar_instalacion.py` desde un clon del commit confirmado, con PostgreSQL 16 temporal y puertos aleatorios, sin usar el volumen habitual.
 
-Resultado:
+- Compilación de Java y generación de JTE correctas.
+- 54 pruebas, cero fallos, cero errores y ninguna omitida.
+- Ocho eventos publicados del docente y tres cuentas demo con contraseñas protegidas.
+- Solo DOCENTE abre el formulario de eventos; ADMIN y ESTUDIANTE reciben 403.
+- ADMIN administra cuentas y roles desde /eventos/usuarios y /eventos/roles; los otros roles reciben 403.
+- ESTUDIANTE recibe 403 al acceder directamente al catálogo. ADMIN ve salas y categorías sin expositores ni Mis actividades.
+- Nueve recorridos HTTP correctos: eventos, inscripción, duplicados, supervisión, asistencia, cancelaciones y administración de cuentas con cambio de rol y desactivación de sesión abierta.
+- Los datos adicionales del ensayo solo existieron en la base temporal. Aplicación y contenedor temporales retirados al finalizar.
 
-- Compilación y generación de las vistas JTE correctas.
-- 42 pruebas de eventos y autenticación ejecutadas sin fallos ni errores.
-- Las semillas crearon cuatro eventos y las tres cuentas demo existentes del proyecto base.
-- Las contraseñas permanecen protegidas y los tres roles cargaron la agenda por HTTP.
-- El estudiante recibió 403 al intentar crear un evento; los roles organizadores cargaron el formulario.
-- La ruta del panel global de usuarios respondió 404 para los tres roles: esa administración no pertenece al módulo 6.
-- La aplicación temporal y el contenedor se retiraron al finalizar. La base y el servidor habituales se conservaron.
+Resumen versionado: [evidencias/instalacion-limpia.json](entrega/evidencias/instalacion-limpia.json). Los logs locales están en target/sigu-ucn-verificacion-7515c36edd81/maven.log y aplicacion.log. Se usó la caché Maven disponible; no se afirma una prueba sin acceso a Maven Central.
 
-Los logs se encuentran en target/sigu-ucn-verificacion-60c0411cc652/maven.log y aplicacion.log. El resumen es target/instalacion-limpia.json. Son archivos locales excluidos de Git. Se usó la caché Maven disponible; no se afirma una prueba sin conexión a Maven Central.
-
-La reducción de 50 a 42 pruebas corresponde al retiro de las ocho pruebas del panel global, su servicio y la actualización de sesiones vinculada a esa funcionalidad. Las pruebas de eventos permanecen y pasan.
+Las capturas de escritorio y móvil se documentan en [capturas](entrega/capturas.md). La exposición oral, aprobación del equipo e integración con otros grupos requieren la revisión de sus responsables.
