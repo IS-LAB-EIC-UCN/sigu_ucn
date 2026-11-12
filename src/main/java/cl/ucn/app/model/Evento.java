@@ -47,7 +47,11 @@ public class Evento {
     private Expositor expositor;
     @ManyToOne @JoinColumn(name = "espacio_id")
     private Espacio espacio;
-    public String getTematica() { return tematica == null ? "General" : tematica; }
+    @ManyToOne @JoinColumn(name="categoria_id")
+    private Categoria categoria;
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria=categoria; if(categoria!=null) this.tematica=categoria.getNombre(); }
+    public String getTematica() { return categoria != null ? categoria.getNombre() : tematica == null ? "General" : tematica; }
     public void setTematica(String tematica) { this.tematica = tematica; }
     @ManyToMany
     @JoinTable(name = "evento_expositores", joinColumns = @JoinColumn(name = "evento_id"), inverseJoinColumns = @JoinColumn(name = "expositor_id"))

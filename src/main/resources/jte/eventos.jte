@@ -25,7 +25,7 @@
 <form class="eventos-filtros" method="get" action="/eventos">
 <input type="hidden" name="vista" value="${vista}">
 <div><label for="buscar">Buscar evento</label><input id="buscar" type="search" name="q" value="${q}" placeholder="Título o ubicación"></div>
-<div><label for="tema">Temática</label><select id="tema" name="tematica"><option value="">Todas las temáticas</option>@for(var t:tematicas)<option value="${t}" selected="${t.equals(tematica)}">${t}</option>@endfor</select></div>
+<div><label for="tema">Categoría</label><select id="tema" name="tematica"><option value="">Todas las categorías</option>@for(var t:tematicas)<option value="${t}" selected="${t.equals(tematica)}">${t}</option>@endfor</select></div>
 <div><label for="fecha">Fecha</label><input id="fecha" type="date" name="fecha" value="${fecha}"></div>
 <button class="eventos-btn" type="submit">Aplicar filtros</button><a class="enlace-suave" href="/eventos">Limpiar</a>
 </form>

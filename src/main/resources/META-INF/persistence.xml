@@ -13,6 +13,7 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        <class>cl.ucn.app.model.Categoria</class>
         <class>cl.ucn.app.model.Expositor</class>
         <class>cl.ucn.app.model.Evento</class>
         <class>cl.ucn.app.model.Inscripcion</class>

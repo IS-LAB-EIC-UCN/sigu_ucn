@@ -5,6 +5,20 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 public class CatalogoEventosRepository {
+    public List<Categoria> categorias() {
+        try (EntityManager em=JPAUtil.getEntityManager()) {
+            return em.createQuery("FROM Categoria ORDER BY nombre",Categoria.class).getResultList();
+        }
+    }
+    public void registrarCategoria(String nombre) {
+        try (EntityManager em=JPAUtil.getEntityManager()) {
+            try {
+                em.getTransaction().begin();
+                em.createNativeQuery("INSERT INTO categorias(nombre) VALUES (:nombre) ON CONFLICT DO NOTHING").setParameter("nombre",nombre).executeUpdate();
+                em.getTransaction().commit();
+            } catch(RuntimeException e) { if(em.getTransaction().isActive()) em.getTransaction().rollback();throw e; }
+        }
+    }
     public List<Expositor> expositores() {
         try (EntityManager em = JPAUtil.getEntityManager()) {
             return em.createQuery("FROM Expositor ORDER BY nombre", Expositor.class).getResultList();

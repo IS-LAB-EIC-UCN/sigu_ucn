@@ -21,6 +21,7 @@ public final class EventosRoutes {
                 config.routes.post("/eventos/ubicaciones/{id}/editar", controller::actualizarUbicacion);
                 config.routes.get("/eventos/expositores/{id}/editar", controller::mostrarExpositorEditar);
                 config.routes.post("/eventos/expositores/{id}/editar", controller::actualizarExpositor);
+                config.routes.post("/eventos/categorias", controller::guardarCategoria);
                 // Mostrar listado de eventos
                 config.routes.get(
                                 "/eventos",

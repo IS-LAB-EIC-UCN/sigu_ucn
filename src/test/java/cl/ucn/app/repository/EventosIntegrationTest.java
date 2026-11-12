@@ -16,6 +16,7 @@ class EventosIntegrationTest {
     private final InscripcionRepository inscripciones=new InscripcionRepository();
     private final List<Long> ids=new ArrayList<>();
     private final List<Long> expositoresExtra=new ArrayList<>();
+    private Categoria categoria;
     private Espacio sala;
     private Expositor expositor;
     private Usuario usuario;
@@ -24,13 +25,14 @@ class EventosIntegrationTest {
         assertNotNull(usuario,"Se requiere el usuario demo admin@sigu.cl");
         try(EntityManager em=JPAUtil.getEntityManager()) {
             em.getTransaction().begin();
+            categoria=new Categoria("Prueba-"+UUID.randomUUID());em.persist(categoria);
             sala=new Espacio("Prueba-"+UUID.randomUUID(),"EVENTOS",5,true); em.persist(sala);
             expositor=new Expositor();expositor.setNombre("Expositor de prueba");em.persist(expositor);
             em.getTransaction().commit();
         }
     }
     private Evento nuevo(int hora) {
-        Evento e=new Evento(); e.setTitulo("Prueba automatizada");e.setTematica("Ciencia");e.setFecha(LocalDate.now().plusDays(10));
+        Evento e=new Evento(); e.setTitulo("Prueba automatizada");e.setTematica("Ciencia");e.setCategoria(categoria);e.setFecha(LocalDate.now().plusDays(10));
         e.setHoraInicio(LocalTime.of(hora,0));e.setHoraFin(LocalTime.of(hora+1,0));e.setCupoMaximo(1);
         e.setEspacio(sala);e.setExpositor(expositor);e.setOrganizador(usuario);
         return e;
@@ -45,6 +47,7 @@ class EventosIntegrationTest {
             }
             for(Long id:expositoresExtra) em.createQuery("DELETE FROM Expositor WHERE id=:id").setParameter("id",id).executeUpdate();
             if(expositor!=null) em.createQuery("DELETE FROM Expositor WHERE id=:id").setParameter("id",expositor.getId()).executeUpdate();
+            if(categoria!=null) em.createQuery("DELETE FROM Categoria WHERE id=:id").setParameter("id",categoria.getId()).executeUpdate();
             if(sala!=null) em.createQuery("DELETE FROM Espacio WHERE id=:id").setParameter("id",sala.getId()).executeUpdate();
             em.getTransaction().commit();
         }
@@ -100,7 +103,8 @@ class EventosIntegrationTest {
     }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
-        assertEquals("Ciencia",leido.getTematica());assertEquals(sala.getNombre(),leido.getEspacio().getNombre());
+        assertEquals(categoria.getNombre(),leido.getTematica());
+        assertEquals(categoria.getId(),leido.getCategoria().getId());assertEquals(sala.getNombre(),leido.getEspacio().getNombre());
         assertEquals(expositor.getNombre(),leido.getExpositor().getNombre());
     }
     @Test void impideSolapamientoYPermiteHorarioConsecutivo() {

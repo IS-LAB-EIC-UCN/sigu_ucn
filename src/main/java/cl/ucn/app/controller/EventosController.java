@@ -86,6 +86,7 @@ public class EventosController {
     private void formulario(Context ctx, Evento e, Map<String,String> datos, String error) {
         Map<String,Object> m=modelo(ctx);
         m.put("evento",e); m.put("datos",datos); m.put("error",error);
+        m.put("categorias",catalogo.categorias());
         m.put("expositores",catalogo.expositores()); m.put("espacios",catalogo.espacios());
         ctx.render("eventos-formulario.jte",m);
     }
@@ -94,6 +95,7 @@ public class EventosController {
         if(e!=null) {
             d.put("titulo",e.getTitulo()); d.put("descripcion",e.getDescripcion()==null?"":e.getDescripcion());
             d.put("fecha",e.getFecha().toString()); d.put("horaInicio",e.getHoraInicio().toString()); d.put("horaFin",e.getHoraFin().toString());
+            d.put("categoriaId",e.getCategoria()==null?"":e.getCategoria().getId().toString());
             d.put("cupoMaximo",e.getCupoMaximo().toString()); d.put("tematica",e.getTematica());
             d.put("espacioId",e.getEspacio()==null?"":e.getEspacio().getId().toString());
             d.put("expositorIds",e.getExpositores().stream().map(x -> x.getId().toString()).collect(java.util.stream.Collectors.joining(",")));
@@ -109,13 +111,13 @@ public class EventosController {
     }
     private void guardar(Context ctx, Evento e) {
         Map<String,String> d=new HashMap<>();
-        for(String campo:List.of("titulo","descripcion","fecha","horaInicio","horaFin","cupoMaximo","tematica","espacioId","expositorId")) {
+        for(String campo:List.of("titulo","descripcion","fecha","horaInicio","horaFin","cupoMaximo","tematica","categoriaId","espacioId","expositorId")) {
             String valor=ctx.formParam(campo); d.put(campo,valor==null?"":valor.strip());
         }
         d.put("expositorIds", String.join(",", ctx.formParams("expositorIds")));
         try {
             if("CANCELADO".equals(e.getEstado())) throw new IllegalArgumentException("El evento cancelado no se puede editar.");
-            e.setTitulo(d.get("titulo"));e.setDescripcion(d.get("descripcion"));e.setTematica(d.get("tematica"));
+            e.setTitulo(d.get("titulo"));e.setDescripcion(d.get("descripcion"));e.setCategoria(catalogo.buscar(Categoria.class,Long.valueOf(d.get("categoriaId"))));
             e.setFecha(LocalDate.parse(d.get("fecha")));e.setHoraInicio(LocalTime.parse(d.get("horaInicio")));e.setHoraFin(LocalTime.parse(d.get("horaFin")));
             e.setCupoMaximo(Integer.parseInt(d.get("cupoMaximo")));
             e.setEspacio(catalogo.buscar(Espacio.class,Long.valueOf(d.get("espacioId"))));
@@ -168,8 +170,16 @@ public class EventosController {
     }
     private void catalogos(Context ctx,String error) {
         Map<String,Object> m=modelo(ctx);m.put("error",error);
+        m.put("categorias",catalogo.categorias());
         m.put("expositores",catalogo.expositores());m.put("espacios",catalogo.espacios());
         ctx.render("eventos-catalogos.jte",m);
+    }
+    public void guardarCategoria(Context ctx) {
+        if(!accesoOrganizador(ctx,true)) return;
+        try {
+            catalogo.registrarCategoria(texto(ctx,"nombre",100,true));
+            ctx.sessionAttribute("eventosAviso","Categoría registrada.");ctx.redirect("/eventos/catalogos");
+        } catch(IllegalArgumentException ex) { ctx.status(400);catalogos(ctx,ex.getMessage()); }
     }
     public void guardarExpositor(Context ctx) {
         if(!accesoOrganizador(ctx,true)) return;

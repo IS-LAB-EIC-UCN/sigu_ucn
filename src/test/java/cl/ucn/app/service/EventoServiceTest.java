@@ -11,7 +11,7 @@ class EventoServiceTest {
     private final EventoService service=new EventoService(store,Clock.fixed(Instant.parse("2026-11-11T12:00:00Z"),ZoneOffset.UTC));
     private Evento evento;
     @BeforeEach void preparar() {
-        evento=new Evento();evento.setTitulo("Seminario");evento.setTematica("Ciencia");
+        evento=new Evento();evento.setTitulo("Seminario");evento.setTematica("Ciencia");evento.setCategoria(new Categoria("Ciencia"));
         evento.setFecha(LocalDate.of(2026,12,1));evento.setHoraInicio(LocalTime.of(10,0));evento.setHoraFin(LocalTime.of(11,0));
         evento.setCupoMaximo(20);evento.setEspacio(new Espacio("Sala 1","EVENTOS",30,true));evento.setExpositor(new Expositor());
     }

@@ -28,6 +28,7 @@ public class EventoService {
             throw new IllegalArgumentException("El cupo supera la capacidad de la ubicación.");
         if (e.getExpositores().isEmpty() || e.getExpositores().stream().anyMatch(java.util.Objects::isNull))
             throw new IllegalArgumentException("Selecciona al menos un expositor válido.");
+        if (e.getCategoria() == null) throw new IllegalArgumentException("Selecciona una categoría válida.");
         if (e.getTematica().isBlank() || e.getTematica().length() > 100)
             throw new IllegalArgumentException("La temática admite entre 1 y 100 caracteres.");
         e.setTitulo(e.getTitulo().strip()); e.setLugar(e.getEspacio().getNombre());
