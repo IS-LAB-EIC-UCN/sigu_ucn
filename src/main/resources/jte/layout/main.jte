@@ -11,8 +11,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="/js/app.js"></script>
+    @if(title != null && title.toLowerCase().contains("evento"))
+    <link rel="stylesheet" href="/css/eventos.css">
+    @endif
+    <script defer src="/js/app.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -36,7 +38,7 @@
                 <li><a href="#">Grupo 3 - Talleres</a></li>
                 <li><a href="#">Grupo 4 - Soporte</a></li>
                 <li><a href="#">Grupo 5 - Inventario</a></li>
-                <li><a href="#">Grupo 6 - Eventos</a></li>
+                <li><a href="/eventos" class="menu-eventos">Grupo 6 · Eventos académicos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>
                 <li><a href="#">Grupo 8 - Tutorías</a></li>
                 <li><a href="#">Grupo 9 - Estacionamientos</a></li>

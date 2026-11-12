@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="/js/app.js"></script>
     <title>Iniciar sesión</title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -27,6 +28,7 @@
                         type="email"
                         id="correo"
                         name="correo"
+                        autocomplete="username"
                         placeholder="Ingrese su correo"
                         required>
             </div>
@@ -37,6 +39,7 @@
                         type="password"
                         id="password"
                         name="password"
+                        autocomplete="current-password"
                         placeholder="Ingrese su contraseña"
                         required>
             </div>

@@ -12,9 +12,9 @@ public final class JPAUtil {
     private JPAUtil() {
     }
 
-    public static EntityManagerFactory getEntityManagerFactory() {
-        if (entityManagerFactory == null) {
-            entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+    public static synchronized EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null || !entityManagerFactory.isOpen()) {
+            entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, ConfiguracionPersistencia.propiedades());
         }
         return entityManagerFactory;
     }
@@ -23,7 +23,7 @@ public final class JPAUtil {
         return getEntityManagerFactory().createEntityManager();
     }
 
-    public static void shutdown() {
+    public static synchronized void shutdown() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
         }

@@ -8,11 +8,18 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
 
     public AuthService() {
-        this.usuarioRepository = new UsuarioRepository();
+        this(new UsuarioRepository());
+    }
+
+    public AuthService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     public Usuario autenticar(String correo, String password) {
-        Usuario usuario = usuarioRepository.findByCorreo(correo);
+        if (correo == null || correo.isBlank() || password == null || password.isBlank()) {
+            return null;
+        }
+        Usuario usuario = usuarioRepository.findByCorreo(correo.strip().toLowerCase(java.util.Locale.ROOT));
 
         if (usuario == null) {
             return null;
@@ -22,9 +29,7 @@ public class AuthService {
             return null;
         }
 
-        // Por ahora comparación simple.
-        // Más adelante, se podría reemplazar por hash seguro.
-        if (!usuario.getPassword().equals(password)) {
+        if (!PasswordHasher.verificar(password, usuario.getPassword())) {
             return null;
         }
 

@@ -26,11 +26,11 @@ public final class AppProperties {
     }
 
     public static String get(String key) {
-        return PROPERTIES.getProperty(key);
+        return System.getProperty(key, PROPERTIES.getProperty(key));
     }
 
     public static int getInt(String key, int defaultValue) {
-        String value = PROPERTIES.getProperty(key);
+        String value = get(key);
         return value != null ? Integer.parseInt(value) : defaultValue;
     }
 }
