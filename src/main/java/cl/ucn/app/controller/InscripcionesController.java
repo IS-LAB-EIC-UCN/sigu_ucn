@@ -130,7 +130,7 @@ public class InscripcionesController {
 
         // Solo el organizador puede consultar los participantes.
         if (evento.getOrganizador() == null ||
-                !usuarioId.equals(evento.getOrganizador().getId())) {
+                !cl.ucn.app.service.PermisosEventos.administra(ctx.sessionAttribute("usuarioRol"), usuarioId, evento.getOrganizador().getId())) {
 
             ctx.status(403).result(
                     "No tienes permisos para consultar los participantes");

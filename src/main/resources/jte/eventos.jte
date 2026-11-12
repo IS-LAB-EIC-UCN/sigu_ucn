@@ -3,6 +3,8 @@
 @param String csrfToken
 @param String error
 @param String aviso
+@param boolean puedeOrganizar
+@param boolean admin
 @param Long usuarioId
 @param java.util.List<cl.ucn.app.model.Evento> eventos
 @param java.util.Map<Long,long[]> resumen
@@ -16,7 +18,7 @@
 @param long organizados
 @template.layout.main(title=title, usuarioNombre=usuarioNombre, content=@`
 <section class="eventos-panel">
-<header class="eventos-cabecera"><div><p class="eyebrow">VIDA UNIVERSITARIA / MÓDULO 06</p><h1>Eventos académicos</h1><p>Conecta con nuevas ideas. Encuentra tu próxima actividad.</p></div><a class="eventos-btn" href="/eventos/nuevo"><span aria-hidden="true">+</span> Crear evento</a></header>
+<header class="eventos-cabecera"><div><p class="eyebrow">VIDA UNIVERSITARIA / MÓDULO 06</p><h1>Eventos académicos</h1><p>Conecta con nuevas ideas. Encuentra tu próxima actividad.</p></div>@if(puedeOrganizar)<a class="eventos-btn" href="/eventos/nuevo"><span aria-hidden="true">+</span> Crear evento</a>@endif</header>
 <nav class="eventos-nav" aria-label="Secciones de eventos"><a href="/eventos">Todos los eventos</a><a href="/eventos?vista=agenda">Agenda</a><a href="/eventos?vista=mios">Mis actividades</a><a href="/eventos/catalogos">Expositores y ubicaciones</a></nav>@if(!aviso.isBlank())<div class="evento-alerta exito" role="status">${aviso}</div>@endif
 @if(!error.isBlank())<div class="evento-alerta error" role="alert">${error}</div>@endif
 <div class="eventos-metricas"><article><span>PRÓXIMOS EVENTOS</span><strong>${proximos}</strong><small>Actividades con inscripción abierta</small></article><article><span>MIS INSCRIPCIONES</span><strong>${misInscripciones}</strong><small>Participaciones activas</small></article><article><span>MIS EVENTOS</span><strong>${organizados}</strong><small>Actividades que organizas</small></article></div>
@@ -29,7 +31,7 @@
 </form>
 <div class="eventos-seccion"><h2>${"agenda".equals(vista) ? "Agenda de próximos eventos" : "mios".equals(vista) ? "Mis actividades" : "Explora los eventos"}</h2><span>${eventos.size()} resultados</span></div>
 @if(eventos.isEmpty())
-<div class="eventos-vacio"><span class="vacio-icono" aria-hidden="true">◇</span><h3>No hay eventos para mostrar</h3><p>Prueba con otros filtros o crea una nueva actividad académica.</p><a href="/eventos/nuevo" class="eventos-btn">Crear un evento</a></div>
+<div class="eventos-vacio"><span class="vacio-icono" aria-hidden="true">◇</span><h3>No hay eventos para mostrar</h3><p>Prueba con otros filtros o crea una nueva actividad académica.</p>@if(puedeOrganizar)<a href="/eventos/nuevo" class="eventos-btn">Crear un evento</a>@endif</div>
 @else
 <div class="eventos-lista">
 @for(var e:eventos)
@@ -49,7 +51,7 @@
 @else <span class="badge">Cupos agotados</span> @endif
 @endif
 @endif
-@if(usuarioId.equals(e.getOrganizador().getId()))
+@if(puedeOrganizar && (admin || usuarioId.equals(e.getOrganizador().getId())))
 <a class="eventos-btn secundario" href="/eventos/${e.getId()}/inscritos">Participantes</a>
 @if("CANCELADO".equals(e.getEstado()))
 <form method="post" action="/eventos/${e.getId()}/reactivar" onsubmit="return confirm('El evento volvera a borrador. Las inscripciones anteriores quedaran canceladas. Deberas revisar los datos y publicarlo nuevamente. Continuar?');"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn" type="submit">Reactivar como borrador</button></form>

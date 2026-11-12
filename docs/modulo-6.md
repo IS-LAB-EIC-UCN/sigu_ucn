@@ -97,3 +97,8 @@ Se permite recuperar el borrador aunque su fecha haya pasado o su sala esté ocu
 `db/init/06_eventos_demo.sql` registra los cuatro eventos solicitados con sus expositores y ubicaciones. Se ejecuta después de la migración 05 y puede repetirse sin duplicar los eventos ni sobrescribir cambios existentes. En una base nueva, Docker ejecuta ambos scripts automáticamente. En volúmenes existentes deben aplicarse explícitamente.
 
 El estado actual completo (esquema, eventos, usuarios, ubicaciones, expositores e inscripciones) se respaldó en `target/backups/sigu_ucn_20261111_154811.sql`. El respaldo es local y no se incluye en Git. El volumen `postgres_data` mantiene los datos al detener y reiniciar Docker.
+
+
+## Permisos según los actores del informe
+
+ESTUDIANTE actúa como participante: consulta, filtra, se inscribe y cancela su inscripción. DOCENTE actúa como organizador: crea y administra sus eventos y expositores. ADMIN supervisa todos los eventos y administra las ubicaciones. Los permisos se verifican tanto en HTTP como en los botones de las vistas. Los eventos antiguos creados por administradores se conservan.

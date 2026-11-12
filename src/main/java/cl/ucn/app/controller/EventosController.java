@@ -3,6 +3,7 @@ package cl.ucn.app.controller;
 import cl.ucn.app.model.*;
 import cl.ucn.app.repository.*;
 import cl.ucn.app.service.EventoService;
+import cl.ucn.app.service.PermisosEventos;
 import io.javalin.http.*;
 import java.time.*;
 import java.util.*;
@@ -25,12 +26,19 @@ public class EventosController {
         }
         return true;
     }
+    private boolean accesoOrganizador(Context ctx, boolean escritura) {
+        if (!acceso(ctx, escritura)) return false;
+        if (!PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")))
+            throw new ForbiddenResponse("Tu rol solo permite participar en eventos.");
+        return true;
+    }
     private Map<String,Object> modelo(Context ctx) {
         Map<String,Object> m = new HashMap<>();
         m.put("title", "Eventos académicos · SIGU-UCN");
         m.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
         m.put("usuarioId", ctx.sessionAttribute("usuarioId"));
         m.put("csrfToken", ctx.sessionAttribute("csrfToken"));
+        m.put("puedeOrganizar", PermisosEventos.organiza(ctx.sessionAttribute("usuarioRol")));
         m.put("admin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")));
         m.put("error", "");
         String aviso = ctx.sessionAttribute("eventosAviso");
@@ -50,7 +58,7 @@ public class EventosController {
         List<Evento> todos = eventos.findAll();
         Map<Long,long[]> resumen = inscripciones.resumenPorEvento(usuarioId);
         List<Evento> lista = todos.stream()
-            .filter(e -> !"BORRADOR".equals(e.getEstado()) || usuarioId.equals(e.getOrganizador().getId()))
+            .filter(e -> !"BORRADOR".equals(e.getEstado()) || PermisosEventos.administra(ctx.sessionAttribute("usuarioRol"), usuarioId, e.getOrganizador().getId()))
             .filter(e -> q.isEmpty() || (e.getTitulo()+" "+e.getLugar()).toLowerCase(Locale.ROOT).contains(q.toLowerCase(Locale.ROOT)))
             .filter(e -> tema.isEmpty() || tema.equals(e.getTematica()))
             .filter(e -> fecha.isEmpty() || fecha.equals(e.getFecha().toString()))
@@ -72,7 +80,7 @@ public class EventosController {
         Evento evento=eventos.findById(id);
         if(evento==null) throw new NotFoundResponse("Evento no encontrado");
         Long usuario=ctx.sessionAttribute("usuarioId");
-        if(!usuario.equals(evento.getOrganizador().getId())) throw new ForbiddenResponse("Solo el organizador puede administrar este evento.");
+        if(!PermisosEventos.administra(ctx.sessionAttribute("usuarioRol"), usuario, evento.getOrganizador().getId())) throw new ForbiddenResponse("Solo el organizador puede administrar este evento.");
         return evento;
     }
     private void formulario(Context ctx, Evento e, Map<String,String> datos, String error) {
@@ -92,9 +100,9 @@ public class EventosController {
         }
         return d;
     }
-    public void mostrarFormulario(Context ctx) { if(acceso(ctx,false)) formulario(ctx,null,Map.of(),""); }
+    public void mostrarFormulario(Context ctx) { if(accesoOrganizador(ctx,false)) formulario(ctx,null,Map.of(),""); }
     public void mostrarFormularioEditar(Context ctx) {
-        if(!acceso(ctx,false)) return;
+        if(!accesoOrganizador(ctx,false)) return;
         Evento e=propio(ctx);
         if("CANCELADO".equals(e.getEstado())) throw new ConflictResponse("El evento cancelado no se puede editar.");
         formulario(ctx,e,datos(e),"");
@@ -118,13 +126,13 @@ public class EventosController {
         }
     }
     public void crearEvento(Context ctx) {
-        if(!acceso(ctx,true)) return;
+        if(!accesoOrganizador(ctx,true)) return;
         Evento e=new Evento(); e.setOrganizador(new UsuarioRepository().findById(ctx.sessionAttribute("usuarioId")));
         guardar(ctx,e);
     }
-    public void actualizarEvento(Context ctx) { if(acceso(ctx,true)) guardar(ctx,propio(ctx)); }
+    public void actualizarEvento(Context ctx) { if(accesoOrganizador(ctx,true)) guardar(ctx,propio(ctx)); }
     public void reactivarEvento(Context ctx) {
-        if (!acceso(ctx, true)) return;
+        if (!accesoOrganizador(ctx, true)) return;
         try {
             Evento evento = propio(ctx);
             servicio.reactivar(evento);
@@ -139,7 +147,7 @@ public class EventosController {
     public void cancelarEvento(Context ctx) { cambiar(ctx,false); }
     public void publicarEvento(Context ctx) { cambiar(ctx,true); }
     private void cambiar(Context ctx,boolean publicar) {
-        if(!acceso(ctx,true)) return;
+        if(!accesoOrganizador(ctx,true)) return;
         try {
             Evento e=propio(ctx); if(publicar) servicio.publicar(e); else servicio.cancelar(e);
             exito(ctx,publicar?"Evento publicado. Las inscripciones ya están abiertas.":"Evento cancelado. Se conserva el historial de participantes.");
@@ -158,7 +166,7 @@ public class EventosController {
         ctx.render("eventos-catalogos.jte",m);
     }
     public void guardarExpositor(Context ctx) {
-        if(!acceso(ctx,true)) return;
+        if(!accesoOrganizador(ctx,true)) return;
         try {
             Expositor e=new Expositor(); e.setNombre(texto(ctx,"nombre",100,true));
             e.setCorreo(texto(ctx,"correo",120,false));e.setEspecialidad(texto(ctx,"especialidad",150,false));
