@@ -26,6 +26,13 @@ class EventosControllerTest {
         autenticar();when(ctx.pathParam("id")).thenReturn("abc");
         assertThrows(io.javalin.http.BadRequestResponse.class,()->controller.detalle(ctx));
     }
+    @Test void docenteYEstudianteNoRegistranCategorias() {
+        autenticar();when(ctx.formParam("csrfToken")).thenReturn("token");
+        for(String rol:java.util.List.of("DOCENTE","ESTUDIANTE")) {
+            when(ctx.sessionAttribute("usuarioRol")).thenReturn(rol);
+            assertThrows(ForbiddenResponse.class,()->controller.guardarCategoria(ctx));
+        }
+    }
     @Test void anonimoEsRedirigidoAntesDeConsultarEventos() {
         controller.mostrarEventos(ctx);
         verify(ctx).redirect("/login");

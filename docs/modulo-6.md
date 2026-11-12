@@ -7,8 +7,8 @@ Implementación del proyecto base y ajustes al informe del equipo (RF-01 a RF-12
 | Rol del sistema | Actor del módulo | Funciones |
 | --- | --- | --- |
 | ESTUDIANTE | Participante | Agenda, búsqueda, filtros y detalle; inscripción y cancelación propia antes del inicio. |
-| DOCENTE | Organizador | Lo anterior, creación y administración de sus eventos; registro/edición de expositores y categorías; lista y asistencia de sus inscritos. |
-| ADMIN | Administrador y supervisor | Gestión de todos los eventos y participantes; alta, edición y disponibilidad de salas; catálogos. |
+| DOCENTE | Organizador | Lo anterior, creación y administración de sus eventos; registro/edición de expositores; lista y asistencia de sus inscritos. |
+| ADMIN | Administrador y supervisor | Gestión de todos los eventos y participantes; alta, edición y disponibilidad de salas; gestión de categorías. |
 
 Los permisos se verifican en el servidor además de ocultar controles en la interfaz. DOCENTE no administra eventos ajenos. ESTUDIANTE no crea eventos, edita expositores, administra salas ni registra asistencia. La reactivación como borrador sigue disponible para organizadores autorizados y conserva el historial.
 
@@ -33,7 +33,7 @@ Los permisos se verifican en el servidor además de ocultar controles en la inte
 
 - El plazo de cancelación cierra exactamente al iniciar el evento. El servidor rechaza intentos posteriores sin modificar la inscripción.
 - La asistencia se modifica únicamente en inscripciones activas de eventos publicados o finalizados. Se puede quitar una marca errónea. No se usa para alterar el estado de inscripción.
-- Las ubicaciones y expositores son catálogos compartidos. Editar un expositor se refleja en los eventos donde participa. Renombrar una sala actualiza las ubicaciones de sus eventos.
+- Las ubicaciones y expositores son catálogos compartidos. Solo ADMIN registra categorías; los otros roles pueden consultarlas y los docentes seleccionarlas en sus eventos. Editar un expositor se refleja en los eventos donde participa. Renombrar una sala actualiza las ubicaciones de sus eventos.
 - Los eventos cancelados no admiten nuevas inscripciones. Recuperarlos como borrador cancela sus inscripciones todavía activas y permite revisar sus datos antes de publicar. No se reactiva a asistentes automáticamente.
 - Los borradores son visibles solo para su organizador autorizado y ADMIN.
 - Un horario termina antes o al comenzar el siguiente: los horarios consecutivos sí están permitidos.

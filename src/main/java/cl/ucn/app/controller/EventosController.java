@@ -190,7 +190,8 @@ public class EventosController {
         ctx.render("eventos-catalogos.jte",m);
     }
     public void guardarCategoria(Context ctx) {
-        if(!accesoOrganizador(ctx,true)) return;
+        if(!acceso(ctx,true)) return;
+        if(!"ADMIN".equals(ctx.sessionAttribute("usuarioRol"))) throw new ForbiddenResponse("Solo el administrador gestiona categorías.");
         try {
             catalogo.registrarCategoria(texto(ctx,"nombre",100,true));
             ctx.sessionAttribute("eventosAviso","Categoría registrada.");ctx.redirect("/eventos/catalogos");
