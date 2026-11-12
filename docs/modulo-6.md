@@ -103,3 +103,7 @@ El informe del equipo debe acompañarse de sus diagramas de casos de uso, secuen
 ## Contraseñas protegidas
 
 Las claves nuevas se guardan con PBKDF2-HMAC-SHA256, sal aleatoria de 16 bytes y 600.000 iteraciones mediante la API estándar de Java. Parámetro basado en la [guía de OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). El login rechaza texto plano y hashes malformados. Las semillas ya contienen hashes. Al iniciar, las cuentas antiguas se migran en una transacción sin cambiar su contraseña de acceso. La operación se puede repetir y no cambia hashes válidos. Para ejecutarla explícitamente: `mvn compile exec:java "-Dexec.mainClass=cl.ucn.app.main.MigrarPasswords"`. La columna compartida password mantiene su estructura; los módulos que autentiquen directamente deben usar el verificador común.
+
+La inscripción y su cancelación muestran una confirmación explícita después de que PostgreSQL confirma la operación. Un error de cupos o plazo muestra su motivo y no presenta una confirmación falsa. El flujo de inscripción desde la agenda requiere como máximo tres pasos: elegir evento, revisar detalle y confirmar.
+
+Las pruebas de integración lanzan solicitudes simultáneas mediante hilos y una barrera de salida: ocho peticiones del mismo usuario deben crear un único registro; ocho usuarios compiten por dos cupos; cuatro eventos compiten por una sala y horario. Se comprueba el estado final real de PostgreSQL y se eliminan solo los datos temporales de cada prueba.

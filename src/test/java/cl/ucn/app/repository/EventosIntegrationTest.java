@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class EventosIntegrationTest {
     private final EventoRepository eventos=new EventoRepository();
     private final InscripcionRepository inscripciones=new InscripcionRepository();
-    private final List<Long> ids=new ArrayList<>();
+    private final List<Long> ids=Collections.synchronizedList(new ArrayList<>());
+    private final List<Long> usuariosExtra=new ArrayList<>();
     private final List<Long> expositoresExtra=new ArrayList<>();
     private Categoria categoria;
     private Espacio sala;
@@ -45,6 +46,7 @@ class EventosIntegrationTest {
                 em.createQuery("DELETE FROM Inscripcion WHERE evento.id=:id").setParameter("id",id).executeUpdate();
                 em.createQuery("DELETE FROM Evento WHERE id=:id").setParameter("id",id).executeUpdate();
             }
+            for(Long id:usuariosExtra) em.createQuery("DELETE FROM Usuario WHERE id=:id").setParameter("id",id).executeUpdate();
             for(Long id:expositoresExtra) em.createQuery("DELETE FROM Expositor WHERE id=:id").setParameter("id",id).executeUpdate();
             if(expositor!=null) em.createQuery("DELETE FROM Expositor WHERE id=:id").setParameter("id",expositor.getId()).executeUpdate();
             if(categoria!=null) em.createQuery("DELETE FROM Categoria WHERE id=:id").setParameter("id",categoria.getId()).executeUpdate();
@@ -115,6 +117,61 @@ class EventosIntegrationTest {
         assertFalse(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
         inscripciones.registrarAsistencia(e.getId(),id,docente.getId(),"DOCENTE",true);
         assertTrue(inscripciones.listarPorEvento(e.getId()).get(0).getAsistencia());
+    }
+    private long competir(int cantidad, java.util.function.IntFunction<Boolean> accion) throws Exception {
+        var pool=java.util.concurrent.Executors.newFixedThreadPool(cantidad);
+        var listos=new java.util.concurrent.CountDownLatch(cantidad);
+        var salida=new java.util.concurrent.CountDownLatch(1);
+        var resultados=new ArrayList<java.util.concurrent.Future<Boolean>>();
+        try {
+            for(int i=0;i<cantidad;i++) {
+                final int indice=i;
+                resultados.add(pool.submit(()->{listos.countDown();salida.await();return accion.apply(indice);}));
+            }
+            assertTrue(listos.await(10,java.util.concurrent.TimeUnit.SECONDS));salida.countDown();
+            long aceptados=0;
+            for(var resultado:resultados) if(resultado.get(30,java.util.concurrent.TimeUnit.SECONDS)) aceptados++;
+            return aceptados;
+        } finally {
+            salida.countDown();pool.shutdownNow();
+            assertTrue(pool.awaitTermination(30,java.util.concurrent.TimeUnit.SECONDS));
+        }
+    }
+    @Test void ochoSolicitudesDelMismoUsuarioCreanUnaSolaInscripcion() throws Exception {
+        Evento e=nuevo(10);e.setCupoMaximo(5);guardar(e);new EventoService(eventos).publicar(e);
+        long aceptados=competir(8,i->{
+            try {inscripciones.inscribir(e.getId(),usuario.getId());return true;}
+            catch(IllegalStateException esperado) {return false;}
+        });
+        assertEquals(1,aceptados);assertEquals(1,inscripciones.contarInscritos(e.getId()));
+        assertEquals(1,inscripciones.listarPorEvento(e.getId()).size());
+    }
+    @Test void usuariosConcurrentesNoSuperanLosUltimosDosCupos() throws Exception {
+        try(EntityManager em=JPAUtil.getEntityManager()) {
+            em.getTransaction().begin();
+            Rol rol=em.getReference(Rol.class,usuario.getRol().getId());
+            for(int i=0;i<8;i++) {
+                Usuario u=new Usuario("Prueba concurrente",UUID.randomUUID()+"@example.test",usuario.getPassword(),true,rol);
+                em.persist(u);usuariosExtra.add(u.getId());
+            }
+            em.getTransaction().commit();
+        }
+        Evento e=nuevo(10);e.setCupoMaximo(2);guardar(e);new EventoService(eventos).publicar(e);
+        long aceptados=competir(8,i->{
+            try {inscripciones.inscribir(e.getId(),usuariosExtra.get(i));return true;}
+            catch(IllegalStateException esperado) {return false;}
+        });
+        assertEquals(2,aceptados);assertEquals(2,inscripciones.contarInscritos(e.getId()));
+    }
+    @Test void eventosConcurrentesNoReservanLaMismaSalaYHorario() throws Exception {
+        long aceptados=competir(4,i->{
+            try {guardar(nuevo(10));return true;}
+            catch(IllegalArgumentException esperado) {return false;}
+        });
+        assertEquals(1,aceptados);
+        try(EntityManager em=JPAUtil.getEntityManager()) {
+            assertEquals(1L,em.createQuery("SELECT COUNT(e) FROM Evento e WHERE e.espacio.id=:id",Long.class).setParameter("id",sala.getId()).getSingleResult());
+        }
     }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
