@@ -22,6 +22,10 @@ class EventosControllerTest {
         assertThrows(ForbiddenResponse.class, () -> controller.crearEvento(ctx));
         assertThrows(ForbiddenResponse.class, () -> controller.guardarExpositor(ctx));
     }
+    @Test void detalleRechazaIdentificadorInvalido() {
+        autenticar();when(ctx.pathParam("id")).thenReturn("abc");
+        assertThrows(io.javalin.http.BadRequestResponse.class,()->controller.detalle(ctx));
+    }
     @Test void anonimoEsRedirigidoAntesDeConsultarEventos() {
         controller.mostrarEventos(ctx);
         verify(ctx).redirect("/login");

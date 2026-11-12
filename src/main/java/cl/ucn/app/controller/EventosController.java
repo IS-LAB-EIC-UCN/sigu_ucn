@@ -73,6 +73,21 @@ public class EventosController {
         m.put("organizados",todos.stream().filter(e -> usuarioId.equals(e.getOrganizador().getId())).count());
         ctx.render("eventos.jte",m);
     }
+    public void detalle(Context ctx) {
+        if(!acceso(ctx,false)) return;
+        long id;
+        try { id=Long.parseLong(ctx.pathParam("id")); }
+        catch(NumberFormatException ex) { throw new BadRequestResponse("ID de evento inválido"); }
+        Evento e=eventos.findById(id);
+        if(e==null) throw new NotFoundResponse("Evento no encontrado");
+        Long usuario=ctx.sessionAttribute("usuarioId");
+        boolean gestiona=PermisosEventos.administra(ctx.sessionAttribute("usuarioRol"),usuario,e.getOrganizador().getId());
+        if("BORRADOR".equals(e.getEstado()) && !gestiona) throw new ForbiddenResponse("El evento aún no está publicado.");
+        Map<String,Object> m=modelo(ctx);m.put("evento",e);m.put("gestiona",gestiona);
+        m.put("disponibles",Math.max(0L,e.getCupoMaximo()-inscripciones.contarInscritos(e.getId())));
+        m.put("inscrito",inscripciones.estaInscrito(e.getId(),usuario));
+        ctx.render("eventos-detalle.jte",m);
+    }
     private Evento propio(Context ctx) {
         long id;
         try { id=Long.parseLong(ctx.pathParam("id")); }

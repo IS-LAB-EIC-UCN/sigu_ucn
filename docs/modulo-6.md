@@ -1,104 +1,100 @@
-# Módulo 6: eventos académicos
+# Módulo 6: gestión de eventos académicos
 
-Implementación basada en las secciones 4.6, 5, 8 y 9 de la pauta del taller. Se mantiene Java 21, Javalin, JTE, JPA/Hibernate, PostgreSQL, JUnit 5 y Mockito. El frontend usa CSS y JavaScript nativo; no se agregan frameworks ni dependencias de ejecución.
+Implementación del proyecto base y ajustes al informe del equipo (RF-01 a RF-12 de las capturas proporcionadas). Java 21, Javalin, JTE, JPA/Hibernate y PostgreSQL. Interfaz con CSS y JavaScript nativo. Se mantienen los usuarios y roles compartidos de la plataforma.
 
-## Requisitos y trazabilidad
+## Actores y permisos
 
-| Requisito del grupo 6 | Implementación | Verificación |
+| Rol del sistema | Actor del módulo | Funciones |
 | --- | --- | --- |
-| Registrar eventos | Formulario único de creación/edición, guardado como borrador | Servicio y prueba de persistencia |
-| Registrar expositores | Catálogo persistente y selección en formulario | Prueba de catálogos y recorrido de navegador |
-| Publicar cupos | Acción Publicar del organizador | Transiciones de estado |
-| Inscribir asistentes | Inscripción de usuarios autenticados | Duplicados, cupo y reactivación |
-| Cancelar inscripción | Cancelación lógica que conserva historial | Integración |
-| Controlar cupos | Capacidad de sala, conteo activo y bloqueo transaccional | Unitarias e integración |
-| Emitir lista de asistentes | Participantes: registros activos o historial e impresión/PDF del navegador | Recorrido de navegador |
-| Consultar agenda | Pestaña Agenda: publicados que aún no comienzan | Recorrido de navegador |
-| Filtrar por temática o fecha | Filtros combinables y búsqueda por título/ubicación | Recorrido de navegador |
-| Administrar ubicaciones | Alta de salas, capacidad y disponibilidad, solo ADMIN | Control HTTP y catálogo |
+| ESTUDIANTE | Participante | Agenda, búsqueda, filtros y detalle; inscripción y cancelación propia antes del inicio. |
+| DOCENTE | Organizador | Lo anterior, creación y administración de sus eventos; registro/edición de expositores y categorías; lista y asistencia de sus inscritos. |
+| ADMIN | Administrador y supervisor | Gestión de todos los eventos y participantes; alta, edición y disponibilidad de salas; catálogos. |
 
-Un evento cancelado no admite inscripciones. Un usuario no puede tener dos registros del mismo evento; se reactiva su registro cancelado. La agenda rechaza horarios solapados en la misma ubicación, incluso en borradores, y permite horarios consecutivos. Los eventos cancelados liberan el horario. El organizador administra sus propios eventos; otros usuarios ven los publicados y el historial. Los borradores son privados del organizador.
+Los permisos se verifican en el servidor además de ocultar controles en la interfaz. DOCENTE no administra eventos ajenos. ESTUDIANTE no crea eventos, edita expositores, administra salas ni registra asistencia. La reactivación como borrador sigue disponible para organizadores autorizados y conserva el historial.
 
-## Uso y actualización de una base existente
+## Trazabilidad del informe
 
-1. Levantar PostgreSQL: `docker compose up -d`.
-2. Si el volumen ya existía, ejecutar la migración una sola vez (es repetible):
+| Requisito | Implementación |
+| --- | --- |
+| RF-01: sesión y roles | AuthController y PermisosEventos; autorización por operación y CSRF. |
+| RF-02: administrar eventos | Crear, editar, publicar, cancelar y recuperar como borrador. |
+| RF-03: búsqueda y filtros | Título/ubicación, categoría y fecha; pestañas Agenda y Mis actividades. |
+| RF-04: inscripción y cancelación con plazo | Cancelación permitida estrictamente antes de la fecha/hora de inicio, según la decisión del equipo. |
+| RF-05: cupos y duplicados | Conteo activo y bloqueo del evento en la misma transacción; reactivación de un único registro cancelado. |
+| RF-06: inscritos y asistencia | Listado completo o activo, impresión/PDF del navegador y marca de asistencia persistente. |
+| RF-07: salas y ubicaciones | ADMIN crea, edita nombre/tipo/capacidad/disponibilidad y deshabilita; se impide reducir capacidad por debajo del cupo de un evento futuro. |
+| RF-08: asignación de sala y horarios | Selector de ubicación disponible y fecha/hora de inicio y término. |
+| RF-09: capacidad suficiente | Validación contra la capacidad real de la sala. |
+| RF-10: cruces de horario | Comprobación y escritura transaccionales; no se permiten solapamientos de eventos no cancelados en la misma sala. |
+| RF-11: uno o varios expositores | Catálogo editable, institución y especialidad; asociación muchos a muchos mediante evento_expositores. |
+| RF-12: detalle | Ficha individual con fecha, horario, ubicación, cupos, categoría, organizador y todos los expositores. |
+
+## Reglas y decisiones del equipo
+
+- El plazo de cancelación cierra exactamente al iniciar el evento. El servidor rechaza intentos posteriores sin modificar la inscripción.
+- La asistencia se modifica únicamente en inscripciones activas de eventos publicados o finalizados. Se puede quitar una marca errónea. No se usa para alterar el estado de inscripción.
+- Las ubicaciones y expositores son catálogos compartidos. Editar un expositor se refleja en los eventos donde participa. Renombrar una sala actualiza las ubicaciones de sus eventos.
+- Los eventos cancelados no admiten nuevas inscripciones. Recuperarlos como borrador cancela sus inscripciones todavía activas y permite revisar sus datos antes de publicar. No se reactiva a asistentes automáticamente.
+- Los borradores son visibles solo para su organizador autorizado y ADMIN.
+- Un horario termina antes o al comenzar el siguiente: los horarios consecutivos sí están permitidos.
+
+## Base de datos y migraciones
+
+En una base nueva: `docker compose up -d` ejecuta los scripts de `db/init` en orden. La base se conecta por localhost:5433 y el volumen postgres_data conserva los registros.
+
+En una base existente, aplicar sin borrar el volumen:
+
+1. 05_eventos_catalogos.sql: expositores, temática y ubicación.
+2. 07_expositores_institucion.sql: institución separada de especialidad.
+3. 08_evento_expositores.sql: relación de varios expositores, migrando los vínculos anteriores.
+4. 09_asistencia.sql: asistencia con valor inicial false.
+5. 10_categorias.sql: catálogo de categorías y conversión de las temáticas existentes.
+
+El script 06_eventos_demo.sql carga los cuatro eventos de ejemplo y puede repetirse sin duplicarlos ni sobrescribir cambios. Los campos anteriores tematica y expositor_id se conservan para compatibilidad con esos datos iniciales. Las pantallas actuales utilizan categoría y la colección de expositores. El ejemplo inicial de Java que no tenía expositor o ubicación asociados requiere completarlos al editarlo.
+
+Ejemplo de aplicación manual de una migración, desde PowerShell:
 
 ```powershell
-Get-Content db/init/05_eventos_catalogos.sql | docker compose exec -T postgres psql -U postgres -d sigu_ucn -v ON_ERROR_STOP=1
+$OutputEncoding = [System.Text.UTF8Encoding]::new()
+Get-Content -Encoding utf8 db/init/10_categorias.sql | docker compose exec -T postgres psql -U postgres -d sigu_ucn -v ON_ERROR_STOP=1
 ```
 
-3. Compilar e iniciar:
+No se necesita eliminar el volumen. El respaldo local previo se conserva en target/backups; los respaldos y cookies están excluidos de Git.
+
+## Ejecución
 
 ```powershell
+docker compose up -d
 mvn compile exec:java "-Dexec.mainClass=cl.ucn.app.main.Main"
 ```
 
-4. Abrir http://localhost:7000/eventos. El usuario demo administrador es `admin@sigu.cl`, clave `admin123`.
-5. Registrar un expositor en Expositores y ubicaciones. Seleccionar una ubicación disponible al crear el evento. Publicar para abrir las inscripciones.
-
-Los eventos existentes conservan sus datos. Antes de volver a publicar o editar un evento antiguo, se debe completar su expositor y ubicación mediante el formulario. No es necesario eliminar el volumen. Las ubicaciones reutilizan la entidad compartida Espacio; su disponibilidad también afecta a los demás módulos que la consulten.
+Abrir http://localhost:7000/eventos. Usuarios demo: admin@sigu.cl / admin123; docente@sigu.cl / docente123; estudiante@sigu.cl / estudiante123.
 
 ## Arquitectura y SOLID
 
-- Presentación: EventosController recibe formularios y construye modelos JTE. InscripcionesController administra el acceso al flujo de inscripción.
-- Negocio: EventoService valida título, fecha/hora, capacidad, expositor y cambios de estado. Clock permite pruebas reproducibles sin depender del día real.
-- Persistencia: EventoRepository implementa EventoStore. CatalogoEventosRepository mantiene personas y salas. InscripcionRepository conserva conteos y reglas que deben ejecutarse atómicamente.
-- S: validación de evento, HTTP, renderizado y acceso a datos tienen clases separadas.
-- O y D: EventoService recibe EventoStore y Clock; permite usar otra persistencia o reloj sin cambiar sus reglas.
-- L: EventoRepository y el doble Mockito satisfacen el contrato EventoStore. No se agrega herencia artificial.
-- I: EventoStore expone únicamente las operaciones necesarias para eventos.
+Controladores: HTTP, autenticación, formularios y respuestas. EventoService: validaciones y estados. PermisosEventos: política común de autorización. PlazoCancelacion: regla temporal con Clock para pruebas reproducibles. Repositorios: persistencia y reglas que necesitan ejecutarse atómicamente.
 
-La protección contra cruces de sala se ejecuta en la misma transacción que la escritura. Un bloqueo de tabla PostgreSQL serializa las escrituras de agenda: es una solución simple apropiada para el alcance del taller, con menor concurrencia que una restricción de exclusión. Las inscripciones bloquean la fila del evento para controlar cupos. No se introducen migradores, microservicios ni infraestructura adicional.
-
-## Modelo de datos
+EventoService depende del contrato pequeño EventoStore; las pruebas sustituyen la implementación con Mockito. Las responsabilidades de vistas, validaciones y acceso a datos están separadas. No se introduce herencia artificial. El bloqueo de tabla PostgreSQL de la agenda es deliberadamente simple para el taller; reduce la concurrencia de escrituras y mantiene la validación de horarios dentro de la transacción.
 
 ```mermaid
 classDiagram
     Evento --> Usuario : organizador
-    Evento --> Expositor : expositor
+    Evento --> Categoria : clasificación
     Evento --> Espacio : ubicación
+    Evento "0..*" --> "1..*" Expositor : evento_expositores
     Inscripcion --> Evento
-    Inscripcion --> Usuario : asistente
-    Evento : titulo, tematica, descripcion
-    Evento : fecha, horaInicio, horaFin, estado, cupoMaximo
-    Expositor : nombre, correo, especialidad
-    Espacio : nombre, capacidad, disponible
-    Inscripcion : estado, fechaInscripcion
+    Inscripcion --> Usuario : participante
+    Inscripcion : estado, fechaInscripcion, asistencia
+    Expositor : nombre, correo, institucion, especialidad
 ```
 
-## Pruebas
+## Pruebas y evidencia
 
 ```powershell
 mvn test
 mvn test "-Deventos.integration=true"
 ```
 
-La primera orden ejecuta 12 pruebas unitarias sin base de datos. La segunda habilita además 5 pruebas de integración reales sobre PostgreSQL. Estas crean salas, expositores y eventos temporales y eliminan exclusivamente sus propios registros al terminar. Requieren el esquema inicial, la migración 05 y los usuarios demo admin y estudiante. No usar una base de producción.
+Las pruebas unitarias no necesitan base de datos. La segunda orden habilita también pruebas sobre PostgreSQL real, con todas las migraciones y los usuarios demo. Cada prueba crea y elimina exclusivamente sus registros temporales. Se comprueban roles, validaciones, estados, horarios, cupos, duplicados, varios expositores, edición de catálogos, asistencia y límites temporales. Los resultados XML/TXT se encuentran en target/surefire-reports.
 
-Evidencia: informes XML y TXT en `target/surefire-reports`. Las pruebas verifican validaciones, estados, catálogos, persistencia, solapamiento, horarios consecutivos, duplicados, reactivación, sobrecupo y cancelación.
-
-Recorrido visual verificado en Chrome: registro de expositor, creación y publicación, búsqueda, agenda, formulario de edición, lista imprimible y cancelación. Resoluciones: 1440×1000 y 390×844, sin desplazamiento horizontal de la página. Capturas locales: `target/eventos-escritorio.png`, `target/eventos-movil.png` y `target/eventos-formulario.png`.
-
-## Alcance de la entrega
-
-Este archivo documenta el módulo implementado; no sustituye los documentos, diagramas de casos de uso/secuencia/actividad, presentación, tablero Kanban o defensa que el equipo debe preparar según el taller. No se publican commits ni se modifica GitHub automáticamente. La rama de trabajo actual es grupo-6.
-
-
-## Reactivar un evento cancelado
-
-El organizador puede usar **Reactivar como borrador**. Esta operación conserva el evento y su historial, cancela las inscripciones que aún figuraban activas y abre el formulario de edición. No publica ni vuelve a inscribir asistentes automáticamente.
-
-Se permite recuperar el borrador aunque su fecha haya pasado o su sala esté ocupada, para poder corregirlo. Guardar y publicar vuelven a exigir fecha futura, sala disponible, capacidad suficiente y ausencia de cruces de horario. Solo se reactiva desde CANCELADO; la operación es transaccional y requiere sesión, organizador y token CSRF.
-
-
-## Datos iniciales y respaldo
-
-`db/init/06_eventos_demo.sql` registra los cuatro eventos solicitados con sus expositores y ubicaciones. Se ejecuta después de la migración 05 y puede repetirse sin duplicar los eventos ni sobrescribir cambios existentes. En una base nueva, Docker ejecuta ambos scripts automáticamente. En volúmenes existentes deben aplicarse explícitamente.
-
-El estado actual completo (esquema, eventos, usuarios, ubicaciones, expositores e inscripciones) se respaldó en `target/backups/sigu_ucn_20261111_154811.sql`. El respaldo es local y no se incluye en Git. El volumen `postgres_data` mantiene los datos al detener y reiniciar Docker.
-
-
-## Permisos según los actores del informe
-
-ESTUDIANTE actúa como participante: consulta, filtra, se inscribe y cancela su inscripción. DOCENTE actúa como organizador: crea y administra sus eventos y expositores. ADMIN supervisa todos los eventos y administra las ubicaciones. Los permisos se verifican tanto en HTTP como en los botones de las vistas. Los eventos antiguos creados por administradores se conservan.
+El informe del equipo debe acompañarse de sus diagramas de casos de uso, secuencia y actividad, presentación y gestión de tareas. Esta guía documenta la implementación, sin sustituir esos entregables.
