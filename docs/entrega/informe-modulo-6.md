@@ -140,7 +140,7 @@ Los nombres ADMIN, DOCENTE y ESTUDIANTE se mantienen porque sus tablas son comun
 
 Las ubicaciones reutilizan espacios; sus cambios afectan al catálogo compartido. La coordinación con reservas generales debe confirmarse en revisión con ese equipo. Este módulo comprueba la agenda de eventos; no implementa las reservas generales del grupo responsable.
 
-La implementación se entrega en commits progresivos de grupo-6. La revisión hacia develop se prepara mediante un PR; no se fusiona automáticamente. La actualización del tablero GitHub Projects requiere un permiso adicional no disponible en la conexión actual. El backlog local refleja el trabajo técnico realizado y separa las tareas de revisión aún pendientes.
+La implementación se entrega en commits progresivos de grupo-6. La revisión hacia develop se publicó como PR #1 en estado borrador (https://github.com/IS-LAB-EIC-UCN/sigu_ucn/pull/1); no se fusiona automáticamente. La actualización del tablero GitHub Projects requiere un permiso adicional no disponible en la conexión actual. El backlog local refleja el trabajo técnico realizado y separa las tareas de revisión aún pendientes.
 
 ## 16. Balance y defensa
 
