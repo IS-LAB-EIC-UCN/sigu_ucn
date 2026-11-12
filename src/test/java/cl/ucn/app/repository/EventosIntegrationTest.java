@@ -15,6 +15,7 @@ class EventosIntegrationTest {
     private final EventoRepository eventos=new EventoRepository();
     private final InscripcionRepository inscripciones=new InscripcionRepository();
     private final List<Long> ids=new ArrayList<>();
+    private final List<Long> expositoresExtra=new ArrayList<>();
     private Espacio sala;
     private Expositor expositor;
     private Usuario usuario;
@@ -42,6 +43,7 @@ class EventosIntegrationTest {
                 em.createQuery("DELETE FROM Inscripcion WHERE evento.id=:id").setParameter("id",id).executeUpdate();
                 em.createQuery("DELETE FROM Evento WHERE id=:id").setParameter("id",id).executeUpdate();
             }
+            for(Long id:expositoresExtra) em.createQuery("DELETE FROM Expositor WHERE id=:id").setParameter("id",id).executeUpdate();
             if(expositor!=null) em.createQuery("DELETE FROM Expositor WHERE id=:id").setParameter("id",expositor.getId()).executeUpdate();
             if(sala!=null) em.createQuery("DELETE FROM Espacio WHERE id=:id").setParameter("id",sala.getId()).executeUpdate();
             em.getTransaction().commit();
@@ -72,6 +74,18 @@ class EventosIntegrationTest {
         new CatalogoEventosRepository().guardar(expositor);
         assertEquals("Nombre actualizado",eventos.findById(e.getId()).getExpositor().getNombre());
         assertEquals("UCN",eventos.findById(e.getId()).getExpositor().getInstitucion());
+    }
+    @Test void persisteYReemplazaVariosExpositores() {
+        Expositor otro=new Expositor();otro.setNombre("Segundo expositor");
+        try(EntityManager em=JPAUtil.getEntityManager()) {
+            em.getTransaction().begin();em.persist(otro);em.getTransaction().commit();
+        }
+        expositoresExtra.add(otro.getId());
+        Evento e=nuevo(10);e.setExpositores(List.of(expositor,otro));guardar(e);
+        assertEquals(2,eventos.findById(e.getId()).getExpositores().size());
+        e.setExpositores(List.of(otro));new EventoService(eventos).guardar(e);
+        assertEquals(1,eventos.findById(e.getId()).getExpositores().size());
+        assertEquals(otro.getId(),eventos.findById(e.getId()).getExpositores().get(0).getId());
     }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());

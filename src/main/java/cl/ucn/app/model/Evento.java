@@ -49,6 +49,21 @@ public class Evento {
     private Espacio espacio;
     public String getTematica() { return tematica == null ? "General" : tematica; }
     public void setTematica(String tematica) { this.tematica = tematica; }
+    @ManyToMany
+    @JoinTable(name = "evento_expositores", joinColumns = @JoinColumn(name = "evento_id"), inverseJoinColumns = @JoinColumn(name = "expositor_id"))
+    @OrderBy("nombre ASC")
+    private java.util.List<Expositor> expositores = new java.util.ArrayList<>();
+    public java.util.List<Expositor> getExpositores() {
+        // Compatibilidad con eventos y scripts iniciales anteriores a la migración 08.
+        return expositores.isEmpty() && expositor != null ? java.util.List.of(expositor) : expositores;
+    }
+    public void setExpositores(java.util.List<Expositor> lista) {
+        expositores = new java.util.ArrayList<>(lista);
+        expositor = lista.isEmpty() ? null : lista.get(0);
+    }
+    public String getNombresExpositores() {
+        return getExpositores().stream().map(Expositor::getNombre).collect(java.util.stream.Collectors.joining(", "));
+    }
     public Expositor getExpositor() { return expositor; }
     public void setExpositor(Expositor expositor) { this.expositor = expositor; }
     public Espacio getEspacio() { return espacio; }

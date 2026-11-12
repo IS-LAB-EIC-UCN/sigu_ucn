@@ -86,3 +86,10 @@
 @media(max-width:1150px) { .formulario-layout { grid-template-columns:1fr; } .evento-consejos { display:none; } .eventos-filtros { flex-wrap:wrap; } .eventos-filtros>div { min-width:160px; } }
 @media(max-width:760px) { .eventos-cabecera { align-items:start; flex-direction:column; gap:12px; } .eventos-metricas { grid-template-columns:1fr; gap:10px; } .eventos-metricas article { padding:15px; } .eventos-metricas strong { display:inline-block; margin:8px 10px 0 0; font-size:24px; } .evento-tarjeta { gap:13px; padding:16px; } .evento-fecha { width:52px; padding:12px 5px; } .evento-info h3 { font-size:17px; } .eventos-form-grid,.catalogos-grid { grid-template-columns:1fr; } .eventos-formulario,.catalogo { padding:20px; } .eventos-nav { gap:20px; } .evento-detalles { flex-direction:column; gap:6px; } .eventos-filtros { padding:15px; } }
 @media print { .topbar,.sidebar,.eventos-nav,.no-imprimir { display:none!important; } .content-area { padding:0; } body { background:white; } .eventos-tabla { font-size:11px; } }
+
+fieldset.eventos-campo { min-width:0; border:1px solid var(--ev-borde); border-radius:7px; padding:12px; }
+fieldset.eventos-campo legend { font-size:12px; font-weight:600; padding:0 5px; }
+.expositores-opciones { max-height:200px; overflow-y:auto; }
+.eventos-panel .expositor-opcion { display:flex; align-items:center; gap:10px; padding:8px; cursor:pointer; }
+.eventos-panel .expositor-opcion input { width:16px; min-height:16px; height:16px; }
+.expositor-opcion small { display:block; font-weight:normal; color:var(--ev-gris); padding-top:4px; }

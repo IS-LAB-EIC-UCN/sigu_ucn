@@ -39,7 +39,7 @@
 <div class="evento-fecha"><strong>${e.getFecha().getDayOfMonth()}</strong><span>${e.getFecha().format(java.time.format.DateTimeFormatter.ofPattern("MMM",java.util.Locale.forLanguageTag("es"))).toUpperCase()}</span><small>${e.getFecha().getYear()}</small></div>
 <div class="evento-info"><div class="evento-etiquetas"><span class="badge tema">${e.getTematica()}</span><span class="badge estado-${e.getEstado()}">${e.getEstado()}</span>@if(resumen.getOrDefault(e.getId(),new long[]{0,0})[1]>0)<span class="badge inscrito">Inscripción activa</span>@endif</div>
 <h3>${e.getTitulo()}</h3><p class="evento-descripcion">${e.getDescripcion()==null || e.getDescripcion().isBlank() ? "Actividad académica de la comunidad universitaria." : e.getDescripcion()}</p>
-<div class="evento-detalles"><span>Horario · ${e.getHoraInicio().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}–${e.getHoraFin().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}</span><span>Ubicación · ${e.getLugar()}</span><span>Expositor · ${e.getExpositor()==null ? "Por confirmar" : e.getExpositor().getNombre()}</span></div>
+<div class="evento-detalles"><span>Horario · ${e.getHoraInicio().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}–${e.getHoraFin().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}</span><span>Ubicación · ${e.getLugar()}</span><span>Expositores · ${e.getExpositores().isEmpty() ? "Por confirmar" : e.getNombresExpositores()}</span></div>
 <div class="evento-pie"><span class="evento-cupo"><strong>${Math.max(0,e.getCupoMaximo()-resumen.getOrDefault(e.getId(),new long[]{0,0})[0])}</strong> de ${e.getCupoMaximo()} cupos disponibles</span>
 <div class="eventos-acciones">
 @if(e.isDisponible())

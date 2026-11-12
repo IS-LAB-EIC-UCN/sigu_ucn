@@ -33,7 +33,7 @@ public class EventoRepository implements EventoStore {
 
         try {
             TypedQuery<Evento> query = em.createQuery(
-                    "SELECT e FROM Evento e JOIN FETCH e.organizador o JOIN FETCH o.rol LEFT JOIN FETCH e.expositor LEFT JOIN FETCH e.espacio ORDER BY e.fecha ASC",
+                    "SELECT DISTINCT e FROM Evento e JOIN FETCH e.organizador o JOIN FETCH o.rol LEFT JOIN FETCH e.expositor LEFT JOIN FETCH e.espacio LEFT JOIN FETCH e.expositores ORDER BY e.fecha ASC",
                     Evento.class);
 
             return query.getResultList();
@@ -47,8 +47,8 @@ public class EventoRepository implements EventoStore {
 
         try {
             return em.createQuery(
-                    "SELECT e FROM Evento e " +
-                            "JOIN FETCH e.organizador " +
+                    "SELECT DISTINCT e FROM Evento e " +
+                            "JOIN FETCH e.organizador LEFT JOIN FETCH e.expositores " +
                             "WHERE e.id = :id",
                     Evento.class)
                     .setParameter("id", id)

@@ -96,7 +96,7 @@ public class EventosController {
             d.put("fecha",e.getFecha().toString()); d.put("horaInicio",e.getHoraInicio().toString()); d.put("horaFin",e.getHoraFin().toString());
             d.put("cupoMaximo",e.getCupoMaximo().toString()); d.put("tematica",e.getTematica());
             d.put("espacioId",e.getEspacio()==null?"":e.getEspacio().getId().toString());
-            d.put("expositorId",e.getExpositor()==null?"":e.getExpositor().getId().toString());
+            d.put("expositorIds",e.getExpositores().stream().map(x -> x.getId().toString()).collect(java.util.stream.Collectors.joining(",")));
         }
         return d;
     }
@@ -112,13 +112,19 @@ public class EventosController {
         for(String campo:List.of("titulo","descripcion","fecha","horaInicio","horaFin","cupoMaximo","tematica","espacioId","expositorId")) {
             String valor=ctx.formParam(campo); d.put(campo,valor==null?"":valor.strip());
         }
+        d.put("expositorIds", String.join(",", ctx.formParams("expositorIds")));
         try {
             if("CANCELADO".equals(e.getEstado())) throw new IllegalArgumentException("El evento cancelado no se puede editar.");
             e.setTitulo(d.get("titulo"));e.setDescripcion(d.get("descripcion"));e.setTematica(d.get("tematica"));
             e.setFecha(LocalDate.parse(d.get("fecha")));e.setHoraInicio(LocalTime.parse(d.get("horaInicio")));e.setHoraFin(LocalTime.parse(d.get("horaFin")));
             e.setCupoMaximo(Integer.parseInt(d.get("cupoMaximo")));
             e.setEspacio(catalogo.buscar(Espacio.class,Long.valueOf(d.get("espacioId"))));
-            e.setExpositor(catalogo.buscar(Expositor.class,Long.valueOf(d.get("expositorId"))));
+            java.util.List<String> ids = ctx.formParams("expositorIds");
+            if (ids.isEmpty() && !d.get("expositorId").isBlank()) ids = java.util.List.of(d.get("expositorId"));
+            java.util.List<Expositor> seleccionados = new java.util.ArrayList<>();
+            for(String id : new java.util.LinkedHashSet<>(ids)) seleccionados.add(catalogo.buscar(Expositor.class,Long.valueOf(id)));
+            if (seleccionados.stream().anyMatch(java.util.Objects::isNull)) throw new IllegalArgumentException("Hay un expositor que ya no existe.");
+            e.setExpositores(seleccionados);
             servicio.guardar(e); exito(ctx,"Evento guardado correctamente.");
         } catch(IllegalArgumentException | java.time.format.DateTimeParseException ex) {
             ctx.status(400); formulario(ctx,e.getId()==null?null:e,d,
