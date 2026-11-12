@@ -112,3 +112,10 @@ Las pruebas de integración lanzan solicitudes simultáneas mediante hilos y una
 ## Rendimiento medido
 
 Se incorporó el pool HikariCP mediante el módulo oficial de Hibernate, con máximo 20 conexiones y espera acotada, después de reproducir el agotamiento del pool interno bajo 100 sesiones. Ver [evidencia y procedimiento reproducible](rendimiento-eventos.md). La medición local corregida procesó 300 consultas sin errores y con un máximo inferior a dos segundos; su alcance se limita a las condiciones documentadas.
+
+
+## Administración de usuarios y roles compartidos
+
+/admin/usuarios permite a ADMIN crear y editar cuentas, asignar ADMIN/DOCENTE/ESTUDIANTE y activarlas o desactivarlas sin eliminarlas. /admin/roles explica los permisos. Las claves iniciales o nuevas requieren al menos ocho caracteres y se guardan mediante PBKDF2; una clave vacía al editar conserva la actual. Las operaciones rechazan correos duplicados y roles desconocidos, consultan los permisos vigentes del actor en PostgreSQL y evitan la autodesactivación administrativa. Antes de cada ruta dinámica se actualiza el rol y estado de la sesión desde la base, por lo que la desactivación y reducción de permisos se aplican en la siguiente petición. No se crean roles arbitrarios ni se renombran los tres roles compartidos.
+
+Ver [evidencia de instalación limpia](instalacion-limpia.md) para la prueba desde un clon y PostgreSQL temporal.

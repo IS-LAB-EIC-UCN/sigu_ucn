@@ -47,3 +47,8 @@ La suite incluye ocho solicitudes duplicadas de un usuario, ocho usuarios compit
 ## Límites de la evidencia
 
 Esta es una prueba reproducible en una base pequeña y sobre la misma máquina cliente/servidor. No es una garantía de latencia para una base grande, una red externa ni una carga sostenida de larga duración. Esas condiciones requieren nuevas mediciones. Las 41 pruebas automatizadas pasaron tras cambiar el pool. También se verificaron en Chrome los permisos de categorías y asistencia y las confirmaciones de inscripción/cancelación.
+
+
+## Revalidación con administración y sesiones actualizadas
+
+Fecha: 2026-11-12T14:14:35.695584-03:00. Con la consulta del rol y estado vigente en cada ruta dinámica, se repitieron tres rondas de 100 sesiones y 300 peticiones. Errores: 0; máximo: 0.628268 s; P95: 0.578157 s. Todas las respuestas quedaron por debajo de dos segundos en esta medición local. Se conservan las mismas limitaciones de tamaño de datos, identidad de prueba y entorno local. Las nuevas verificaciones de usuarios y la instalación limpia completaron una suite de 50 pruebas.
