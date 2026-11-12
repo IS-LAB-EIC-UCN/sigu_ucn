@@ -6,8 +6,7 @@ Estas fuentes documentan el diseño actual. Las versiones SVG y PDF se regeneran
 
 ```mermaid
 flowchart LR
-    A[Administrador] --> U[Administrar usuarios y roles asignados]
-    A --> S[Administrar salas y categorías]
+    A[Administrador] --> S[Administrar salas y categorías]
     A --> V[Supervisar eventos ajenos publicados]
     O[Organizador: DOCENTE o ADMIN responsable] --> E[Crear, editar, publicar y cancelar su evento]
     O --> X[Gestionar expositores]

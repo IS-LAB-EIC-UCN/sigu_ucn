@@ -11,7 +11,7 @@ Versión técnica: 12 de noviembre de 2026. Documento de apoyo para revisión y 
 
 La información de eventos distribuida entre correos, afiches y redes dificulta la consulta de horarios y ubicaciones. Las inscripciones manuales favorecen duplicados, exceso de cupos y problemas de trazabilidad. El módulo centraliza programación, difusión, inscripción y asistencia.
 
-Incluye usuarios autenticados, eventos, expositores, categorías, salas compartidas, control de cupos, asistencia y administración de cuentas y roles asignados. Excluye presupuestos, proveedores, inventario, externos e integración automatizada con sistemas universitarios. Las reservas generales pertenecen al equipo responsable de ese módulo.
+Incluye usuarios autenticados, eventos, expositores, categorías, salas compartidas, control de cupos y asistencia. La administración global de cuentas y roles permanece a cargo del sistema base, fuera del alcance del Grupo 6. Excluye presupuestos, proveedores, inventario, externos e integración automatizada con sistemas universitarios. Las reservas generales pertenecen al equipo responsable de ese módulo.
 
 ## 2. Actores y permisos
 
@@ -19,7 +19,7 @@ Incluye usuarios autenticados, eventos, expositores, categorías, salas comparti
 | --- | --- | --- |
 | ESTUDIANTE | Participante | Consultar, buscar, filtrar, revisar detalle, inscribirse y cancelar antes del inicio. |
 | DOCENTE | Organizador | Administrar sus eventos y expositores; listar participantes y registrar asistencia oficial propia. |
-| ADMIN | Administrador | Gestionar cuentas, roles asignados, salas y categorías; supervisar eventos ajenos publicados o finalizados sin modificarlos. |
+| ADMIN | Administrador | Gestionar salas y categorías; supervisar eventos ajenos publicados o finalizados sin modificarlos. |
 
 La equivalencia de los roles compartidos con los actores es una decisión de diseño del equipo. ADMIN puede organizar sus propios eventos para conservar la responsabilidad de los existentes. No puede editar, cancelar, reactivar ni registrar asistencia de un evento ajeno. Un borrador es privado de su organizador autorizado.
 
@@ -29,7 +29,7 @@ La equivalencia de los roles compartidos con los actores es una decisión de dis
 
 | ID | Comportamiento implementado | Evidencia |
 | --- | --- | --- |
-| RF-01 | Inicio de sesión, roles y actualización de permisos vigentes. | Pruebas de autenticación, sesiones y administración. |
+| RF-01 | Inicio de sesión y permisos de eventos por rol. | Pruebas de autenticación y autorización del módulo. |
 | RF-02 | Crear, editar, publicar y cancelar eventos propios. | Servicio, persistencia y navegador. |
 | RF-03 | Buscar por texto y filtrar por categoría o fecha. | Agenda y recorrido de navegador. |
 | RF-04 | Inscribir y cancelar estrictamente antes del inicio. | Pruebas de frontera temporal y transacción. |
@@ -56,7 +56,7 @@ La equivalencia de los roles compartidos con los actores es una decisión de dis
 
 ## 5. Arquitectura y SOLID
 
-Presentación: rutas Javalin, controladores y vistas JTE. Negocio: EventoService, AdministracionUsuariosService, PermisosEventos y PlazoCancelacion. Persistencia: repositorios JPA/Hibernate. PostgreSQL mantiene claves foráneas, unicidad y transacciones.
+Presentación: rutas Javalin, controladores y vistas JTE. Negocio: EventoService, PermisosEventos y PlazoCancelacion. Persistencia: repositorios JPA/Hibernate. PostgreSQL mantiene claves foráneas, unicidad y transacciones.
 
 S: las responsabilidades HTTP, validación, autorización y acceso a datos tienen clases separadas. O y D: EventoService depende de EventoStore y un reloj intercambiable; se puede sustituir el repositorio o el tiempo de prueba sin cambiar las reglas. L: la implementación y el doble de prueba satisfacen el mismo contrato sin introducir herencia artificial. I: EventoStore expone solo las operaciones de eventos que necesita el servicio.
 
@@ -68,7 +68,7 @@ Las reglas que requieren atomicidad, como comprobar cupos o solapamientos antes 
 
 | Tabla | Propósito y alcance |
 | --- | --- |
-| usuarios, roles | Compartidas. No se duplican. Administración de cuentas y roles asignados. |
+| usuarios, roles | Compartidas. Se reutilizan para autenticación y permisos de eventos. Su gestión global pertenece al sistema base. |
 | espacios | Compartida. Nombre, tipo, capacidad y disponibilidad. |
 | eventos | Programación, estado, organizador, ubicación y categoría. |
 | expositores | Nombre, correo, especialidad e institución. |
@@ -84,7 +84,7 @@ CU-01 — Inscribirse. Actor: participante autenticado. Precondición: evento pu
 
 CU-02 — Programar un evento. Actor: organizador. Selecciona categoría, uno o varios expositores y sala; introduce fecha, horas y cupo. El servicio valida y el repositorio serializa la comprobación de horarios y la escritura. Si hay conflicto, el formulario conserva los datos y muestra el motivo. El nuevo evento queda en borrador; publicar habilita la inscripción.
 
-CU-03 — Administrar cuentas. Actor: ADMIN activo. Crea o edita nombre, correo, rol y estado. Una clave nueva se protege con PBKDF2; en una edición, dejarla vacía conserva la actual. Se rechazan duplicados, roles desconocidos, autodesactivación administrativa y la pérdida del último administrador activo. Los cambios afectan la siguiente petición de las sesiones abiertas.
+CU-03 — Registrar asistencia. Actor: organizador responsable. Consulta sus inscritos y marca o corrige la asistencia de una inscripción activa. Un administrador ajeno puede consultar un evento publicado, pero no modificar su asistencia oficial. La transacción conserva el estado de la inscripción y la corrección de una marca no crea un registro nuevo.
 
 ## 8. Secuencia: inscripción
 
@@ -114,29 +114,29 @@ El organizador puede corregir una marca errónea. Un supervisor ajeno puede cons
 
 Las contraseñas usan PBKDF2-HMAC-SHA256 con sal aleatoria y 600.000 iteraciones, mediante la API estándar de Java. El login no compara texto plano. Las semillas contienen hashes y una migración idempotente convierte cuentas anteriores sin cambiar su clave de acceso.
 
-Las escrituras validan sesión, rol y CSRF. Los cambios de estado o rol de una cuenta se consultan antes de las rutas dinámicas. La autorización no depende de ocultar botones: se verifica en el servidor. Las vistas JTE escapan los datos de usuario.
+Las escrituras del módulo validan sesión, rol y CSRF. La administración de cuentas y sus sesiones pertenece a la base común del sistema. La autorización no depende de ocultar botones: se verifica en el servidor. Las vistas JTE escapan los datos de usuario.
 
-Las inscripciones bloquean la fila del evento y conservan su unicidad. La agenda serializa sus escrituras. La administración de cuentas serializa sus cambios para conservar un administrador activo. La edición no elimina registros con historial.
+Las inscripciones bloquean la fila del evento y conservan su unicidad. La agenda serializa sus escrituras. La edición no elimina registros con historial.
 
 ## 13. Pruebas y resultados
 
-La instalación independiente ejecutó 50 pruebas con cero fallos y cero errores. Incluye validaciones de servicios y controladores, persistencia real, roles, asistencia, plazos, varios expositores y administración de usuarios. La configuración externa permite aislar la base usada por las pruebas.
+La suite actual ejecutó 42 pruebas con cero fallos y cero errores. Incluye validaciones de servicios y controladores, persistencia real, roles, asistencia, plazos y varios expositores. La configuración externa permite aislar la base usada por las pruebas.
 
 Concurrencia: ocho peticiones del mismo usuario generan una inscripción; ocho usuarios que compiten por dos cupos aceptan exactamente dos; cuatro eventos que compiten por la misma sala y horario aceptan exactamente uno.
 
-Rendimiento revalidado el 12/11/2026: 100 sesiones independientes, tres rondas y 300 consultas; cero errores, máximo 0,628268 s y P95 0,578157 s. La identidad de prueba es compartida, con cookies distintas, y la base contiene seis eventos y dos inscripciones. El login y calentamiento no forman parte del cronómetro. Esta medición local no garantiza el rendimiento con otra red, volumen de datos o carga sostenida.
+Rendimiento revalidado el 12/11/2026: 100 sesiones independientes, tres rondas y 300 consultas; cero errores, máximo 0.619212 s y P95 0.567522 s. La identidad de prueba es compartida, con cookies distintas, y la base contiene seis eventos y dos inscripciones. El login y calentamiento no forman parte del cronómetro. Esta medición local no garantiza el rendimiento con otra red, volumen de datos o carga sostenida.
 
-Se verificó en Chrome el flujo de las tres cuentas, pantallas de escritorio y móvil, varios expositores, filtros, asistencia, confirmaciones, cambio de rol en sesión abierta, desactivación y cambio de contraseña. Los registros temporales fueron retirados.
+Se verificó en Chrome el flujo de las tres cuentas, pantallas de escritorio y móvil, varios expositores, filtros, asistencia, confirmaciones. Los registros temporales fueron retirados.
 
 ## 14. Instalación limpia
 
-Se clonó el commit b7af1b36aa83b0830cc3fad383ba04d880cd3bc2 sin archivos generados del directorio original. Un PostgreSQL 16 temporal aplicó los scripts desde cero. Maven compiló, generó JTE y ejecutó 50 pruebas. La aplicación inició, validó las tres cuentas y cuatro eventos iniciales, y rechazó la administración para DOCENTE y ESTUDIANTE.
+Se clonó el commit e4c8a3d0e66cbf602a93f68c45786dd0de171788 sin archivos generados del directorio original. Un PostgreSQL 16 temporal aplicó los scripts desde cero. Maven compiló, generó JTE y ejecutó 42 pruebas. La aplicación inició y validó las tres cuentas y cuatro eventos iniciales. Las rutas del panel global retirado devolvieron 404 para los tres roles, mientras los permisos de eventos se conservaron.
 
 Se retiraron únicamente la aplicación y contenedor temporales. El volumen y servidor habituales se conservaron. El README incluye inicio desde GitHub, migraciones para una base existente y configuración por entorno. La caché Maven del usuario estaba disponible; no se afirma una prueba sin conexión a Maven Central.
 
 ## 15. Integración y decisiones compartidas
 
-Los nombres ADMIN, DOCENTE y ESTUDIANTE se mantienen porque sus tablas son comunes. La administración asigna roles existentes y no crea variantes arbitrarias. La migración a hashes exige que los módulos que autentican usuarios utilicen el verificador común. No se altera la estructura de las tablas de usuarios y roles.
+Los nombres ADMIN, DOCENTE y ESTUDIANTE se mantienen porque sus tablas son comunes. El módulo no crea, edita ni desactiva usuarios ni administra roles; utiliza los valores definidos por el proyecto base. La migración a hashes exige que los módulos que autentican usuarios utilicen el verificador común. No se altera la estructura de las tablas de usuarios y roles.
 
 Las ubicaciones reutilizan espacios; sus cambios afectan al catálogo compartido. La coordinación con reservas generales debe confirmarse en revisión con ese equipo. Este módulo comprueba la agenda de eventos; no implementa las reservas generales del grupo responsable.
 
@@ -144,7 +144,7 @@ La implementación se entrega en commits progresivos de grupo-6. La revisión ha
 
 ## 16. Balance y defensa
 
-El módulo implementa los doce requisitos funcionales del informe y agrega administración de usuarios para cubrir el actor administrativo. La trazabilidad conecta requisitos, casos, modelo, código y pruebas. La combinación de pruebas de frontera, integración y concurrencia detectó problemas que no aparecían al compilar, como el agotamiento del pool básico bajo carga.
+El módulo implementa los doce requisitos funcionales de eventos del informe. La mención de usuarios/roles del actor administrativo se integra con el sistema base y no se desarrolla como un módulo adicional. La trazabilidad conecta requisitos, casos, modelo, código y pruebas. La combinación de pruebas de frontera, integración y concurrencia detectó problemas que no aparecían al compilar, como el agotamiento del pool básico bajo carga.
 
 La entrega debe ser revisada por el equipo antes de presentarse. La aprobación académica, la coordinación con los otros grupos y la aceptación del PR son actividades humanas pendientes de validación, no resultados que este documento dé por realizados.
 

@@ -12,7 +12,7 @@ Material de apoyo para revisión y ensayo del equipo
 # Actores y permisos
 - ESTUDIANTE: consulta, filtros, detalle e inscripción propia.
 - DOCENTE: organiza sus eventos y registra asistencia de sus participantes.
-- ADMIN: administra cuentas, roles asignados, salas y categorías.
+- ADMIN: gestiona salas, categorías y supervisa eventos.
 - Supervisar un evento ajeno permite consultar, no modificarlo.
 ---
 # Demostración del flujo principal
@@ -30,17 +30,17 @@ Material de apoyo para revisión y ensayo del equipo
 - Cuatro eventos compiten por una sala y horario: uno aceptado.
 - Validación y escritura permanecen en la misma transacción.
 ---
-# Seguridad y administración
+# Seguridad del módulo de eventos
 - Contraseñas protegidas con PBKDF2 y sal aleatoria.
 - Permisos y CSRF comprobados en el servidor.
-- Cambiar rol o desactivar una cuenta afecta la siguiente petición.
+- La gestión global de usuarios y roles pertenece al proyecto base.
 - Solo el organizador registra la asistencia oficial de su evento.
 ---
 # Verificación reproducible
-- 50 pruebas correctas desde un clon y PostgreSQL nuevos.
+- 42 pruebas de eventos y autenticación correctas.
 - Los tres roles acceden a sus funciones y reciben los rechazos esperados.
-- Chrome: administración, sesiones abiertas, eventos y móvil.
-- 100 sesiones y 300 consultas: cero errores, máximo local 0,628 s.
+- Chrome y HTTP: eventos, permisos y pantallas móviles.
+- 100 sesiones y 300 consultas: cero errores, máximo local 0.619 s.
 - La medición usa una base pequeña en localhost; no garantiza otros entornos.
 ---
 # Integración y cierre

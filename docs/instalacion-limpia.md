@@ -1,19 +1,19 @@
-# Evidencia de instalación limpia
+# Evidencia de instalación limpia · alcance de eventos
 
-Fecha: 2026-11-12T14:10:56.911639-03:00. Commit verificado: b7af1b36aa83b0830cc3fad383ba04d880cd3bc2.
+Fecha: 2026-11-12T14:47:10.709096-03:00. Commit verificado: e4c8a3d0e66cbf602a93f68c45786dd0de171788.
 
-Se ejecutó `python scripts/verificar_instalacion.py` desde la raíz del proyecto. El script creó un clon local sin archivos generados ni dependencias del directorio target original. Se utilizó un PostgreSQL 16 nuevo en Docker, sin el volumen postgres_data habitual y con puertos aleatorios ligados a localhost.
+Se ejecutó `python scripts/verificar_instalacion.py` desde la raíz del proyecto. Se creó un clon sin archivos generados del directorio original y un PostgreSQL 16 temporal, con puertos aleatorios y sin utilizar el volumen postgres_data habitual.
 
 Resultado:
 
-- Compilación y generación JTE correctas.
-- 50 pruebas ejecutadas: cero fallos y cero errores.
-- Las semillas crearon 4 eventos y 3 cuentas demo.
-- Las tres contraseñas quedaron protegidas; el acceso de ADMIN, DOCENTE y ESTUDIANTE se verificó por HTTP.
-- ADMIN accedió a usuarios; los otros roles recibieron 403 en esa administración.
-- Las tres cuentas cargaron la agenda de eventos.
-- La aplicación temporal y su contenedor fueron retirados. El volumen y el servidor habituales se conservaron.
+- Compilación y generación de las vistas JTE correctas.
+- 42 pruebas de eventos y autenticación ejecutadas sin fallos ni errores.
+- Las semillas crearon cuatro eventos y las tres cuentas demo existentes del proyecto base.
+- Las contraseñas permanecen protegidas y los tres roles cargaron la agenda por HTTP.
+- El estudiante recibió 403 al intentar crear un evento; los roles organizadores cargaron el formulario.
+- La ruta del panel global de usuarios respondió 404 para los tres roles: esa administración no pertenece al módulo 6.
+- La aplicación temporal y el contenedor se retiraron al finalizar. La base y el servidor habituales se conservaron.
 
-Los logs originales se encuentran en target/sigu-ucn-verificacion-ed51c3b50475/maven.log y aplicacion.log. El resumen está en target/instalacion-limpia.json. Esos archivos son locales y no se versionan. Las dependencias Maven ya estaban disponibles en la caché del usuario; no se afirma haber probado un entorno sin acceso a Maven Central.
+Los logs se encuentran en target/sigu-ucn-verificacion-60c0411cc652/maven.log y aplicacion.log. El resumen es target/instalacion-limpia.json. Son archivos locales excluidos de Git. Se usó la caché Maven disponible; no se afirma una prueba sin conexión a Maven Central.
 
-Esta prueba usa un clon local del commit confirmado. Para repetir desde GitHub se puede clonar grupo-6 y ejecutar las mismas instrucciones del README.
+La reducción de 50 a 42 pruebas corresponde al retiro de las ocho pruebas del panel global, su servicio y la actualización de sesiones vinculada a esa funcionalidad. Las pruebas de eventos permanecen y pasan.

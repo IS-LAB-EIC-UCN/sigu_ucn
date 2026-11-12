@@ -19,10 +19,10 @@
 			<path d="M 50,327 L 65,312 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
 			<text x="42.111328125" y="297" style="font-family: UI; font-size: 8px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,594) scale(1,-1)">ADMIN</text>
 			<ellipse cx="305.0" cy="350.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
-			<text x="255.7759765625" y="347.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,694) scale(1,-1)">Usuarios y roles asignados</text>
+			<text x="271.27109375" y="347.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,694) scale(1,-1)">Salas y categorías</text>
 			<path d="M 70,342 L 148,350 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
 			<ellipse cx="305.0" cy="305.0" rx="157.0" ry="18.0" style="stroke: rgb(9%,23%,43%); stroke-linecap: butt; stroke-width: 1; fill: rgb(92%,95%,98%); fill-rule: evenodd;"/>
-			<text x="248.254638671875" y="302.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,604) scale(1,-1)">Salas, categorías y supervisión</text>
+			<text x="249.16152343750002" y="302.0" style="font-family: UI; font-size: 8.2px;fill: rgb(9%,23%,43%); stroke:none;" transform="translate(0,604) scale(1,-1)">Supervisar eventos publicados</text>
 			<path d="M 70,342 L 148,305 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>
 			<circle cx="50" cy="233" r="8" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1; fill: none; fill-rule: evenodd;"/>
 			<path d="M 50,225 L 50,202 Z" style="stroke: rgb(36%,43%,53%); stroke-linecap: butt; stroke-width: 1;"/>

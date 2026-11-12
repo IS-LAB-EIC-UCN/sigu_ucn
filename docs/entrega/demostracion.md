@@ -6,9 +6,9 @@ Duración sugerida: 10 a 12 minutos. Ejecutar la aplicación y PostgreSQL previa
 
 Explicar el problema, el alcance del módulo y la relación con usuarios/espacios compartidos. Mostrar ADMIN, DOCENTE y ESTUDIANTE. Aclarar que supervisar no permite alterar eventos ajenos.
 
-## 2. Administración (2 minutos)
+## 2. Catálogos del módulo de eventos (2 minutos)
 
-Entrar como ADMIN y abrir Usuarios y roles. Crear una cuenta temporal docente, cambiarla a estudiante y mostrar cómo pierde el botón de creación en una sesión ya abierta. Desactivarla y comprobar que se cierra su acceso. Reactivarla. Mostrar el catálogo de salas y categorías; explicar la protección de capacidad y de la propia cuenta administradora.
+Entrar como ADMIN y mostrar únicamente las salas, categorías y supervisión de eventos. Editar una ubicación de prueba y comprobar la protección de capacidad. Explicar que los usuarios y roles se reutilizan desde el proyecto base y no se administran en este módulo.
 
 ## 3. Organización y conflictos (3 minutos)
 
@@ -20,7 +20,7 @@ Entrar como ESTUDIANTE. Buscar/filtrar, revisar el detalle e inscribirse. Mostra
 
 ## 5. Pruebas, instalación y rendimiento (2 minutos)
 
-Mostrar los informes de las 50 pruebas del clon limpio, los tres casos simultáneos y la evidencia de 100 sesiones. Explicar la corrección del pool básico y la limitación de que se midió en localhost con una base pequeña. Mostrar que el script de instalación utiliza otro contenedor y no elimina la base de trabajo.
+Mostrar los informes de las 42 pruebas del clon limpio, los tres casos simultáneos y la evidencia de 100 sesiones. Explicar la corrección del pool básico y la limitación de que se midió en localhost con una base pequeña. Mostrar que el script de instalación utiliza otro contenedor y no elimina la base de trabajo.
 
 ## 6. Cierre técnico (1 minuto)
 

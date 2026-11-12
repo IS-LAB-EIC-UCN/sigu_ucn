@@ -1,32 +1,26 @@
-# Evidencia de concurrencia y rendimiento de eventos
+# Evidencia de concurrencia y rendimiento · módulo de eventos
 
-Medición local del 12 de noviembre de 2026, zona America/Santiago. Requisito del informe: consultas inferiores a dos segundos con hasta 100 usuarios concurrentes.
+Versión limitada al módulo 6, sin administración global de usuarios/roles ni su filtro de actualización de sesiones.
 
 ## Método
 
-- Aplicación Java 21 en localhost:7000, PostgreSQL 16 en Docker, Windows 11.
-- Base de demostración: 6 eventos, 2 registros de inscripción y 3 usuarios.
-- 100 clientes con cookies y sesiones autenticadas independientes. Se reutiliza una cuenta de prueba; no son 100 identidades distintas.
-- Tres rondas con barrera de salida simultánea: 300 consultas HTTP en total.
-- Rutas: listado, agenda y Mis actividades, 100 consultas de cada ruta distribuidas entre las tres rondas.
-- Login y calentamiento fuera del cronómetro. El tiempo de cada consulta incluye recibir completamente su HTML.
-- Se exige HTTP correcto, página autenticada y menos de dos segundos en todas las muestras. No basta con una media baja.
-- Las consultas no modifican eventos o inscripciones. Las cookies y contraseñas no se guardan en el informe.
+- Medición: 2026-11-12T14:49:45.177840-03:00, entorno Windows-11-10.0.26300-SP0.
+- Java 21, Javalin, JTE, Hibernate/HikariCP y PostgreSQL 16 local en Docker.
+- Base de demostración: seis eventos, dos registros de inscripción y tres usuarios.
+- 100 sesiones autenticadas independientes, con una cuenta de prueba y cookies distintas.
+- Tres rondas con barrera de salida simultánea: 300 consultas en total, distribuidas entre listado, agenda y Mis actividades.
+- Login y calentamiento fuera del cronómetro. Cada medición incluye la recepción completa del HTML.
+- La prueba no modifica eventos ni inscripciones y exige una respuesta autenticada correcta y menor a dos segundos en todas las muestras.
 
-## Resultados
+## Resultado actual
 
-| Configuración | Errores / 300 | Máximo (s) | P95 (s) | Cumple esta medición |
+| Peticiones | Errores | Máximo (s) | P95 (s) | Resultado |
 | --- | --- | --- | --- | --- |
-| Pool interno anterior | 74 | 1.428458 | 1.130650 | No |
-| HikariCP, máximo 20 conexiones | 0 | 0.737048 | 0.684180 | Sí |
+| 300 | 0 | 0.619212 | 0.567522 | Correcto en estas condiciones |
 
-Medición anterior: 2026-11-12T13:50:01.800480-03:00. Medición corregida: 2026-11-12T13:51:59.939221-03:00.
-
-El fallo inicial fue una excepción por agotamiento del pool interno, verificada en el registro del servidor. Se añadió el módulo oficial hibernate-hikaricp, con la misma versión que Hibernate, y un máximo de 20 conexiones con espera acotada a 2000 ms. No se aumentó el límite de conexiones de PostgreSQL. Referencia: [integración de HikariCP en Hibernate](https://docs.hibernate.org/orm/6.6/userguide/html_single/).
+Se conserva HikariCP con máximo 20 conexiones y espera de hasta 2000 ms. El pool interno anterior produjo errores por agotamiento bajo carga, motivo de la corrección. Referencia: [integración HikariCP de Hibernate](https://docs.hibernate.org/orm/6.6/userguide/html_single/).
 
 ## Repetir
-
-Con PostgreSQL y la aplicación activos:
 
 ```powershell
 $env:SIGU_TEST_CORREO = 'estudiante@sigu.cl'
@@ -34,21 +28,8 @@ $env:SIGU_TEST_PASSWORD = 'clave de la cuenta de prueba'
 python scripts/probar_carga.py --clientes 100 --rondas 3
 ```
 
-El script devuelve error si alguna petición falla o alcanza los dos segundos. Las muestras y el resumen se guardan en target/carga_eventos.json, excluido de Git. La variable de contraseña solo se usa para crear las sesiones.
+La salida detallada queda en target/carga_eventos.json y no se versiona. La última medición de esta corrección se conservó en target/carga_eventos_solo_eventos.json. El script devuelve error si alguna respuesta falla o alcanza dos segundos.
 
-Para comprobar simultáneamente la integridad de escrituras:
+La suite actual de 42 pruebas conserva las verificaciones de duplicados, usuarios que compiten por cupos y eventos que compiten por la misma sala. Las ocho pruebas retiradas pertenecían exclusivamente al panel global de usuarios y roles que quedó fuera de alcance.
 
-```powershell
-mvn test "-Deventos.integration=true"
-```
-
-La suite incluye ocho solicitudes duplicadas de un usuario, ocho usuarios compitiendo por dos cupos y cuatro eventos compitiendo por la misma sala y horario. Se valida el estado final en PostgreSQL y se limpian únicamente sus datos temporales.
-
-## Límites de la evidencia
-
-Esta es una prueba reproducible en una base pequeña y sobre la misma máquina cliente/servidor. No es una garantía de latencia para una base grande, una red externa ni una carga sostenida de larga duración. Esas condiciones requieren nuevas mediciones. Las 41 pruebas automatizadas pasaron tras cambiar el pool. También se verificaron en Chrome los permisos de categorías y asistencia y las confirmaciones de inscripción/cancelación.
-
-
-## Revalidación con administración y sesiones actualizadas
-
-Fecha: 2026-11-12T14:14:35.695584-03:00. Con la consulta del rol y estado vigente en cada ruta dinámica, se repitieron tres rondas de 100 sesiones y 300 peticiones. Errores: 0; máximo: 0.628268 s; P95: 0.578157 s. Todas las respuestas quedaron por debajo de dos segundos en esta medición local. Se conservan las mismas limitaciones de tamaño de datos, identidad de prueba y entorno local. Las nuevas verificaciones de usuarios y la instalación limpia completaron una suite de 50 pruebas.
+Esta prueba local utiliza una base pequeña y una identidad de prueba repetida en sesiones distintas. No garantiza la latencia con una base grande, otra red o una carga sostenida; esos escenarios requieren mediciones específicas.

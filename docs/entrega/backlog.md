@@ -14,9 +14,8 @@ Estado técnico local, respaldado por commits y pruebas. No representa una actua
 | HU-08 | Catálogo de expositores | Implementado y probado | Institución, edición y selección múltiple. |
 | HU-09 | Inscritos y asistencia oficial | Implementado y probado | Lista imprimible y autorización del responsable. |
 | HU-10 | Conflictos de sala | Implementado y probado | Bloqueo transaccional y escrituras simultáneas. |
-| ADM-01 | Cuentas y roles asignados | Implementado y probado | Panel y pruebas con PostgreSQL y Chrome. |
-| ADM-02 | Revocación en sesiones abiertas | Implementado y probado | Cambio de rol, desactivación y filtro por petición. |
-| QA-01 | Instalación limpia | Verificado | Clon b7af1b3, PostgreSQL temporal y 50 pruebas. |
+| ALC-01 | Administración global de usuarios y roles | Fuera del alcance del Grupo 6; retirada | Se reutiliza la autenticación base, sin panel paralelo. |
+| QA-01 | Instalación limpia | Verificado | Ver evidencia actualizada en docs/instalacion-limpia.md. |
 | QA-02 | Carga de 100 sesiones | Verificado en condiciones locales | 300 consultas, sin errores; evidencia de rendimiento. |
 | DOC-01 | Informe y diagramas | Preparado para revisión del equipo | PDF, Markdown, seis SVG y fuentes Mermaid. |
 | DOC-02 | Demostración y defensa | Guion y presentación preparados; ensayo pendiente del equipo | demostracion.md. |
