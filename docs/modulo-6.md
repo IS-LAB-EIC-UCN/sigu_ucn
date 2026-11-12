@@ -107,3 +107,8 @@ Las claves nuevas se guardan con PBKDF2-HMAC-SHA256, sal aleatoria de 16 bytes y
 La inscripción y su cancelación muestran una confirmación explícita después de que PostgreSQL confirma la operación. Un error de cupos o plazo muestra su motivo y no presenta una confirmación falsa. El flujo de inscripción desde la agenda requiere como máximo tres pasos: elegir evento, revisar detalle y confirmar.
 
 Las pruebas de integración lanzan solicitudes simultáneas mediante hilos y una barrera de salida: ocho peticiones del mismo usuario deben crear un único registro; ocho usuarios compiten por dos cupos; cuatro eventos compiten por una sala y horario. Se comprueba el estado final real de PostgreSQL y se eliminan solo los datos temporales de cada prueba.
+
+
+## Rendimiento medido
+
+Se incorporó el pool HikariCP mediante el módulo oficial de Hibernate, con máximo 20 conexiones y espera acotada, después de reproducir el agotamiento del pool interno bajo 100 sesiones. Ver [evidencia y procedimiento reproducible](rendimiento-eventos.md). La medición local corregida procesó 300 consultas sin errores y con un máximo inferior a dos segundos; su alcance se limita a las condiciones documentadas.
