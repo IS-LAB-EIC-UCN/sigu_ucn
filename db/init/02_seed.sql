@@ -4,9 +4,9 @@ INSERT INTO roles (nombre) VALUES
                                ('ESTUDIANTE');
 
 INSERT INTO usuarios (nombre, correo, password, activo, rol_id) VALUES
-                                                                    ('Administrador General', 'admin@sigu.cl', 'admin123', TRUE, 1),
-                                                                    ('Docente Demo', 'docente@sigu.cl', 'docente123', TRUE, 2),
-                                                                    ('Estudiante Demo', 'estudiante@sigu.cl', 'estudiante123', TRUE, 3);
+                                                                    ('Administrador General', 'admin@sigu.cl', 'pbkdf2-sha256$600000$YvDeIMU0ym+63BbhHcX9CQ==$EaZUcTNsM8wOjeJxy4E6BldTk/rgW6iBtFfhJpP+/QQ=', TRUE, 1),
+                                                                    ('Docente Demo', 'docente@sigu.cl', 'pbkdf2-sha256$600000$EbHZOo7e3XwQqifdjXieSg==$nuIuWRzJHTfTO4AuYF9uqG5S9sZ5nhM133D9i0umSMg=', TRUE, 2),
+                                                                    ('Estudiante Demo', 'estudiante@sigu.cl', 'pbkdf2-sha256$600000$pKy+cNI+dByFk7RuIPtB2A==$eMq0/rfdBzc/+fQF6zVzKk3XTNDgIE+5pRV+pVL3qHw=', TRUE, 3);
 
 INSERT INTO espacios (nombre, tipo, capacidad, disponible) VALUES
                                                                ('Sala A101', 'SALA_CLASES', 40, TRUE),

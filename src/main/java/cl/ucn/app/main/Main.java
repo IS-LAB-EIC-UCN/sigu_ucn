@@ -32,6 +32,7 @@ public class Main {
         });
 
         cl.ucn.app.config.JPAUtil.getEntityManagerFactory();
+        new cl.ucn.app.repository.UsuarioRepository().migrarPasswords();
         app.start(cl.ucn.app.util.AppProperties.getInt("server.port", 7000));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             app.stop();

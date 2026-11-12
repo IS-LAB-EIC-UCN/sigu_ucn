@@ -98,3 +98,8 @@ mvn test "-Deventos.integration=true"
 Las pruebas unitarias no necesitan base de datos. La segunda orden habilita también pruebas sobre PostgreSQL real, con todas las migraciones y los usuarios demo. Cada prueba crea y elimina exclusivamente sus registros temporales. Se comprueban roles, validaciones, estados, horarios, cupos, duplicados, varios expositores, edición de catálogos, asistencia y límites temporales. Los resultados XML/TXT se encuentran en target/surefire-reports.
 
 El informe del equipo debe acompañarse de sus diagramas de casos de uso, secuencia y actividad, presentación y gestión de tareas. Esta guía documenta la implementación, sin sustituir esos entregables.
+
+
+## Contraseñas protegidas
+
+Las claves nuevas se guardan con PBKDF2-HMAC-SHA256, sal aleatoria de 16 bytes y 600.000 iteraciones mediante la API estándar de Java. Parámetro basado en la [guía de OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html). El login rechaza texto plano y hashes malformados. Las semillas ya contienen hashes. Al iniciar, las cuentas antiguas se migran en una transacción sin cambiar su contraseña de acceso. La operación se puede repetir y no cambia hashes válidos. Para ejecutarla explícitamente: `mvn compile exec:java "-Dexec.mainClass=cl.ucn.app.main.MigrarPasswords"`. La columna compartida password mantiene su estructura; los módulos que autentiquen directamente deben usar el verificador común.

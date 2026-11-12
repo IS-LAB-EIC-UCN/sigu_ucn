@@ -10,7 +10,7 @@ class AuthServiceTest {
         Usuario usuario = mock(Usuario.class);
         when(repo.findByCorreo("admin@sigu.cl")).thenReturn(usuario);
         when(usuario.getActivo()).thenReturn(true);
-        when(usuario.getPassword()).thenReturn("admin123");
+        when(usuario.getPassword()).thenReturn(PasswordHasher.generar("admin123"));
         AuthService service = new AuthService(repo);
         assertSame(usuario, service.autenticar("  ADMIN@sigu.cl  ", "admin123"));
         assertNull(service.autenticar("admin@sigu.cl", "incorrecta"));

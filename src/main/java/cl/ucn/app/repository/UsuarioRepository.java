@@ -30,6 +30,7 @@ public class UsuarioRepository {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
+            usuario.setPassword(cl.ucn.app.service.PasswordHasher.generar(usuario.getPassword()));
             em.persist(usuario);
             em.getTransaction().commit();
         } catch (Exception e) {
@@ -42,6 +43,22 @@ public class UsuarioRepository {
         }
     }
 
+    /** Migración idempotente para bases anteriores. Se ejecuta antes de atender peticiones. */
+    public int migrarPasswords() {
+        try (EntityManager em=JPAUtil.getEntityManager()) {
+            try {
+                em.getTransaction().begin();
+                int migrados=0;
+                for(Usuario usuario:em.createQuery("FROM Usuario",Usuario.class).setLockMode(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE).getResultList()) {
+                    String valor=usuario.getPassword();
+                    if(cl.ucn.app.service.PasswordHasher.esHash(valor)) continue;
+                    if(cl.ucn.app.service.PasswordHasher.tienePrefijo(valor)) throw new IllegalStateException("Hay un hash de contraseña con formato inválido.");
+                    usuario.setPassword(cl.ucn.app.service.PasswordHasher.generar(valor));migrados++;
+                }
+                em.getTransaction().commit();return migrados;
+            } catch(RuntimeException ex) { if(em.getTransaction().isActive()) em.getTransaction().rollback();throw ex; }
+        }
+    }
     public Usuario findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

@@ -29,9 +29,7 @@ public class AuthService {
             return null;
         }
 
-        // Por ahora comparación simple.
-        // Más adelante, se podría reemplazar por hash seguro.
-        if (!password.equals(usuario.getPassword())) {
+        if (!PasswordHasher.verificar(password, usuario.getPassword())) {
             return null;
         }
 
