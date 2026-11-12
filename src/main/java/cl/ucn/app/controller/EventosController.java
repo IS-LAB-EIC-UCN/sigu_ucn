@@ -170,9 +170,35 @@ public class EventosController {
         try {
             Expositor e=new Expositor(); e.setNombre(texto(ctx,"nombre",100,true));
             e.setCorreo(texto(ctx,"correo",120,false));e.setEspecialidad(texto(ctx,"especialidad",150,false));
+            e.setInstitucion(texto(ctx,"institucion",150,false));
             if(!e.getCorreo().isBlank() && !e.getCorreo().matches("[^\\s@]+@[^\\s@]+[.][^\\s@]+")) throw new IllegalArgumentException("Ingresa un correo válido.");
             catalogo.guardar(e);ctx.sessionAttribute("eventosAviso","Expositor registrado.");ctx.redirect("/eventos/catalogos");
         } catch(IllegalArgumentException e) { ctx.status(400);catalogos(ctx,e.getMessage()); }
+    }
+    public void mostrarExpositorEditar(Context ctx) {
+        if (!accesoOrganizador(ctx, false)) return;
+        formularioExpositor(ctx, expositor(ctx), "");
+    }
+    private Expositor expositor(Context ctx) {
+        try {
+            Expositor e = catalogo.buscar(Expositor.class, Long.valueOf(ctx.pathParam("id")));
+            if(e == null) throw new NotFoundResponse("Expositor no encontrado");
+            return e;
+        } catch(NumberFormatException ex) { throw new BadRequestResponse("ID inválido"); }
+    }
+    private void formularioExpositor(Context ctx, Expositor e, String error) {
+        Map<String,Object> m=modelo(ctx);m.put("expositor",e);m.put("error",error);
+        ctx.render("eventos-expositor.jte",m);
+    }
+    public void actualizarExpositor(Context ctx) {
+        if (!accesoOrganizador(ctx, true)) return;
+        Expositor e = expositor(ctx);
+        try {
+            e.setNombre(texto(ctx,"nombre",100,true));e.setCorreo(texto(ctx,"correo",120,false));
+            e.setEspecialidad(texto(ctx,"especialidad",150,false));e.setInstitucion(texto(ctx,"institucion",150,false));
+            if (!e.getCorreo().isBlank() && !e.getCorreo().matches("[^\\s@]+@[^\\s@]+[.][^\\s@]+")) throw new IllegalArgumentException("Ingresa un correo válido.");
+            catalogo.guardar(e);ctx.sessionAttribute("eventosAviso","Expositor actualizado.");ctx.redirect("/eventos/catalogos");
+        } catch(IllegalArgumentException ex) { ctx.status(400);formularioExpositor(ctx,e,ex.getMessage()); }
     }
     public void guardarUbicacion(Context ctx) {
         if(!acceso(ctx,true)) return;

@@ -11,6 +11,10 @@ public class Expositor {
     private String correo;
     @Column(length = 150)
     private String especialidad;
+    @Column(nullable = false, length = 150)
+    private String institucion = "";
+    public String getInstitucion() { return institucion; }
+    public void setInstitucion(String institucion) { this.institucion = institucion; }
     public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

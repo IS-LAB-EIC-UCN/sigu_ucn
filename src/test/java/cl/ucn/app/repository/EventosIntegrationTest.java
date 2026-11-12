@@ -67,6 +67,12 @@ class EventosIntegrationTest {
         sala.setCapacidad(4);sala.setNombre(sala.getNombre()+" editada");catalogo.actualizarEspacio(sala);
         assertEquals(sala.getNombre(),eventos.findById(e.getId()).getLugar());
     }
+    @Test void editaExpositorSinPerderSuAsociacion() {
+        Evento e=nuevo(10);guardar(e);expositor.setNombre("Nombre actualizado");expositor.setInstitucion("UCN");
+        new CatalogoEventosRepository().guardar(expositor);
+        assertEquals("Nombre actualizado",eventos.findById(e.getId()).getExpositor().getNombre());
+        assertEquals("UCN",eventos.findById(e.getId()).getExpositor().getInstitucion());
+    }
     @Test void persisteCatalogosYEvento() {
         Evento e=nuevo(10);guardar(e);Evento leido=eventos.findById(e.getId());
         assertEquals("Ciencia",leido.getTematica());assertEquals(sala.getNombre(),leido.getEspacio().getNombre());
