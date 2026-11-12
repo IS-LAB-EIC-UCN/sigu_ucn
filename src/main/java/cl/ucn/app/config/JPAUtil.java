@@ -14,7 +14,7 @@ public final class JPAUtil {
 
     public static synchronized EntityManagerFactory getEntityManagerFactory() {
         if (entityManagerFactory == null || !entityManagerFactory.isOpen()) {
-            entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+            entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, ConfiguracionPersistencia.propiedades());
         }
         return entityManagerFactory;
     }
