@@ -13,8 +13,12 @@ import java.util.Map;
 
 public class InscripcionesController {
 
-    private final InscripcionRepository repository = new InscripcionRepository();
-    private final EventoRepository eventoRepository = new EventoRepository();
+    private final InscripcionRepository repository;
+    private final EventoRepository eventoRepository;
+    public InscripcionesController() { this(new InscripcionRepository(), new EventoRepository()); }
+    public InscripcionesController(InscripcionRepository repository, EventoRepository eventoRepository) {
+        this.repository=repository;this.eventoRepository=eventoRepository;
+    }
 
     public void inscribir(Context ctx) {
 
@@ -48,6 +52,7 @@ public class InscripcionesController {
 
         try {
             repository.inscribir(eventoId, usuarioId);
+            ctx.sessionAttribute("eventosAviso", "Tu inscripción se registró correctamente. Ya tienes un cupo reservado.");
 
             ctx.redirect("/eventos");
 
@@ -92,6 +97,7 @@ public class InscripcionesController {
 
         try {
             repository.cancelarInscripcion(eventoId, usuarioId);
+            ctx.sessionAttribute("eventosAviso", "Tu inscripción fue cancelada. El cupo quedó disponible.");
             ctx.redirect("/eventos");
 
         } catch (IllegalArgumentException e) {
