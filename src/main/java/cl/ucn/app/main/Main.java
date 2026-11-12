@@ -23,8 +23,6 @@ public class Main {
             // 2. Archivos estáticos
             config.staticFiles.add("/static");
 
-            config.routes.beforeMatched(new cl.ucn.app.service.SesionActualizada(new cl.ucn.app.repository.UsuarioRepository())::verificar);
-            cl.ucn.app.routes.AdminUsuariosRoutes.register(config);
 
             // 3. Registro de rutas
             AuthRoutes.register(config);

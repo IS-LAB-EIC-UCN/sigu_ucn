@@ -61,11 +61,14 @@ def main():
             with c.open(base+"/login",urllib.parse.urlencode({"correo":correo,"password":clave}).encode(),timeout=15) as r:
                 assert r.geturl().endswith("/home");r.read()
             with c.open(base+"/eventos",timeout=15) as r:assert r.status==200;r.read()
-            if correo.startswith("admin"):
-                with c.open(base+"/admin/usuarios",timeout=15) as r:assert r.status==200;r.read()
-            else:
-                try:c.open(base+"/admin/usuarios",timeout=15);raise AssertionError("Acceso administrativo indebido")
+            # La administración global de usuarios no pertenece al módulo 6.
+            try:c.open(base+"/admin/usuarios",timeout=15);raise AssertionError("El panel global de usuarios sigue expuesto")
+            except urllib.error.HTTPError as ex:assert ex.code==404
+            if correo.startswith("estudiante"):
+                try:c.open(base+"/eventos/nuevo",timeout=15);raise AssertionError("El estudiante no debe crear eventos")
                 except urllib.error.HTTPError as ex:assert ex.code==403
+            else:
+                with c.open(base+"/eventos/nuevo",timeout=15) as r:assert r.status==200;r.read()
             verificaciones.append(correo)
         datos=ejecutar(["docker","exec",nombre,"psql","-U","postgres","-d","sigu_ucn","-At","-c","SELECT (SELECT count(*) FROM eventos)||'|'||(SELECT count(*) FROM usuarios)||'|'||(SELECT count(*) FROM usuarios WHERE password LIKE 'pbkdf2-sha256$%');"]).decode().strip()
         assert datos=="4|3|3",datos

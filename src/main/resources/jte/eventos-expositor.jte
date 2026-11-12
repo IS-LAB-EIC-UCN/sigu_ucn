@@ -1,10 +1,9 @@
-@param boolean admin = false
 @param String title
 @param String usuarioNombre
 @param String csrfToken
 @param String error
 @param cl.ucn.app.model.Expositor expositor
-@template.layout.main(administrador=admin,title=title,usuarioNombre=usuarioNombre,content=@`
+@template.layout.main(title=title,usuarioNombre=usuarioNombre,content=@`
 <section class="eventos-panel"><a class="enlace-suave" href="/eventos/catalogos">← Volver al catálogo</a><header class="eventos-cabecera"><div><p class="eyebrow">ORGANIZACIÓN</p><h1>Editar expositor</h1><p>Los cambios se reflejan en todos los eventos donde participa.</p></div></header>
 @if(!error.isBlank())<div class="evento-alerta error" role="alert">${error}</div>@endif
 <form class="eventos-formulario" action="/eventos/expositores/${expositor.getId()}/editar" method="post"><input type="hidden" name="csrfToken" value="${csrfToken}"><div class="eventos-form-grid">

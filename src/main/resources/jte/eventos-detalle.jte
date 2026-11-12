@@ -1,4 +1,3 @@
-@param boolean admin = false
 @param String title
 @param String usuarioNombre
 @param String csrfToken
@@ -7,7 +6,7 @@
 @param boolean gestiona
 @param boolean inscrito
 @param long disponibles
-@template.layout.main(administrador=admin,title=title,usuarioNombre=usuarioNombre,content=@`
+@template.layout.main(title=title,usuarioNombre=usuarioNombre,content=@`
 <section class="eventos-panel"><a class="enlace-suave" href="/eventos">← Volver a la agenda</a>
 <header class="eventos-cabecera"><div><p class="eyebrow">DETALLE DEL EVENTO</p><h1>${evento.getTitulo()}</h1><span class="badge tema">${evento.getTematica()}</span> <span class="badge estado-${evento.getEstado()}">${evento.getEstado()}</span></div></header>
 <article class="catalogo"><dl class="evento-ficha"><div><dt>Fecha</dt><dd>${evento.getFecha().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))}</dd></div><div><dt>Horario</dt><dd>${evento.getHoraInicio().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}–${evento.getHoraFin().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))}</dd></div><div><dt>Ubicación</dt><dd>${evento.getLugar()}</dd></div><div><dt>Cupos disponibles</dt><dd>${disponibles} de ${evento.getCupoMaximo()}</dd></div><div><dt>Categoría</dt><dd>${evento.getTematica()}</dd></div><div><dt>Organiza</dt><dd>${evento.getOrganizador().getNombre()}</dd></div></dl>

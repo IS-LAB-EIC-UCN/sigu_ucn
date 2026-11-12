@@ -1,4 +1,3 @@
-@param boolean admin = false
 
 @param boolean puedeRegistrarAsistencia
 @param String csrfToken
@@ -7,7 +6,7 @@
 @param cl.ucn.app.model.Evento evento
 @param java.util.List<cl.ucn.app.model.Inscripcion> inscripciones
 
-@template.layout.main(administrador=admin,
+@template.layout.main(
     title = title,
     usuarioNombre = usuarioNombre,
     content = @`
