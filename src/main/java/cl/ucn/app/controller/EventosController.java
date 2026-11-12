@@ -84,6 +84,7 @@ public class EventosController {
         boolean gestiona=PermisosEventos.administra(ctx.sessionAttribute("usuarioRol"),usuario,e.getOrganizador().getId());
         if("BORRADOR".equals(e.getEstado()) && !gestiona) throw new ForbiddenResponse("El evento aún no está publicado.");
         Map<String,Object> m=modelo(ctx);m.put("evento",e);m.put("gestiona",gestiona);
+        m.put("consultaInscritos",PermisosEventos.consultaInscritos(ctx.sessionAttribute("usuarioRol"),usuario,e.getOrganizador().getId(),e.getEstado()));
         m.put("disponibles",Math.max(0L,e.getCupoMaximo()-inscripciones.contarInscritos(e.getId())));
         m.put("inscrito",inscripciones.estaInscrito(e.getId(),usuario));
         ctx.render("eventos-detalle.jte",m);

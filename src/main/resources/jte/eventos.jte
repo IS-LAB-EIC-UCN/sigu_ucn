@@ -51,7 +51,10 @@
 @else <span class="badge">Cupos agotados</span> @endif
 @endif
 @endif
-@if(puedeOrganizar && (admin || usuarioId.equals(e.getOrganizador().getId())))
+@if(admin && !usuarioId.equals(e.getOrganizador().getId()) && ("PUBLICADO".equals(e.getEstado()) || "FINALIZADO".equals(e.getEstado())))
+<a class="eventos-btn secundario" href="/eventos/${e.getId()}/inscritos">Supervisar inscritos</a>
+@endif
+@if(puedeOrganizar && usuarioId.equals(e.getOrganizador().getId()))
 <a class="eventos-btn secundario" href="/eventos/${e.getId()}/inscritos">Participantes</a>
 @if("CANCELADO".equals(e.getEstado()))
 <form method="post" action="/eventos/${e.getId()}/reactivar" onsubmit="return confirm('El evento volvera a borrador. Las inscripciones anteriores quedaran canceladas. Deberas revisar los datos y publicarlo nuevamente. Continuar?');"><input type="hidden" name="csrfToken" value="${csrfToken}"><button class="eventos-btn" type="submit">Reactivar como borrador</button></form>

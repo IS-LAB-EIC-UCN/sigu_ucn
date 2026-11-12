@@ -18,7 +18,11 @@ class PermisosEventosTest {
         assertFalse(PermisosEventos.administra("DOCENTE",1L,2L));
     }
     @Test void adminSupervisaYRechazaAnonimosYRolesDesconocidos() {
-        assertTrue(PermisosEventos.administra("ADMIN",1L,2L));
+        assertFalse(PermisosEventos.administra("ADMIN",1L,2L));
+        assertTrue(PermisosEventos.administra("ADMIN",1L,1L));
+        assertTrue(PermisosEventos.consultaInscritos("ADMIN",1L,2L,"PUBLICADO"));
+        assertFalse(PermisosEventos.consultaInscritos("ADMIN",1L,2L,"BORRADOR"));
+        assertFalse(PermisosEventos.consultaInscritos("ESTUDIANTE",1L,2L,"PUBLICADO"));
         assertFalse(PermisosEventos.administra("ADMIN",null,2L));
         assertFalse(PermisosEventos.organiza(null));assertFalse(PermisosEventos.organiza("OTRO"));
     }
