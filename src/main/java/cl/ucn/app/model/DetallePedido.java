@@ -4,17 +4,17 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "DetallePedido")
+@Table(name = "detalle_pedido")
 @IdClass(DetallePedidoId.class)
 public class DetallePedido {
     @Id
-    @ManyToOne
-    @JoinColumn(name = "pedido_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "producto_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
     @Column(nullable = false)
@@ -22,6 +22,16 @@ public class DetallePedido {
 
     @Column(name = "precio_registrado", nullable = false, precision = 10, scale = 2)
     private BigDecimal precioRegistrado;
+
+    public DetallePedido() {
+    }
+
+    public DetallePedido(Pedido pedido, Producto producto, Integer cantidad, BigDecimal precioRegistrado) {
+        this.pedido = pedido;
+        this.producto = producto;
+        this.cantidad = cantidad;
+        this.precioRegistrado = precioRegistrado;
+    }
 
     public Pedido getPedido() {
         return pedido;
@@ -53,5 +63,12 @@ public class DetallePedido {
 
     public void setPrecioRegistrado(BigDecimal precioRegistrado) {
         this.precioRegistrado = precioRegistrado;
+    }
+
+    public BigDecimal getSubtotal() {
+        if (precioRegistrado == null || cantidad == null) {
+            return BigDecimal.ZERO;
+        }
+        return precioRegistrado.multiply(BigDecimal.valueOf(cantidad));
     }
 }

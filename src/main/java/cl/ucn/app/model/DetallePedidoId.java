@@ -7,18 +7,36 @@ public class DetallePedidoId implements Serializable {
     private Long pedido;
     private Long producto;
 
-    public DetallePedidoId() {}
+    public DetallePedidoId() {
+    }
 
     public DetallePedidoId(Long pedido, Long producto) {
         this.pedido = pedido;
         this.producto = producto;
     }
 
-    // Es obligatorio sobreescribir equals y hashCode para las llaves compuestas en JPA
+    public Long getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Long pedido) {
+        this.pedido = pedido;
+    }
+
+    public Long getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Long producto) {
+        this.producto = producto;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         DetallePedidoId that = (DetallePedidoId) o;
         return Objects.equals(pedido, that.pedido) && Objects.equals(producto, that.producto);
     }

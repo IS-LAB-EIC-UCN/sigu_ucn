@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Producto")
+@Table(name = "producto")
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,19 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
+    public Producto() {
+    }
+
+    public Producto(String nombre, BigDecimal precio, Integer stock, Categoria categoria) {
+        this.nombre = nombre;
+        this.precio = precio;
+        this.stock = stock;
+        this.categoria = categoria;
+    }
 
     public Long getId() {
         return id;
