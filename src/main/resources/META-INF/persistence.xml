@@ -13,6 +13,11 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        <!-- Clases del Grupo 7 (Cafetería) -->
+        <class>cl.ucn.app.model.Categoria</class>
+        <class>cl.ucn.app.model.Producto</class>
+        <class>cl.ucn.app.model.Pedido</class>
+        <class>cl.ucn.app.model.DetallePedido</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
