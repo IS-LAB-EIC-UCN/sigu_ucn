@@ -13,6 +13,9 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        <!-- Grupo 3 - Talleres -->
+        <class>cl.ucn.app.model.talleres.Taller</class>
+        <class>cl.ucn.app.model.talleres.Inscripcion</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
