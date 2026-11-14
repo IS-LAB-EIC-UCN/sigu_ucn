@@ -13,6 +13,13 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        
+        <!-- Grupo 5 - Inventario de Laboratorio -->
+        <class>cl.ucn.app.model.Categoria</class>
+        <class>cl.ucn.app.model.Proveedor</class>
+        <class>cl.ucn.app.model.Producto</class>
+        <class>cl.ucn.app.model.Equipo</class>
+        <class>cl.ucn.app.model.Insumo</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
