@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/js/app.js"></script>
+    <link rel="stylesheet" href="/css/talleres.css">
 </head>
 <body>
 <header class="topbar">
@@ -33,7 +34,7 @@
                 <li><a href="/home">Inicio</a></li>
                 <li><a href="#">Grupo 1 - Reservas de salas</a></li>
                 <li><a href="#">Grupo 2 - Biblioteca</a></li>
-                <li><a href="#">Grupo 3 - Talleres</a></li>
+                <li><a href="/talleres">Grupo 3 - Talleres</a></li>
                 <li><a href="#">Grupo 4 - Soporte</a></li>
                 <li><a href="#">Grupo 5 - Inventario</a></li>
                 <li><a href="#">Grupo 6 - Eventos</a></li>

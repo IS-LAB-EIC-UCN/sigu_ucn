@@ -1,0 +1,35 @@
+/* Grupo 3 - Talleres. Clases con prefijo tl- para no chocar con otros módulos. */
+.tl-page { max-width: 1100px; }
+.tl-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tl-actions { display: flex; gap: 8px; }
+.tl-btn { display: inline-block; background: #1f3b73; color: #fff; border: none; border-radius: 8px; padding: 9px 14px; text-decoration: none; cursor: pointer; font-size: 0.95rem; }
+.tl-btn:hover { background: #17305e; }
+.tl-btn-secondary { background: #fff; color: #1f3b73; border: 1px solid #1f3b73; }
+.tl-btn-secondary:hover { background: #eef2fa; }
+.tl-btn-mini { background: #fff; color: #8f1d1d; border: 1px solid #efb7b7; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+.tl-link { color: #1f3b73; text-decoration: none; font-weight: 500; }
+.tl-link:hover { text-decoration: underline; }
+.tl-alert { padding: 10px 14px; border-radius: 8px; margin: 14px 0; }
+.tl-alert-ok { background: #e7f6ec; color: #1e5e33; border: 1px solid #b5e0c3; }
+.tl-alert-error { background: #ffe6e6; color: #8f1d1d; border: 1px solid #efb7b7; }
+.tl-filtros { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; background: #fff; padding: 14px; border-radius: 10px; border: 1px solid #e2e7ef; margin: 16px 0; }
+.tl-filtros label, .tl-form label { display: flex; flex-direction: column; gap: 4px; font-weight: bold; font-size: 0.9rem; }
+.tl-filtros select, .tl-filtros input, .tl-form input, .tl-form textarea { padding: 8px 10px; border: 1px solid #c9d2df; border-radius: 8px; font-weight: normal; font-size: 0.95rem; }
+.tl-tabla { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #e2e7ef; margin-bottom: 24px; }
+.tl-tabla th, .tl-tabla td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eef1f6; }
+.tl-tabla th { background: #f0f3f9; font-size: 0.85rem; text-transform: uppercase; color: #4a5568; }
+.tl-tag { background: #eef2fa; color: #1f3b73; padding: 3px 8px; border-radius: 999px; font-size: 0.8rem; }
+.tl-badge { padding: 3px 9px; border-radius: 999px; font-size: 0.85rem; white-space: nowrap; }
+.tl-badge-ok { background: #e7f6ec; color: #1e5e33; }
+.tl-badge-lleno { background: #fff1e0; color: #8a4b00; }
+.tl-badge-espera { background: #fff8d6; color: #7a6000; }
+.tl-badge-anulada { background: #eceff3; color: #5a6270; }
+.tl-card { background: #fff; border: 1px solid #e2e7ef; border-radius: 12px; padding: 20px; margin: 16px 0 24px; }
+.tl-datos { display: grid; grid-template-columns: 180px 1fr; gap: 8px 16px; margin: 0 0 18px; }
+.tl-datos dt { font-weight: bold; color: #4a5568; }
+.tl-datos dd { margin: 0; }
+.tl-aviso { color: #8a4b00; }
+.tl-vacio { color: #666; font-style: italic; }
+.tl-form { display: flex; flex-direction: column; gap: 14px; max-width: 720px; }
+.tl-fila { display: flex; gap: 14px; flex-wrap: wrap; }
+.tl-fila label { flex: 1; min-width: 160px; }
