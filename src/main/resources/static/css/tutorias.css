@@ -1,0 +1,130 @@
+.tutorias {
+    max-width: 980px;
+}
+
+.tut-subnav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.tut-subnav a {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #e8edf7;
+    color: #1f3b73;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.tut-subnav a.activo {
+    background: #1f3b73;
+    color: white;
+}
+
+.tut-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.tut-btn {
+    display: inline-block;
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #1f3b73;
+    color: white;
+    font-size: 0.95rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tut-btn-secundario {
+    background: #e8edf7;
+    color: #1f3b73;
+}
+
+.tut-btn-peligro {
+    background: #b42318;
+}
+
+.tut-alerta-exito {
+    background: #e7f6ec;
+    color: #1d6b33;
+    border: 1px solid #b6e0c2;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.tut-tabla {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tut-tabla th,
+.tut-tabla td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e2e7ef;
+    text-align: left;
+}
+
+.tut-tabla th {
+    background: #f0f3f9;
+    color: #1f3b73;
+}
+
+.tut-acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tut-acciones form {
+    margin: 0;
+}
+
+.tut-etiqueta {
+    display: inline-block;
+    margin: 2px 4px 2px 0;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e8edf7;
+    color: #1f3b73;
+    font-size: 0.85rem;
+}
+
+.tut-formulario {
+    max-width: 560px;
+}
+
+.tut-fieldset {
+    margin: 0;
+    padding: 12px 16px;
+    border: 1px solid #c9d2df;
+    border-radius: 8px;
+}
+
+.tut-opcion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px 0;
+}
+
+.tut-botones {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.tut-vacio {
+    color: #555;
+}
+
+.tutorias .campo-invalido {
+    border-color: #d92d20;
+    background: #fff5f5;
+}
