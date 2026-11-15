@@ -11,6 +11,7 @@ usuarioNombre = usuarioNombre,
 content = @`
     <section class="dashboard">
         <h1>Salas disponibles</h1>
+        <p><a href="/reservas/mis-reservas">Mis reservas</a></p>
 
         <table>
             <thead>

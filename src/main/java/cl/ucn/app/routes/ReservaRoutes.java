@@ -15,5 +15,6 @@ public final class ReservaRoutes {
                 new ReservaController(new EspacioService(new EspacioRepository()));
 
         config.routes.get("/reservas", reservaController::listarSalas);
+        MisReservasRoutes.register(config);
     }
 }
