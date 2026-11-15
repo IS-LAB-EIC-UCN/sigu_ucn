@@ -20,6 +20,9 @@
     <logback.version>1.5.32</logback.version>
     <junit.version>5.13.4</junit.version>
     <mockito.version>5.18.0</mockito.version>
+
+    <!-- "mvn test" no ejecuta las pruebas @Tag("integration"); el perfil "integration" sí. -->
+    <surefire.excludedGroups>integration</surefire.excludedGroups>
   </properties>
 
   <dependencies>
@@ -133,7 +136,21 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.3</version>
+        <configuration>
+          <excludedGroups>${surefire.excludedGroups}</excludedGroups>
+        </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <!-- Pruebas de integración contra PostgreSQL real: mvn test -Pintegration -->
+    <profile>
+      <id>integration</id>
+      <properties>
+        <surefire.excludedGroups>ninguno</surefire.excludedGroups>
+        <groups>integration</groups>
+      </properties>
+    </profile>
+  </profiles>
 </project>

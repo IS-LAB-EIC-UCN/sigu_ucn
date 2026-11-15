@@ -3,6 +3,7 @@ package cl.ucn.app.main;
 import cl.ucn.app.routes.AuthRoutes;
 import cl.ucn.app.routes.HomeRoutes;
 import cl.ucn.app.routes.TutoriaAdminRoutes;
+import cl.ucn.app.routes.TutoriaRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import gg.jte.ContentType;
@@ -40,6 +41,7 @@ public class Main {
             AuthRoutes.register(config);
             HomeRoutes.register(config);
             TutoriaAdminRoutes.register(config);
+            TutoriaRoutes.register(config);
         });
 
         app.start(7000);

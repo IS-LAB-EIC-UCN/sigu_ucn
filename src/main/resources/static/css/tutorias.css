@@ -128,3 +128,35 @@
     border-color: #d92d20;
     background: #fff5f5;
 }
+
+.tut-error-campo {
+    display: block;
+    margin-top: 4px;
+    color: #b42318;
+    font-size: 0.85rem;
+}
+
+.tut-etiqueta-sin-cupos {
+    background: #fde8e8;
+    color: #b42318;
+}
+
+.tutorias select,
+.tutorias input[type="date"],
+.tutorias input[type="time"],
+.tutorias input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #c9d2df;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.tut-detalle dt {
+    font-weight: bold;
+    color: #1f3b73;
+}
+
+.tut-detalle dd {
+    margin: 0 0 12px 0;
+}

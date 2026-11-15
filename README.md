@@ -133,6 +133,21 @@ También puede ejecutarse directamente desde IntelliJ IDEA usando la clase `Main
 mvn test
 ```
 
+`mvn test` ejecuta solo las pruebas unitarias (no necesita base de datos).
+
+### Ejecutar pruebas de integración (módulo Tutorías, PostgreSQL real)
+
+Requieren la base levantada **desde cero** con los scripts de `db/init` (incluidos el seed `81_` y el índice `82_`):
+
+```bash
+docker compose down -v
+docker compose up -d
+mvn test -Pintegration
+```
+
+Solo se ejecutan las clases etiquetadas con `@Tag("integration")` (`src/test/java/cl/ucn/app/integration/`).
+Cada prueba crea su propia asignatura `INT-xxxx` y la elimina al terminar.
+
 ---
 
 ## 3. Orden correcto de ejecución
