@@ -2,9 +2,9 @@ package cl.ucn.app.controller;
 
 import cl.ucn.app.service.AgendaService;
 import cl.ucn.app.util.SessionUtil;
+import cl.ucn.app.util.VistaUtil;
 import io.javalin.http.Context;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class AgendaController {
@@ -16,10 +16,7 @@ public class AgendaController {
     }
 
     public void mostrar(Context ctx) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("title", "Agenda - SIGU-UCN");
-        model.put("usuarioNombre", SessionUtil.usuarioNombre(ctx));
-        model.put("esTutor", SessionUtil.esTutor(ctx));
+        Map<String, Object> model = VistaUtil.modeloBase(ctx, "Agenda - SIGU-UCN");
         boolean tienePerfilEstudiante = "ESTUDIANTE".equals(SessionUtil.usuarioRol(ctx))
                 || SessionUtil.esTutor(ctx);
         model.put("reservas", tienePerfilEstudiante

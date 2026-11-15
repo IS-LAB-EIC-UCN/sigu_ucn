@@ -9,6 +9,7 @@
 title = title,
 usuarioNombre = usuarioNombre,
 usuarioRol = usuarioRol,
+esTutor = esTutor,
 content = @`
     <link rel="stylesheet" href="/css/tutorias.css">
     <section class="tutorias">

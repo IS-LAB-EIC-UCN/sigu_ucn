@@ -4,11 +4,10 @@ import cl.ucn.app.dto.TutoriaFiltro;
 import cl.ucn.app.service.TutoriaBusquedaService;
 import cl.ucn.app.repository.AsignaturaRepository;
 import cl.ucn.app.repository.TutorRepository;
-import cl.ucn.app.util.SessionUtil;
+import cl.ucn.app.util.VistaUtil;
 import io.javalin.http.Context;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 
 public class TutoriaController {
@@ -31,9 +30,7 @@ public class TutoriaController {
                 parseLong(ctx.queryParam("asignaturaId")),
                 parseDate(ctx.queryParam("fecha"))
         );
-        Map<String, Object> model = new HashMap<>();
-        model.put("title", "Tutorías - SIGU-UCN");
-        model.put("usuarioNombre", SessionUtil.usuarioNombre(ctx));
+        Map<String, Object> model = VistaUtil.modeloBase(ctx, "Tutorías - SIGU-UCN");
         model.put("tutorias", busquedaService.buscar(filtro));
         model.put("filtro", filtro);
         model.put("asignaturas", asignaturaRepository.findAll());

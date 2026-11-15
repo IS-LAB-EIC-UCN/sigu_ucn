@@ -2,7 +2,6 @@ package cl.ucn.app.util;
 
 import io.javalin.http.Context;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public final class AuthMiddleware {
@@ -40,9 +39,7 @@ public final class AuthMiddleware {
     }
 
     private static void forbidden(Context ctx, String mensaje) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("title", "Acceso restringido - SIGU-UCN");
-        model.put("usuarioNombre", SessionUtil.usuarioNombre(ctx));
+        Map<String, Object> model = VistaUtil.modeloBase(ctx, "Acceso restringido - SIGU-UCN");
         model.put("mensaje", mensaje);
         ctx.status(403).render("tutorias/error.jte", model);
         ctx.skipRemainingHandlers();

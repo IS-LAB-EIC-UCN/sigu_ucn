@@ -1,6 +1,7 @@
 @param String title
 @param String usuarioNombre
 @param String usuarioRol = null
+@param boolean esTutor = false
 @param java.util.List<cl.ucn.app.dto.TutoriaListado> tutorias
 @param cl.ucn.app.dto.TutoriaFiltro filtro
 @param java.util.List<cl.ucn.app.model.Asignatura> asignaturas
@@ -10,10 +11,16 @@
 title = title,
 usuarioNombre = usuarioNombre,
 usuarioRol = usuarioRol,
+esTutor = esTutor,
 content = @`
     <link rel="stylesheet" href="/css/tutorias.css">
     <section class="tutorias">
-        <h1>Tutorías disponibles</h1>
+        <div class="tut-encabezado">
+            <h1>Tutorías disponibles</h1>
+            @if(esTutor)
+                <a class="tut-btn" href="/tutorias/publicar">Publicar tutoría</a>
+            @endif
+        </div>
         <form method="get" action="/tutorias" class="filter-form">
             <label for="asignaturaId">Asignatura</label>
             <select id="asignaturaId" name="asignaturaId">
@@ -59,6 +66,7 @@ content = @`
                         <p>Fin: ${item.tutoria().getFin().toString()}</p>
                         <p>Modalidad: ${item.tutoria().getModalidad()}</p>
                         <p>Cupos disponibles: ${item.cuposDisponibles()}</p>
+                        <a class="tut-btn" href="/tutorias/${item.tutoria().getId()}">Ver detalle</a>
                     </article>
                 @endfor
             </div>

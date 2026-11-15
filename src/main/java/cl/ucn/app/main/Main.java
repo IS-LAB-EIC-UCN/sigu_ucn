@@ -44,6 +44,7 @@ public class Main {
             TutoriaRoutes.register(config);
         });
 
-        app.start(7000);
+        // PORT permite cambiar el puerto (en macOS el 7000 lo ocupa el Receptor AirPlay).
+        app.start(Integer.parseInt(System.getenv().getOrDefault("PORT", "7000")));
     }
 }
