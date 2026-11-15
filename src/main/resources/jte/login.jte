@@ -1,4 +1,5 @@
 @param String error
+@param String mensaje = null
 
 <!DOCTYPE html>
 <html lang="es">
@@ -18,6 +19,9 @@
             <div class="error-message">
                 ${error}
             </div>
+        @endif
+        @if(mensaje != null)
+            <div class="success-message">${mensaje}</div>
         @endif
 
         <form method="post" action="/login" class="login-form">
@@ -43,6 +47,7 @@
 
             <button type="submit" class="btn-login">Ingresar</button>
         </form>
+        <p><a href="/registro">Crear cuenta de estudiante</a></p>
     </div>
 </div>
 </body>

@@ -44,4 +44,26 @@ public class EstudianteRepositoryImpl implements EstudianteRepository {
             em.close();
         }
     }
+
+    @Override
+    public Optional<Estudiante> findByUsuarioId(EntityManager em, Long usuarioId) {
+        return em.createQuery(
+                        "SELECT e FROM Estudiante e WHERE e.usuario.id = :usuarioId",
+                        Estudiante.class)
+                .setParameter("usuarioId", usuarioId)
+                .getResultStream()
+                .findFirst();
+    }
+
+    @Override
+    public boolean cursaAsignatura(EntityManager em, Long estudianteId, Long asignaturaId) {
+        Long cantidad = em.createQuery(
+                        "SELECT COUNT(a) FROM Estudiante e JOIN e.asignaturasCursadas a " +
+                                "WHERE e.id = :estudianteId AND a.id = :asignaturaId",
+                        Long.class)
+                .setParameter("estudianteId", estudianteId)
+                .setParameter("asignaturaId", asignaturaId)
+                .getSingleResult();
+        return cantidad > 0;
+    }
 }

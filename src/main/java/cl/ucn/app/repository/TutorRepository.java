@@ -1,6 +1,7 @@
 package cl.ucn.app.repository;
 
 import cl.ucn.app.model.Tutor;
+import jakarta.persistence.EntityManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,4 +15,10 @@ public interface TutorRepository {
     boolean existsByEstudianteId(Long estudianteId);
 
     void save(Tutor tutor);
+
+    // ---- Dentro de una transacción ----
+
+    Optional<Tutor> findByUsuarioId(EntityManager em, Long usuarioId);
+
+    void bloquear(EntityManager em, Tutor tutor);
 }
