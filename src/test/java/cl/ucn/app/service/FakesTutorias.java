@@ -118,6 +118,11 @@ final class FakesTutorias {
         }
 
         @Override
+        public List<Tutoria> buscarDisponibles(TutoriaFiltro filtro, LocalDateTime ahora) {
+            return buscarDisponibles(filtro);
+        }
+
+        @Override
         public long countByAsignatura(Long asignaturaId) {
             throw new UnsupportedOperationException();
         }
@@ -237,6 +242,11 @@ final class FakesTutorias {
         @Override
         public Optional<InscripcionTutoria> findById(Long id) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long countActivasByTutoriaId(Long tutoriaId) {
+            return activas;
         }
 
         @Override
