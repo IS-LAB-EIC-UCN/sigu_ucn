@@ -18,7 +18,8 @@ public final class TallerRoutes {
 
         // Las rutas fijas van antes que /talleres/{id}
         config.routes.get("/talleres", tallerController::listar);
-        // TODO [Tarea 1]: GET /talleres/nuevo y POST /talleres
+        config.routes.get("/talleres/nuevo", tallerController::formularioNuevo);
+        config.routes.post("/talleres", tallerController::registrar);
         config.routes.get("/talleres/{id}", tallerController::detalle);
         config.routes.post("/talleres/{id}/inscribir", inscripcionController::inscribir);
 

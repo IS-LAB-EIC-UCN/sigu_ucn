@@ -3,12 +3,14 @@ package cl.ucn.app.service.talleres;
 import cl.ucn.app.dto.talleres.NuevoTaller;
 import cl.ucn.app.dto.talleres.TallerResumen;
 import cl.ucn.app.exception.RecursoNoEncontradoException;
+import cl.ucn.app.exception.ReglaNegocioException;
 import cl.ucn.app.model.talleres.Taller;
 import cl.ucn.app.repository.talleres.TallerRepository;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 /** Casos de uso del catálogo de talleres: registrar, consultar y filtrar. */
 public class TallerService {
@@ -23,17 +25,71 @@ public class TallerService {
 
     /** RF2 y RF3: registrar un taller con su cupo máximo. */
     public Taller registrar(NuevoTaller datos) {
-        // TODO [Tarea 1 - RF2 y RF3]: implementar.
-        //  1. Validar y lanzar ReglaNegocioException con un mensaje claro si:
-        //     - nombre vacío o de más de 120 caracteres;
-        //     - categoría vacía;
-        //     - fecha u horas nulas;
-        //     - fecha anterior a LocalDate.now(clock)  (usar el clock, así se puede probar);
-        //     - horaInicio no es anterior a horaFin;
-        //     - cupoMaximo nulo o <= 0.
-        //  2. Crear new Taller(...) (categoría en mayúsculas, textos vacíos como null).
-        //  3. return tallerRepository.save(taller);
-        throw new UnsupportedOperationException("TODO Tarea 1: TallerService.registrar()");
+        if (datos == null) {
+            throw new ReglaNegocioException("Los datos del taller son obligatorios.");
+        }
+        String nombre = datos.nombre() == null ? "" : datos.nombre().trim();
+        if (nombre.isEmpty()) {
+            throw new ReglaNegocioException("El nombre del taller es obligatorio.");
+        }
+        if (nombre.length() > 120) {
+            throw new ReglaNegocioException("El nombre del taller no puede superar los 120 caracteres.");
+        }
+
+        String categoria = datos.categoria() == null ? "" : datos.categoria().trim();
+        if (categoria.isEmpty()) {
+            throw new ReglaNegocioException("La categoría del taller es obligatoria.");
+        }
+        if (categoria.length() > 50) {
+            throw new ReglaNegocioException("La categoría no puede superar los 50 caracteres.");
+        }
+
+        if (datos.fecha() == null) {
+            throw new ReglaNegocioException("La fecha del taller es obligatoria.");
+        }
+        if (datos.fecha().isBefore(LocalDate.now(clock))) {
+            throw new ReglaNegocioException("La fecha del taller no puede ser anterior a hoy.");
+        }
+
+        if (datos.horaInicio() == null || datos.horaFin() == null) {
+            throw new ReglaNegocioException("Las horas de inicio y término son obligatorias.");
+        }
+        if (!datos.horaInicio().isBefore(datos.horaFin())) {
+            throw new ReglaNegocioException("La hora de inicio debe ser anterior a la hora de término.");
+        }
+
+        if (datos.cupoMaximo() == null || datos.cupoMaximo() <= 0) {
+            throw new ReglaNegocioException("El cupo máximo debe ser un número entero mayor a cero.");
+        }
+
+        String descripcion = limpiarOpcional(datos.descripcion(), 500, "La descripción no puede superar los 500 caracteres.");
+        String lugar = limpiarOpcional(datos.lugar(), 100, "El lugar no puede superar los 100 caracteres.");
+
+        Taller taller = new Taller(
+                nombre,
+                descripcion,
+                categoria.toUpperCase(Locale.ROOT),
+                datos.fecha(),
+                datos.horaInicio(),
+                datos.horaFin(),
+                lugar,
+                datos.cupoMaximo()
+        );
+        return tallerRepository.save(taller);
+    }
+
+    private String limpiarOpcional(String valor, int maxLen, String mensajeError) {
+        if (valor == null) {
+            return null;
+        }
+        String limpio = valor.trim();
+        if (limpio.isEmpty()) {
+            return null;
+        }
+        if (limpio.length() > maxLen) {
+            throw new ReglaNegocioException(mensajeError);
+        }
+        return limpio;
     }
 
     /** RF8 y RF9: talleres disponibles (activos y no pasados), con filtros opcionales. */

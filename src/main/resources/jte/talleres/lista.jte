@@ -21,7 +21,9 @@ content = @`
             <h1>Talleres disponibles</h1>
             <div class="tl-actions">
                 <%-- TODO [Tarea 3]: botón "Mis inscripciones" -> /mis-inscripciones --%>
-                <%-- TODO [Tarea 1]: si esAdmin, botón "+ Nuevo taller" -> /talleres/nuevo --%>
+                @if(esAdmin)
+                    <a class="tl-btn" href="/talleres/nuevo">+ Nuevo taller</a>
+                @endif
             </div>
         </div>
 
