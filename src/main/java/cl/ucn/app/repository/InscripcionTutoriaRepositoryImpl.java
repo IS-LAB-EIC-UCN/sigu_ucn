@@ -7,6 +7,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.Optional;
+import java.util.List;
 
 public class InscripcionTutoriaRepositoryImpl implements InscripcionTutoriaRepository {
 
@@ -25,6 +26,38 @@ public class InscripcionTutoriaRepositoryImpl implements InscripcionTutoriaRepos
             return Optional.empty();
         } finally {
             em.close();
+        }
+    }
+
+    @Override
+    public long countActivasByTutoriaId(Long tutoriaId) {
+            EntityManager em = JPAUtil.getEntityManager();
+            try {
+                TypedQuery<Long> query = em.createQuery(
+                        "SELECT COUNT(i) FROM InscripcionTutoria i " +
+                                "WHERE i.tutoria.id = :tutoriaId AND i.estado = cl.ucn.app.model.EstadoInscripcion.RESERVADA",
+                        Long.class);
+                query.setParameter("tutoriaId", tutoriaId);
+                return query.getSingleResult();
+            } finally {
+                em.close();
+            }
+        }
+
+    @Override
+    public List<InscripcionTutoria> findByEstudianteId(Long estudianteId) {
+            EntityManager em = JPAUtil.getEntityManager();
+            try {
+                TypedQuery<InscripcionTutoria> query = em.createQuery(
+                        "SELECT i FROM InscripcionTutoria i " +
+                                "JOIN FETCH i.tutoria t JOIN FETCH t.asignatura " +
+                                "JOIN FETCH t.tutor tu JOIN FETCH tu.estudiante " +
+                                "WHERE i.estudiante.id = :estudianteId ORDER BY t.inicio",
+                        InscripcionTutoria.class);
+                query.setParameter("estudianteId", estudianteId);
+                return query.getResultList();
+            } finally {
+                em.close();
         }
     }
 
