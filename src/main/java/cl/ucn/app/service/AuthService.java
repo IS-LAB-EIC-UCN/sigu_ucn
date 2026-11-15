@@ -1,14 +1,21 @@
 package cl.ucn.app.service;
 
 import cl.ucn.app.model.Usuario;
+import cl.ucn.app.repository.TutorRepository;
 import cl.ucn.app.repository.UsuarioRepository;
 
 public class AuthService {
 
     private final UsuarioRepository usuarioRepository;
+    private final TutorRepository tutorRepository;
 
     public AuthService() {
-        this.usuarioRepository = new UsuarioRepository();
+        this(new UsuarioRepository(), new cl.ucn.app.repository.TutorRepositoryImpl());
+    }
+
+    public AuthService(UsuarioRepository usuarioRepository, TutorRepository tutorRepository) {
+        this.usuarioRepository = usuarioRepository;
+        this.tutorRepository = tutorRepository;
     }
 
     public Usuario autenticar(String correo, String password) {
@@ -29,5 +36,9 @@ public class AuthService {
         }
 
         return usuario;
+    }
+
+    public TutorRepository tutorRepository() {
+        return tutorRepository;
     }
 }
