@@ -1,5 +1,11 @@
 package cl.ucn.app.service;
 
+import cl.ucn.app.model.Espacio;
+import cl.ucn.app.model.Usuario;
+import cl.ucn.app.repository.EspacioRepository;
+import cl.ucn.app.repository.UsuarioRepository;
+import java.time.LocalTime;
+
 import cl.ucn.app.model.Reserva;
 import cl.ucn.app.repository.ReservaRepository;
 
@@ -16,6 +22,9 @@ public class ReservaService {
     private static final String CANCELADA = "CANCELADA";
     private final ReservaRepository reservaRepository;
     private final Clock reloj;
+    private final UsuarioRepository usuarioRepository;
+    private final EspacioRepository espacioRepository;
+    
     public ReservaService(ReservaRepository reservaRepository, Clock reloj) {
         this.reservaRepository = Objects.requireNonNull(reservaRepository);
         this.reloj = Objects.requireNonNull(reloj);
