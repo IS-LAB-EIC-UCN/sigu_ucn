@@ -10,5 +10,8 @@ public class SoporteRoutes {
         SoporteController controller = new SoporteController();
         config.routes.get("/soporte", controller::mostrarInicio);
         config.routes.post("/api/soporte/tickets", controller::crearTicket);
+        config.routes.get("/api/soporte/tecnicos", controller::listarTecnicos);
+        config.routes.get("/api/soporte/tickets/pendientes", controller::listarPendientes);
+        config.routes.put("/api/soporte/tickets/{id}/asignacion", controller::asignarTecnico);
     }
 }
