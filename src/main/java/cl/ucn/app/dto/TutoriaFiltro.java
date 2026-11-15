@@ -12,6 +12,10 @@ public record TutoriaFiltro(Long asignaturaId, Long tutorId, LocalDate fecha) {
         return new TutoriaFiltro(leerLong(asignaturaId), leerLong(tutorId), leerFecha(fecha));
     }
 
+    public String fechaTexto() {
+        return fecha == null ? "" : fecha.toString();
+    }
+
     private static Long leerLong(String valor) {
         try {
             return valor == null || valor.isBlank() ? null : Long.valueOf(valor.trim());

@@ -4,9 +4,14 @@ import cl.ucn.app.dto.TutoriaDetalle;
 import cl.ucn.app.dto.TutoriaFiltro;
 import cl.ucn.app.dto.TutoriaForm;
 import cl.ucn.app.model.Tutoria;
+import cl.ucn.app.repository.AsignaturaRepository;
+import cl.ucn.app.repository.AsignaturaRepositoryImpl;
+import cl.ucn.app.repository.TutorRepository;
+import cl.ucn.app.repository.TutorRepositoryImpl;
 import cl.ucn.app.service.ReservaTutoriaService;
 import cl.ucn.app.service.TutoriaService;
 import cl.ucn.app.service.TutoriaValidacionException;
+import cl.ucn.app.util.VistaUtil;
 import io.javalin.http.Context;
 
 import java.util.HashMap;
@@ -20,10 +25,19 @@ public class TutoriaController {
 
     private final TutoriaService tutoriaService;
     private final ReservaTutoriaService reservaService;
+    private final AsignaturaRepository asignaturaRepository;
+    private final TutorRepository tutorRepository;
 
     public TutoriaController(TutoriaService tutoriaService, ReservaTutoriaService reservaService) {
+        this(tutoriaService, reservaService, new AsignaturaRepositoryImpl(), new TutorRepositoryImpl());
+    }
+
+    public TutoriaController(TutoriaService tutoriaService, ReservaTutoriaService reservaService,
+                             AsignaturaRepository asignaturaRepository, TutorRepository tutorRepository) {
         this.tutoriaService = tutoriaService;
         this.reservaService = reservaService;
+        this.asignaturaRepository = asignaturaRepository;
+        this.tutorRepository = tutorRepository;
     }
 
     public void verificarSesion(Context ctx) {
@@ -33,8 +47,6 @@ public class TutoriaController {
         }
     }
 
-    // ------------------------------------------------------------ listado y detalle
-
     public void listar(Context ctx) {
         Long usuarioId = ctx.sessionAttribute("usuarioId");
         TutoriaFiltro filtro = TutoriaFiltro.desde(
@@ -43,6 +55,8 @@ public class TutoriaController {
         Map<String, Object> model = crearModelo(ctx, "Tutorías disponibles - SIGU-UCN");
         model.put("tutorias", tutoriaService.listarDisponibles(filtro));
         model.put("filtro", filtro);
+        model.put("asignaturas", asignaturaRepository.findAll());
+        model.put("tutores", tutorRepository.findAll());
         model.put("esTutor", tutoriaService.esTutor(usuarioId));
         model.put("esAdmin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")));
         model.put("mensaje", ctx.consumeSessionAttribute(MENSAJE));
@@ -67,8 +81,6 @@ public class TutoriaController {
             mostrarErrorGeneral(ctx, 404, e.getMessage());
         }
     }
-
-    // ------------------------------------------------------------ publicar
 
     public void mostrarPublicar(Context ctx) {
         Long usuarioId = ctx.sessionAttribute("usuarioId");
@@ -99,7 +111,6 @@ public class TutoriaController {
             ctx.redirect(RUTA_LISTADO);
         } catch (TutoriaValidacionException e) {
             if (e.getErrores().isEmpty()) {
-                // Error sin campo asociado (por ejemplo, el usuario no es tutor).
                 mostrarErrorGeneral(ctx, 403, e.getMessage());
                 return;
             }
@@ -111,8 +122,6 @@ public class TutoriaController {
             }
         }
     }
-
-    // ------------------------------------------------------------ reservar
 
     public void reservar(Context ctx) {
         Long usuarioId = ctx.sessionAttribute("usuarioId");
@@ -126,8 +135,6 @@ public class TutoriaController {
         }
         ctx.redirect(id == null ? RUTA_LISTADO : RUTA_LISTADO + "/" + id);
     }
-
-    // ------------------------------------------------------------ auxiliares
 
     private void mostrarFormularioPublicar(Context ctx, Long usuarioId, TutoriaForm form,
                                            Map<String, String> errores) {
@@ -154,8 +161,7 @@ public class TutoriaController {
     }
 
     private Map<String, Object> crearModelo(Context ctx, String titulo) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("title", titulo);
+        Map<String, Object> model = new HashMap<>(VistaUtil.modeloBase(ctx, titulo));
         model.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
         return model;
     }

@@ -14,13 +14,15 @@ public interface TutoriaRepository {
 
     Optional<Tutoria> findById(Long id);
 
+    List<Tutoria> buscarDisponibles(TutoriaFiltro filtro, LocalDateTime ahora);
+
+    List<Tutoria> findByTutorId(Long tutorId);
+
     long countByAsignatura(Long asignaturaId);
 
     long countByAsignaturaAndEstado(Long asignaturaId, EstadoTutoria estado);
 
     void save(Tutoria tutoria);
-
-    // ---- Operaciones para usar dentro de una transacción (reciben el EntityManager) ----
 
     Optional<Tutoria> findByIdForUpdate(EntityManager em, Long id);
 
@@ -32,11 +34,7 @@ public interface TutoriaRepository {
 
     long contarInscripcionesActivas(EntityManager em, Long tutoriaId);
 
-    // ---- Consultas de lectura ----
-
     List<Tutoria> buscarDisponibles(TutoriaFiltro filtro);
-
-    List<Tutoria> findByTutorId(Long tutorId);
 
     List<Tutoria> findByEstudianteId(Long estudianteId);
 

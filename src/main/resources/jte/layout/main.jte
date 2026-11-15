@@ -2,6 +2,8 @@
 
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
+@param boolean esTutor = false
 @param Content content
 
 <!DOCTYPE html>
@@ -38,7 +40,14 @@
                 <li><a href="#">Grupo 5 - Inventario</a></li>
                 <li><a href="#">Grupo 6 - Eventos</a></li>
                 <li><a href="#">Grupo 7 - Cafetería</a></li>
-                <li><a href="/tutorias">Grupo 8 - Tutorías</a></li>
+                <li><a href="/tutorias">Tutorías disponibles</a></li>
+                <li><a href="/tutorias/agenda">Mi agenda</a></li>
+                @if(esTutor)
+                    <li><a href="/tutorias/publicar">Publicar tutoría</a></li>
+                @endif
+                @if("ADMIN".equals(usuarioRol))
+                    <li><a href="/tutorias/admin/asignaturas">Administrar tutorías</a></li>
+                @endif
                 <li><a href="#">Grupo 9 - Estacionamientos</a></li>
             </ul>
         </aside>

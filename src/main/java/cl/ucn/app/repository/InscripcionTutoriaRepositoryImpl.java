@@ -32,6 +32,21 @@ public class InscripcionTutoriaRepositoryImpl implements InscripcionTutoriaRepos
     }
 
     @Override
+    public long countActivasByTutoriaId(Long tutoriaId) {
+            EntityManager em = JPAUtil.getEntityManager();
+            try {
+                TypedQuery<Long> query = em.createQuery(
+                        "SELECT COUNT(i) FROM InscripcionTutoria i " +
+                                "WHERE i.tutoria.id = :tutoriaId AND i.estado = cl.ucn.app.model.EstadoInscripcion.RESERVADA",
+                        Long.class);
+                query.setParameter("tutoriaId", tutoriaId);
+                return query.getSingleResult();
+            } finally {
+                em.close();
+            }
+        }
+
+    @Override
     public void save(InscripcionTutoria inscripcion) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

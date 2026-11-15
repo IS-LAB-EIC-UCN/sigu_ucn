@@ -18,6 +18,7 @@ public class HomeController {
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Inicio - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("usuarioRol", ctx.sessionAttribute("usuarioRol"));
 
         ctx.render("home.jte", model);
     }

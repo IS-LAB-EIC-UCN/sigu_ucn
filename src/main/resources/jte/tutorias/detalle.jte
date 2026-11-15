@@ -2,6 +2,8 @@
 
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
+@param boolean esTutor = false
 @param TutoriaDetalle tutoria
 @param boolean yaReservada = false
 @param String mensaje = null
@@ -10,6 +12,8 @@
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
+usuarioRol = usuarioRol,
+esTutor = esTutor,
 content = @`
     <link rel="stylesheet" href="/css/tutorias.css">
     <section class="tutorias">

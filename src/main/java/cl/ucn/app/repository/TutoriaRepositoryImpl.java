@@ -11,6 +11,7 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,47 @@ public class TutoriaRepositoryImpl implements TutoriaRepository {
             em.close();
         }
     }
+
+    @Override
+    public List<Tutoria> buscarDisponibles(TutoriaFiltro filtro, LocalDateTime ahora) {
+            EntityManager em = JPAUtil.getEntityManager();
+            try {
+                StringBuilder jpql = new StringBuilder(
+                        "SELECT t FROM Tutoria t " +
+                                "JOIN FETCH t.asignatura a " +
+                                "JOIN FETCH t.tutor tu " +
+                                "JOIN FETCH tu.estudiante e " +
+                                "WHERE t.estado = :estado AND t.inicio > :ahora");
+                if (filtro.tutorId() != null) {
+                    jpql.append(" AND tu.id = :tutorId");
+                }
+                if (filtro.asignaturaId() != null) {
+                    jpql.append(" AND a.id = :asignaturaId");
+                }
+                if (filtro.fecha() != null) {
+                    jpql.append(" AND t.inicio >= :desde AND t.inicio < :hasta");
+                }
+                jpql.append(" ORDER BY t.inicio");
+
+                TypedQuery<Tutoria> query = em.createQuery(jpql.toString(), Tutoria.class);
+                query.setParameter("estado", EstadoTutoria.PUBLICADA);
+                query.setParameter("ahora", ahora);
+                if (filtro.tutorId() != null) {
+                    query.setParameter("tutorId", filtro.tutorId());
+                }
+                if (filtro.asignaturaId() != null) {
+                    query.setParameter("asignaturaId", filtro.asignaturaId());
+                }
+                if (filtro.fecha() != null) {
+                    LocalDateTime desde = filtro.fecha().atStartOfDay();
+                    query.setParameter("desde", desde);
+                    query.setParameter("hasta", desde.plusDays(1));
+                }
+                return query.getResultList();
+            } finally {
+                em.close();
+            }
+        }
 
     @Override
     public long countByAsignatura(Long asignaturaId) {

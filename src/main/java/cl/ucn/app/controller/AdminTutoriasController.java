@@ -179,6 +179,7 @@ public class AdminTutoriasController {
         Map<String, Object> model = new HashMap<>();
         model.put("title", titulo);
         model.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
+        model.put("usuarioRol", ctx.sessionAttribute("usuarioRol"));
         return model;
     }
 }

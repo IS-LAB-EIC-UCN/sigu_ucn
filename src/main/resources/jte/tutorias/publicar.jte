@@ -5,6 +5,8 @@
 
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
+@param boolean esTutor = false
 @param TutoriaForm form
 @param List<Asignatura> asignaturas
 @param Map<String, String> errores
@@ -12,6 +14,8 @@
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
+usuarioRol = usuarioRol,
+esTutor = esTutor,
 content = @`
     <link rel="stylesheet" href="/css/tutorias.css">
     <section class="tutorias">

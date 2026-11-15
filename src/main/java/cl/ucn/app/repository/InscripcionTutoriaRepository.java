@@ -12,9 +12,11 @@ public interface InscripcionTutoriaRepository {
 
     Optional<InscripcionTutoria> findById(Long id);
 
-    void save(InscripcionTutoria inscripcion);
+    long countActivasByTutoriaId(Long tutoriaId);
 
-    // ---- Dentro de una transacción ----
+    List<InscripcionTutoria> findByEstudianteId(Long estudianteId);
+
+    void save(InscripcionTutoria inscripcion);
 
     void save(EntityManager em, InscripcionTutoria inscripcion);
 
@@ -22,10 +24,6 @@ public interface InscripcionTutoriaRepository {
                                                       EstadoInscripcion estado);
 
     long contarActivasPorTutoria(EntityManager em, Long tutoriaId);
-
-    // ---- Lectura ----
-
-    List<InscripcionTutoria> findByEstudianteId(Long estudianteId);
 
     default boolean existsByTutoriaIdAndEstudianteIdAndEstado(Long tutoriaId, Long estudianteId,
                                                               EstadoInscripcion estado) {
