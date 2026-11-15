@@ -1,17 +1,24 @@
 package cl.ucn.app.service.talleres.reglas;
 
 import cl.ucn.app.exception.ReglaNegocioException;
+import cl.ucn.app.model.talleres.EstadoInscripcion;
+import cl.ucn.app.model.talleres.Inscripcion;
+
+import java.util.Objects;
 
 /** Regla de negocio 2: un participante no puede inscribirse dos veces al mismo taller. */
 public class ReglaSinDuplicado implements ReglaInscripcion {
 
     @Override
     public void validar(SolicitudInscripcion solicitud) {
-        // TODO [Tarea 2 - RN2]: implementar.
-        //  - Recorrer solicitud.inscripcionesVigentes() (son las INSCRITO o EN_ESPERA del participante).
-        //  - Si alguna es del mismo taller (comparar getTaller().getId() con solicitud.taller().getId()),
-        //    lanzar new ReglaNegocioException("Ya estás inscrito en este taller.")
-        //    (si su estado es EN_ESPERA, el mensaje puede decir "Ya estás en la lista de espera de este taller.").
-        //  - Esta regla ya está registrada en TalleresModule: solo falta el cuerpo.
+        Long tallerObjetivoId = solicitud.taller().getId();
+        for (Inscripcion existente : solicitud.inscripcionesVigentes()) {
+            if (Objects.equals(existente.getTaller().getId(), tallerObjetivoId)) {
+                if (existente.getEstado() == EstadoInscripcion.EN_ESPERA) {
+                    throw new ReglaNegocioException("Ya estás en la lista de espera de este taller.");
+                }
+                throw new ReglaNegocioException("Ya estás inscrito en este taller.");
+            }
+        }
     }
 }

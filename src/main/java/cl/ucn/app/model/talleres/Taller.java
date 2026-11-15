@@ -63,11 +63,16 @@ public class Taller {
      * Que uno termine exactamente cuando empieza el otro NO es solapamiento.
      */
     public boolean seSolapaCon(Taller otro) {
-        // TODO [Tarea 2 - RF10]: implementar.
-        //  - Si "otro" es null o es otro día -> false.
-        //  - Si es el mismo día, se solapan cuando: inicioA < finB  y  inicioB < finA
-        //    (usar LocalTime.isBefore). Ej: 10-12 y 11-13 se solapan; 10-12 y 12-13 NO.
-        return false;
+        if (otro == null || this.fecha == null || otro.fecha == null) {
+            return false;
+        }
+        if (!this.fecha.equals(otro.fecha)) {
+            return false;
+        }
+        if (this.horaInicio == null || this.horaFin == null || otro.horaInicio == null || otro.horaFin == null) {
+            return false;
+        }
+        return this.horaInicio.isBefore(otro.horaFin) && otro.horaInicio.isBefore(this.horaFin);
     }
 
     public boolean estaActivo() {
