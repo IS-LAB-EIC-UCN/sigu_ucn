@@ -3,6 +3,7 @@
 @param String usuarioNombre
 @param String csrfToken
 @param boolean esAdmin
+@param boolean esTecnico
 
 @template.layout.main(
     title = title,
@@ -84,6 +85,31 @@
                     </button>
 
                     <p id="mensajeAsignacion" role="status" aria-live="polite"></p>
+                </div>
+            @endif
+
+            @if(esTecnico)
+                <div class="info-card" style="margin-top:24px;">
+                    <h2>Iniciar resolución (HU03)</h2>
+                    <p>
+                        Seleccione un ticket asignado a usted para indicar que está trabajando en él.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="ticketResolucion">Ticket asignado</label>
+                        <select id="ticketResolucion" style="width:100%;padding:10px;">
+                            <option value="">Cargando tickets...</option>
+                        </select>
+                    </div>
+
+                    <button id="btnIniciarResolucion"
+                            type="button"
+                            class="primary-btn"
+                            style="background:#1f3b73;color:white;">
+                        Iniciar resolución
+                    </button>
+
+                    <p id="mensajeResolucion" role="status" aria-live="polite"></p>
                 </div>
             @endif
 

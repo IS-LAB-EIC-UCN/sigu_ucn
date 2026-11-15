@@ -54,6 +54,51 @@ public class TicketRepository {
                 throw new NoSuchElementException("El ticket no existe.");
             }
 
+            public List<Ticket> listarAsignados(Long tecnicoId) {
+                EntityManager em = JPAUtil.getEntityManager();
+
+                try {
+                    return em.createQuery(
+                                    "SELECT t FROM Ticket t " +
+                                            "WHERE t.tecnicoAsignado.id = :tecnicoId " +
+                                            "AND t.estado = :estado " +
+                                            "ORDER BY t.fechaCreacion ASC", Ticket.class)
+                            .setParameter("tecnicoId", tecnicoId)
+                            .setParameter("estado", EstadoTicket.ASIGNADO)
+                            .getResultList();
+                } finally {
+                    em.close();
+                }
+            }
+
+            public Ticket iniciarResolucion(Long ticketId, Long tecnicoId) {
+                EntityManager em = JPAUtil.getEntityManager();
+
+                try {
+                    em.getTransaction().begin();
+                    Ticket ticket = em.find(Ticket.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
+
+                    if (ticket == null) {
+                        throw new NoSuchElementException("El ticket no existe.");
+                    }
+
+                    Usuario tecnico = em.find(Usuario.class, tecnicoId);
+
+                    if (tecnico == null) {
+                        throw new NoSuchElementException("El técnico no existe.");
+                    }
+
+                    ticket.iniciarResolucion(tecnico);
+                    em.getTransaction().commit();
+                    return ticket;
+                } catch (RuntimeException e) {
+                    revertir(em);
+                    throw e;
+                } finally {
+                    em.close();
+                }
+            }
+
             Usuario tecnico = em.find(Usuario.class, tecnicoId);
 
             if (tecnico == null) {
