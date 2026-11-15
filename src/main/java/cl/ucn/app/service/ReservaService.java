@@ -11,9 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ReservaService {
-    private static final String PENDIENTE = "PENDIENTE";
-    private static final String APROBADA = "APROBADA";
-    private static final String CANCELADA = "CANCELADA";
     private final ReservaRepository reservaRepository;
     private final Clock reloj;
     public ReservaService(ReservaRepository reservaRepository, Clock reloj) {
@@ -38,12 +35,12 @@ public class ReservaService {
         motivoNoCancelable(reserva).ifPresent(motivo -> {
             throw new ReservaException(motivo);
         });
-        reservaRepository.actualizarEstado(reservaId, CANCELADA);
+        reserva.cancelar(LocalDateTime.now(reloj));
+        reservaRepository.actualizar(reserva);
     }
     private Optional<String> motivoNoCancelable(Reserva reserva) {
-        String estado = reserva.getEstado();
-        if (!PENDIENTE.equals(estado) && !APROBADA.equals(estado)) {
-            return Optional.of("Solo se pueden cancelar reservas pendientes o aprobadas; " + "esta reserva está " + estado + ".");
+        if (!reserva.estaActiva()) {
+            return Optional.of("Solo se pueden cancelar reservas pendientes o aprobadas; " + "esta reserva está " + reserva.getEstado() + ".");
         }
         LocalDateTime inicio = LocalDateTime.of(reserva.getFechaReserva(), reserva.getHoraInicio());
         if (!inicio.isAfter(LocalDateTime.now(reloj))) {
