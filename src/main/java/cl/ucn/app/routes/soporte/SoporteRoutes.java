@@ -13,5 +13,7 @@ public class SoporteRoutes {
         config.routes.get("/api/soporte/tecnicos", controller::listarTecnicos);
         config.routes.get("/api/soporte/tickets/pendientes", controller::listarPendientes);
         config.routes.put("/api/soporte/tickets/{id}/asignacion", controller::asignarTecnico);
+        config.routes.get("/api/soporte/tickets/asignados", controller::listarAsignados);
+        config.routes.put("/api/soporte/tickets/{id}/resolucion", controller::iniciarResolucion);
     }
 }

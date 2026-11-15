@@ -60,6 +60,10 @@ public class TicketService {
         return usuarioId != null && permisosRepository.esAdminsitrador(usuarioId);
     }
 
+    public boolean esTecnico(Long usuarioId) {
+        return usuarioId != null && permisosRepository.esTecnico(usuarioId);
+    }
+
     public List<TecnicoDisponible> listarTecnicos(Long administradorId) {
         exigirAdministrador(administradorId);
         return permisosRepository.listarTecnicoActivos();
@@ -82,9 +86,26 @@ public class TicketService {
         return ticketRepository.asignarTecnico(ticketId, tecnicoId);
     }
 
+    public List<Ticket> listarAsignados(Long tecnicoId) {
+        exigirTecnico(tecnicoId);
+        return ticketRepository.listarAsignados(tecnicoId);
+    }
+
+    public Ticket iniciarResolucion(Long ticketId, Long tecnicoId) {
+        exigirTecnico(tecnicoId);
+        validarId(ticketId, "Ticket");
+        return ticketRepository.iniciarResolucion(ticketId, tecnicoId);
+    }
+
     private void exigirAdministrador(Long usuarioId) {
         if (!esAdministrador(usuarioId)) {
             throw new SecurityException("Solo un administrador puede asignar tickets.");
+        }
+    }
+
+    private void exigirTecnico(Long usuarioId) {
+        if (usuarioId == null || !permisosRepository.esTecnico(usuarioId)) {
+            throw new SecurityException("Solo un técnico puede modificar el estado del ticket.");
         }
     }
 

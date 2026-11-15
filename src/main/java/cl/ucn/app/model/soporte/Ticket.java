@@ -59,6 +59,20 @@ public class Ticket {
         this.estado = EstadoTicket.ASIGNADO;
     }
 
+    public void iniciarResolucion(Usuario tecnico) {
+        Objects.requireNonNull(tecnico, "El técnico es obligatorio.");
+
+        if (tecnicoAsignado == null || !tecnicoAsignado.getId().equals(tecnico.getId())) {
+            throw new SecurityException("Solo el técnico asignado puede iniciar la resolución.");
+        }
+
+        if (estado != EstadoTicket.ASIGNADO) {
+            throw new IllegalStateException("El ticket no está asignado o ya inició su resolución.");
+        }
+
+        this.estado = EstadoTicket.EN_RESOLUCION;
+    }
+
     public Long getId() {return id;}
     public String getTitulo() {return titulo;}
     public String getDescripcion() {return descripcion;}

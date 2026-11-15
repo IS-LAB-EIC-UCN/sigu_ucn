@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnAsignar = document.getElementById("btnAsignarTicket");
     const mensajeAsignacion =
         document.getElementById("mensajeAsignacion");
+    const ticketsResolucion = document.getElementById("ticketResolucion");
+    const btnIniciarResolucion =
+        document.getElementById("btnIniciarResolucion");
+    const mensajeResolucion = document.getElementById("mensajeResolucion");
 
     const csrf = formulario ?.querySelector('[name="csrfToken"]')?.value;
 
@@ -64,6 +68,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function cargarTicketsAsignados() {
+        if (!ticketsResolucion) return;
+
+        try {
+            const resultado = await peticion("/api/soporte/tickets/asignados");
+            completarSelector(
+                ticketsResolucion,
+                resultado.datos,
+                "Sin tickets asignados",
+                ticket => `#${ticket.id} — ${ticket.titulo}`
+            );
+        } catch (error) {
+            informar(mensajeResolucion, error.message, true);
+        }
+    }
+
     formulario?.addEventListener("submit", async (evento) => {
         evento.preventDefault();
 
@@ -113,5 +133,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    btnIniciarResolucion?.addEventListener("click", async () => {
+        if (!ticketsResolucion.value) {
+            informar(mensajeResolucion, "Seleccione un ticket asignado.", true);
+            return;
+        }
+
+        btnIniciarResolucion.disabled = true;
+
+        try {
+            const resultado = await peticion(
+                `/api/soporte/tickets/${ticketsResolucion.value}/resolucion`,
+                {
+                    method: "PUT",
+                    headers: {"X-CSRF-Token": csrf}
+                }
+            );
+
+            informar(mensajeResolucion, resultado.mensaje);
+            await cargarTicketsAsignados();
+        } catch (error) {
+            informar(mensajeResolucion, error.message, true);
+        } finally {
+            btnIniciarResolucion.disabled = false;
+        }
+    });
+
     cargarDatosAsignacion();
+    cargarTicketsAsignados();
 });

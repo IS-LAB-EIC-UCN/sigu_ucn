@@ -32,7 +32,8 @@ public class SoporteController {
                 "title", "Soporte Técnico - SIGU-UCN",
                 "usuarioNombre", nombre,
                 "csrfToken", token,
-                "esAdmin", ticketService.esAdministrador(usuarioId)
+                "esAdmin", ticketService.esAdministrador(usuarioId),
+                "esTecnico", ticketService.esTecnico(usuarioId)
         ));
     }
 
@@ -95,6 +96,36 @@ public class SoporteController {
             responderOk(ctx, "Ticket asignado correctamente.",
                     Map.of("id", ticket.getId(), "tecnicoId", solicitud.tecnicoId(), "estado", ticket.getEstado().name()
                     ));
+        });
+    }
+
+    public void listarAsignados(Context ctx) {
+        if (!validarSesion(ctx)) return;
+
+        ejecutar(ctx, () -> {
+            List<Map<String, Object>> lista =
+                    ticketService.listarAsignados(ctx.sessionAttribute("usuarioId")).stream()
+                            .map(ticket -> Map.<String, Object>of(
+                                    "id", ticket.getId(),
+                                    "titulo", ticket.getTitulo(),
+                                    "estado", ticket.getEstado().name()
+                            )).toList();
+
+            responderOk(ctx, "Tickets asignados.", lista);
+        });
+    }
+
+    public void iniciarResolucion(Context ctx) {
+        if (!validarSesion(ctx) || !validarCsrf(ctx, ctx.header("X-CSRF-Token"))) {
+            return;
+        }
+
+        ejecutar(ctx, () -> {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            Long usuarioId = ctx.sessionAttribute("usuarioId");
+            Ticket ticket = ticketService.iniciarResolucion(id, usuarioId);
+            responderOk(ctx, "El ticket ahora está en resolución.",
+                    Map.of("id", ticket.getId(), "estado", ticket.getEstado().name()));
         });
     }
 
