@@ -20,11 +20,9 @@ public class ReservaService {
         this.reservaRepository = Objects.requireNonNull(reservaRepository);
         this.reloj = Objects.requireNonNull(reloj);
     }
-    /** Reservas del usuario, de la más reciente a la más antigua. Los filtros nulos se ignoran. */
     public List<Reserva> listarMisReservas(Long usuarioId, Long espacioId, LocalDate fecha, String estado) {
         return reservaRepository.buscarPorUsuario(usuarioId, espacioId, fecha, estado);
     }
-    /** Indica si el botón Cancelar debe mostrarse para esta reserva. */
     public boolean puedeCancelarse(Reserva reserva) {
         return motivoNoCancelable(reserva).isEmpty();
     }
