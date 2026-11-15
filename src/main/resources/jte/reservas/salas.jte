@@ -18,6 +18,7 @@ content = @`
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Capacidad</th>
+                <th>Ubicación</th>
             </tr>
             </thead>
             <tbody>
@@ -26,6 +27,7 @@ content = @`
                     <td>${sala.getNombre()}</td>
                     <td>${sala.getTipo()}</td>
                     <td>${sala.getCapacidad()}</td>
+                    <td>${sala.getUbicacion() != null ? sala.getUbicacion() : "-"}</td>
                 </tr>
             @endfor
             </tbody>
