@@ -139,20 +139,48 @@ mvn test
 
 Para correr el sistema correctamente:
 
-### Paso 1: levantar PostgreSQL con Docker
+### Paso 1: levantar PostgreSQL 16 con Docker
+
+*(Verificar previamente que el puerto `5432` esté disponible)*
 
 ```bash
 docker compose up -d
 ```
 
-### Paso 2: ejecutar la aplicación Java
+### Paso 2: aplicar las migraciones del Grupo 3 (Talleres)
+
+**En PowerShell o la terminal de IntelliJ (Windows):**
+
+```powershell
+Get-Content db/migrations/G3_V001__create_talleres_inscripciones.sql | docker exec -i sigu_ucn_postgres psql -U postgres -d sigu_ucn
+Get-Content db/migrations/G3_V002__seed_talleres.sql | docker exec -i sigu_ucn_postgres psql -U postgres -d sigu_ucn
+```
+
+**En Linux / macOS / Git Bash:**
+
+```bash
+docker exec -i sigu_ucn_postgres psql -U postgres -d sigu_ucn < db/migrations/G3_V001__create_talleres_inscripciones.sql
+docker exec -i sigu_ucn_postgres psql -U postgres -d sigu_ucn < db/migrations/G3_V002__seed_talleres.sql
+```
+
+### Paso 3: compilar y ejecutar la aplicación Java
+
+**Opción A (Terminal con Maven):**
 
 ```bash
 mvn clean compile
-mvn exec:java -Dexec.mainClass="cl.ucn.app.Main"
+mvn exec:java -Dexec.mainClass="cl.ucn.app.main.Main"
 ```
 
-### Paso 3: abrir en navegador
+**Opción B (IntelliJ IDEA):**
+
+1. Abrir el panel lateral derecho **Maven** -> **Lifecycle** y ejecutar `clean` y luego `compile`.
+2. Ir a `src/main/java/cl/ucn/app/main/Main.java` y ejecutar el método `main` (botón verde **Run**).
+
+
+### Paso 4: abrir en navegador
+
+Ingresar a la siguiente URL y seleccionar **"Grupo 3 - Talleres"** en el menú:
 
 ```text
 http://localhost:7000
