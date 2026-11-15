@@ -9,6 +9,7 @@ import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
 
 import java.nio.file.Paths;
+import cl.ucn.app.routes.soporte.SoporteRoutes;
 
 public class Main {
     public static void main(String[] args) {
@@ -38,6 +39,7 @@ public class Main {
             // 3. Registro de rutas
             AuthRoutes.register(config);
             HomeRoutes.register(config);
+            SoporteRoutes.register(config);
         });
 
         app.start(7000);
