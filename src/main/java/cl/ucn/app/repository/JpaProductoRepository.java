@@ -53,7 +53,6 @@ public class JpaProductoRepository extends JpaRepositorioBase implements Product
         });
     }
 
-    // existeCodigo(...) y guardar(...) quedan igual que ahora
 
     @Override
     public List<Insumo> listarInsumos() {
