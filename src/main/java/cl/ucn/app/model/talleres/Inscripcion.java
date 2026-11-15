@@ -43,15 +43,19 @@ public class Inscripcion {
 
     /** Anula la inscripción. Una inscripción ya anulada no puede volver a anularse. */
     public void anular() {
-        // TODO [Tarea 3 - RF5]: si ya está ANULADA lanzar IllegalStateException;
-        //  si no, cambiar estado a ANULADA y guardar fechaAnulacion = LocalDateTime.now().
-        throw new UnsupportedOperationException("TODO Tarea 3: Inscripcion.anular()");
+        if (this.estado == EstadoInscripcion.ANULADA) {
+            throw new IllegalStateException("La inscripción ya se encuentra anulada.");
+        }
+        this.estado = EstadoInscripcion.ANULADA;
+        this.fechaAnulacion = LocalDateTime.now();
     }
 
     /** Pasa una inscripción de la lista de espera a inscrita (cuando se libera un cupo). */
     public void promoverDesdeEspera() {
-        // TODO [Tarea 3 - RF7]: solo si está EN_ESPERA (si no, IllegalStateException); pasa a INSCRITO.
-        throw new UnsupportedOperationException("TODO Tarea 3: Inscripcion.promoverDesdeEspera()");
+        if (this.estado != EstadoInscripcion.EN_ESPERA) {
+            throw new IllegalStateException("Solo se puede promover una inscripción que esté en lista de espera.");
+        }
+        this.estado = EstadoInscripcion.INSCRITO;
     }
 
     public Long getId() { return id; }

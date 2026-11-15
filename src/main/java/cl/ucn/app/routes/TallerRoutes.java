@@ -23,6 +23,7 @@ public final class TallerRoutes {
         config.routes.get("/talleres/{id}", tallerController::detalle);
         config.routes.post("/talleres/{id}/inscribir", inscripcionController::inscribir);
 
-        // TODO [Tarea 3]: GET /mis-inscripciones y POST /inscripciones/{id}/anular
+        config.routes.get("/mis-inscripciones", inscripcionController::misInscripciones);
+        config.routes.post("/inscripciones/{id}/anular", inscripcionController::anular);
     }
 }

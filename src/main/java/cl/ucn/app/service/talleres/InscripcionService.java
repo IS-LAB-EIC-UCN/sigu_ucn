@@ -3,6 +3,7 @@ package cl.ucn.app.service.talleres;
 import cl.ucn.app.dto.talleres.ListadoInscritos;
 import cl.ucn.app.dto.talleres.ResultadoAnulacion;
 import cl.ucn.app.dto.talleres.ResultadoInscripcion;
+import cl.ucn.app.exception.AccesoDenegadoException;
 import cl.ucn.app.exception.RecursoNoEncontradoException;
 import cl.ucn.app.exception.ReglaNegocioException;
 import cl.ucn.app.model.Usuario;
@@ -17,7 +18,10 @@ import cl.ucn.app.service.talleres.reglas.SolicitudInscripcion;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /** Casos de uso de inscripción: inscribir, anular (con promoción desde la espera) y listar. */
 public class InscripcionService {
@@ -76,16 +80,36 @@ public class InscripcionService {
      * Si se liberó un cupo, el primero de la lista de espera pasa a INSCRITO (RF7).
      */
     public ResultadoAnulacion anular(Long inscripcionId, Long usuarioId, boolean esAdmin) {
-        // TODO [Tarea 3 - RF5 y RF7]: implementar. Pasos sugeridos:
-        //  1. inscripcionRepository.findById(inscripcionId) -> si no existe, RecursoNoEncontradoException.
-        //  2. Si !esAdmin y la inscripción no es del usuarioId -> AccesoDenegadoException.
-        //  3. Si ya está ANULADA -> ReglaNegocioException.
-        //  4. Recordar si estaba INSCRITO (solo así se libera cupo) y llamar inscripcion.anular().
-        //  5. Si liberó cupo: inscripcionRepository.findPrimeraEnEspera(tallerId);
-        //     si existe, llamar promoverDesdeEspera() sobre ella.
-        //  6. Guardar ambos cambios JUNTOS con inscripcionRepository.updateAll(lista) (una transacción).
-        //  7. Devolver new ResultadoAnulacion(nombreDelPromovido) o new ResultadoAnulacion(null).
-        throw new UnsupportedOperationException("TODO Tarea 3: InscripcionService.anular()");
+        Inscripcion inscripcion = inscripcionRepository.findById(inscripcionId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe la inscripción " + inscripcionId + "."));
+
+        if (!esAdmin && !Objects.equals(inscripcion.getUsuario().getId(), usuarioId)) {
+            throw new AccesoDenegadoException("No tienes permiso para anular esta inscripción.");
+        }
+
+        if (inscripcion.getEstado() == EstadoInscripcion.ANULADA) {
+            throw new ReglaNegocioException("La inscripción ya estaba anulada.");
+        }
+
+        boolean liberabaCupo = inscripcion.getEstado() == EstadoInscripcion.INSCRITO;
+        inscripcion.anular();
+
+        List<Inscripcion> porActualizar = new ArrayList<>();
+        porActualizar.add(inscripcion);
+
+        String promovidoNombre = null;
+        if (liberabaCupo) {
+            Optional<Inscripcion> siguiente = inscripcionRepository.findPrimeraEnEspera(inscripcion.getTaller().getId());
+            if (siguiente.isPresent()) {
+                Inscripcion promovida = siguiente.get();
+                promovida.promoverDesdeEspera();
+                porActualizar.add(promovida);
+                promovidoNombre = promovida.getUsuario().getNombre();
+            }
+        }
+
+        inscripcionRepository.updateAll(porActualizar);
+        return new ResultadoAnulacion(promovidoNombre);
     }
 
     /** RF6 y RF7: inscritos y lista de espera de un taller, en orden de llegada. */
