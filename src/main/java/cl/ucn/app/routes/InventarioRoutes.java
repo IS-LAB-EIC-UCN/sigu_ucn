@@ -12,6 +12,7 @@ import io.javalin.config.JavalinConfig;
 
 import static cl.ucn.app.controller.ControlAcceso.requiere;
 import static cl.ucn.app.util.RolesInventario.SOLO_ADMIN;
+import static cl.ucn.app.util.RolesInventario.TODOS;
 
 /**
  * Rutas del módulo de inventario de laboratorio (Grupo 5).
@@ -36,6 +37,9 @@ public final class InventarioRoutes {
         // Presentación
         InventarioController inventario = new InventarioController(inventarioService);
 
+        // CU05 - Consultar inventario (todos los roles)
+        config.routes.get("/inventario", requiere(TODOS, inventario::lista));
+        
         // CU01 - Registrar productos e insumos (administrador)
         config.routes.get("/inventario/productos/nuevo", requiere(SOLO_ADMIN, inventario::formularioProducto));
         config.routes.post("/inventario/productos/nuevo", requiere(SOLO_ADMIN, inventario::registrarProducto));

@@ -35,6 +35,22 @@ public class InventarioService {
         this.proveedorRepository = proveedorRepository;
     }
 
+    /**
+    * CU05: productos activos, filtrados por categoría y/o texto.
+    */
+    public List<Producto> consultar(Long categoriaId, String texto) {
+        return productoRepository.buscar(categoriaId, texto);
+    }
+
+    /**
+     * Alerta de stock bajo: insumos con stock actual menor o igual al mínimo.
+     */
+    public List<Insumo> insumosConStockBajo() {
+        return productoRepository.listarInsumos().stream()
+                .filter(Insumo::tieneStockBajo)
+                .toList();
+    }
+    
     public List<Categoria> categorias() {
         return categoriaRepository.listar();
     }

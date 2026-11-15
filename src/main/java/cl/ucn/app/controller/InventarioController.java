@@ -5,7 +5,10 @@ import cl.ucn.app.exception.ReglaNegocioException;
 import cl.ucn.app.model.Producto;
 import cl.ucn.app.service.InventarioService;
 import io.javalin.http.Context;
-
+import cl.ucn.app.model.Insumo;
+import cl.ucn.app.util.RolesInventario;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,35 @@ public class InventarioController extends InventarioControllerBase {
 
     public InventarioController(InventarioService inventarioService) {
         this.inventarioService = inventarioService;
+    }
+
+    /**
+    * GET /inventario?categoria={id}&q={texto}
+    */
+    public void lista(Context ctx) {
+        Long categoriaId = null;
+        try {
+            categoriaId = longOpcional(ctx.queryParam("categoria"));
+        } catch (ReglaNegocioException e) {
+            error(ctx, "La categoría indicada no es válida; se muestran todos los productos.");
+        }
+        String texto = ctx.queryParam("q");
+
+        List<Producto> productos = inventarioService.consultar(categoriaId, texto);
+        List<Insumo> alertas = RolesInventario.esGestion(rol(ctx))
+                ? inventarioService.insumosConStockBajo()
+                : List.of();
+        Set<Long> idsStockBajo = alertas.stream().map(Insumo::getId).collect(Collectors.toSet());
+
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("productos", productos);
+        datos.put("categorias", inventarioService.categorias());
+        datos.put("categoriaSeleccionada", categoriaId);
+        datos.put("texto", texto == null ? "" : texto);
+        datos.put("alertas", alertas);
+        datos.put("idsStockBajo", idsStockBajo);
+        datos.put("hayFiltros", categoriaId != null || (texto != null && !texto.isBlank()));
+        render(ctx, "lista.jte", "Consultar inventario", datos);
     }
 
     /**
