@@ -1,4 +1,6 @@
+@import cl.ucn.app.dto.talleres.ListadoInscritos
 @import cl.ucn.app.dto.talleres.TallerResumen
+@import cl.ucn.app.model.talleres.Inscripcion
 @import cl.ucn.app.util.Formato
 
 @param String title
@@ -7,6 +9,7 @@
 @param String flashOk
 @param String flashError
 @param TallerResumen taller
+@param ListadoInscritos listado = null
 
 @template.layout.main(
 title = title,
@@ -41,10 +44,73 @@ content = @`
             </form>
         </div>
 
-        <%-- TODO [Tarea 4 - RF6]: si esAdmin, mostrar dos tablas: "Inscritos" y "Lista de espera"
-             (posición, nombre, correo, fecha de inscripción). Recibir un @param ListadoInscritos listado.
-             TODO [Tarea 3]: en cada fila, un botón "Anular" (form POST a /inscripciones/{id}/anular
-             con un input hidden name="volver" value="/talleres/{idTaller}"). --%>
+        @if(esAdmin && listado != null)
+            <h2>Participantes inscritos (${Formato.texto(listado.inscritos().size())})</h2>
+            @if(listado.inscritos().isEmpty())
+                <p class="tl-vacio">No hay participantes inscritos todavía.</p>
+            @else
+                <table class="tl-tabla">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Fecha de inscripción</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @for(Inscripcion ins : listado.inscritos())
+                        <tr>
+                            <td>${Formato.texto(listado.inscritos().indexOf(ins) + 1)}</td>
+                            <td>${ins.getUsuario().getNombre()}</td>
+                            <td>${ins.getUsuario().getCorreo()}</td>
+                            <td>${Formato.fechaHora(ins.getFechaInscripcion())}</td>
+                            <td>
+                                <form method="post" action="/inscripciones/${Formato.texto(ins.getId())}/anular">
+                                    <input type="hidden" name="volver" value="/talleres/${Formato.texto(taller.id())}">
+                                    <button class="tl-btn-mini" type="submit">Anular</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endfor
+                    </tbody>
+                </table>
+            @endif
+
+            <h2>Lista de espera (${Formato.texto(listado.listaEspera().size())})</h2>
+            @if(listado.listaEspera().isEmpty())
+                <p class="tl-vacio">No hay participantes en lista de espera.</p>
+            @else
+                <table class="tl-tabla">
+                    <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Fecha de solicitud</th>
+                        <th>Acción</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @for(Inscripcion esp : listado.listaEspera())
+                        <tr>
+                            <td>${Formato.texto(listado.listaEspera().indexOf(esp) + 1)}</td>
+                            <td>${esp.getUsuario().getNombre()}</td>
+                            <td>${esp.getUsuario().getCorreo()}</td>
+                            <td>${Formato.fechaHora(esp.getFechaInscripcion())}</td>
+                            <td>
+                                <form method="post" action="/inscripciones/${Formato.texto(esp.getId())}/anular">
+                                    <input type="hidden" name="volver" value="/talleres/${Formato.texto(taller.id())}">
+                                    <button class="tl-btn-mini" type="submit">Anular</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endfor
+                    </tbody>
+                </table>
+            @endif
+        @endif
     </section>
 `
 )

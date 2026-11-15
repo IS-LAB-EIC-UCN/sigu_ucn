@@ -104,8 +104,11 @@ public class TallerController extends ControladorBase {
             TallerResumen taller = tallerService.obtenerResumen(id);
             Map<String, Object> model = modeloBase(ctx, sesion.get(), taller.nombre());
             model.put("taller", taller);
-            // TODO [Tarea 4 - RF6]: si sesion.get().esAdmin(), agregar al modelo
-            //  inscripcionService.listarInscritos(id) y mostrarlo en detalle.jte (inscritos y lista de espera).
+            if (sesion.get().esAdmin()) {
+                model.put("listado", inscripcionService.listarInscritos(id));
+            } else {
+                model.put("listado", null);
+            }
             ctx.render("talleres/detalle.jte", model);
         } catch (RecursoNoEncontradoException e) {
             flashError(ctx, e.getMessage());

@@ -114,11 +114,11 @@ public class InscripcionService {
 
     /** RF6 y RF7: inscritos y lista de espera de un taller, en orden de llegada. */
     public ListadoInscritos listarInscritos(Long tallerId) {
-        // TODO [Tarea 4 - RF6]: implementar.
-        //  - Buscar el taller con tallerRepository.findById (si no existe, RecursoNoEncontradoException).
-        //  - Usar inscripcionRepository.findByTallerAndEstado(tallerId, INSCRITO) y (..., EN_ESPERA).
-        //  - Devolver new ListadoInscritos(taller, inscritos, enEspera).
-        throw new UnsupportedOperationException("TODO Tarea 4: InscripcionService.listarInscritos()");
+        Taller taller = tallerRepository.findById(tallerId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el taller " + tallerId + "."));
+        List<Inscripcion> inscritos = inscripcionRepository.findByTallerAndEstado(tallerId, EstadoInscripcion.INSCRITO);
+        List<Inscripcion> enEspera = inscripcionRepository.findByTallerAndEstado(tallerId, EstadoInscripcion.EN_ESPERA);
+        return new ListadoInscritos(taller, inscritos, enEspera);
     }
 
     /** Historial de inscripciones del participante (incluye anuladas). */
