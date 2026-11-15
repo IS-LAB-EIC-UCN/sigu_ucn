@@ -2,8 +2,10 @@ package cl.ucn.app.controller;
 
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.service.AuthService;
+import cl.ucn.app.util.SessionUtil;
 import io.javalin.http.Context;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AuthController {
@@ -14,11 +16,20 @@ public class AuthController {
         this.authService = new AuthService();
     }
 
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
     public void showLogin(Context ctx) {
-        ctx.render("login.jte", Map.of("error", ""));
+        String mensaje = ctx.consumeSessionAttribute("registroMensaje");
+        Map<String, Object> model = new HashMap<>();
+        model.put("error", "");
+        model.put("mensaje", mensaje);
+        ctx.render("login.jte", model);
     }
 
     public void doLogin(Context ctx) {
+        ctx.req().getSession().invalidate();
         String correo = ctx.formParam("correo");
         String password = ctx.formParam("password");
 
@@ -36,10 +47,20 @@ public class AuthController {
             return;
         }
 
-        ctx.sessionAttribute("usuarioId", usuario.getId());
-        ctx.sessionAttribute("usuarioNombre", usuario.getNombre());
-        ctx.sessionAttribute("usuarioCorreo", usuario.getCorreo());
-        ctx.sessionAttribute("usuarioRol", usuario.getRol().getNombre());
+        ctx.sessionAttribute(SessionUtil.USUARIO_ID, usuario.getId());
+        ctx.sessionAttribute(SessionUtil.USUARIO_NOMBRE, usuario.getNombre());
+        ctx.sessionAttribute(SessionUtil.USUARIO_CORREO, usuario.getCorreo());
+        ctx.sessionAttribute(SessionUtil.USUARIO_ROL, usuario.getRol().getNombre());
+        authService.tutorRepository().findByUsuarioId(usuario.getId()).ifPresentOrElse(
+                tutor -> {
+                    ctx.sessionAttribute(SessionUtil.ES_TUTOR, true);
+                    ctx.sessionAttribute(SessionUtil.TUTOR_ID, tutor.getId());
+                },
+                () -> {
+                    ctx.sessionAttribute(SessionUtil.ES_TUTOR, false);
+                    ctx.sessionAttribute(SessionUtil.TUTOR_ID, null);
+                }
+        );
 
         ctx.redirect("/home");
     }

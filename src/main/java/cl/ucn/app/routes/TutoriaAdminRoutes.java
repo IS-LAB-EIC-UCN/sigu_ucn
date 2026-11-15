@@ -8,6 +8,7 @@ import cl.ucn.app.repository.TutorRepositoryImpl;
 import cl.ucn.app.repository.TutoriaRepositoryImpl;
 import cl.ucn.app.service.AsignaturaService;
 import cl.ucn.app.service.TutorService;
+import cl.ucn.app.util.AuthMiddleware;
 import io.javalin.config.JavalinConfig;
 
 public final class TutoriaAdminRoutes {
@@ -28,7 +29,7 @@ public final class TutoriaAdminRoutes {
         );
         AdminTutoriasController controller = new AdminTutoriasController(asignaturaService, tutorService);
 
-        config.routes.before("/tutorias/admin/*", controller::verificarAdministrador);
+        config.routes.before("/tutorias/admin/*", AuthMiddleware::requireAdmin);
 
         config.routes.get("/tutorias/admin/asignaturas", controller::listarAsignaturas);
         config.routes.get("/tutorias/admin/asignaturas/nueva", controller::mostrarNuevaAsignatura);

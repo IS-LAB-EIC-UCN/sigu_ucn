@@ -1,9 +1,11 @@
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
 
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
+usuarioRol = usuarioRol,
 content = @`
     <section class="dashboard">
         <h1>Panel principal</h1>

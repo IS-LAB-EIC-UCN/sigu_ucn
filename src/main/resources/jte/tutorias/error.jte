@@ -1,10 +1,12 @@
 @param String title
 @param String usuarioNombre
+@param String usuarioRol = null
 @param String mensaje
 
 @template.layout.main(
 title = title,
 usuarioNombre = usuarioNombre,
+usuarioRol = usuarioRol,
 content = @`
     <link rel="stylesheet" href="/css/tutorias.css">
     <section class="tutorias">
