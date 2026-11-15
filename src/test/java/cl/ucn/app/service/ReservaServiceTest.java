@@ -1,5 +1,6 @@
 package cl.ucn.app.service;
 
+import cl.ucn.app.model.EstadoReserva;
 import cl.ucn.app.model.Reserva;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.ReservaRepository;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,9 +50,17 @@ class ReservaServiceTest {
             }
         };
     }
+    // Reserva ya no tiene setEstado: se crea PENDIENTE y se lleva al estado pedido con sus transiciones.
     private Reserva reserva(Long propietarioId, String estado) {
-        return new Reserva(LocalDate.now().plusDays(30), LocalTime.NOON, LocalTime.NOON.plusHours(1),
-                estado, usuarioConId(propietarioId), null);
+        Reserva r = new Reserva(LocalDate.now().plusDays(30), LocalTime.NOON, LocalTime.NOON.plusHours(1),
+                "Motivo de prueba", usuarioConId(propietarioId), null);
+        switch (EstadoReserva.valueOf(estado)) {
+            case APROBADA -> r.aprobar();
+            case RECHAZADA -> r.rechazar("Motivo de prueba");
+            case CANCELADA -> r.cancelar(LocalDateTime.now());
+            default -> { }
+        }
+        return r;
     }
 
     @Test
@@ -76,41 +87,41 @@ class ReservaServiceTest {
     void cancelarReservaPropiaPendienteCambiaElEstadoACancelada() {
         when(reservaRepository.buscarPorId(RESERVA_ID)).thenReturn(reserva(USUARIO_ID, "PENDIENTE"));
         servicio.cancelar(RESERVA_ID, USUARIO_ID);
-        verify(reservaRepository).actualizarEstado(RESERVA_ID, "CANCELADA");
+        verify(reservaRepository).actualizar(argThat(r -> r.getEstado() == EstadoReserva.CANCELADA));
     }
 
     @Test
     void cancelarReservaPropiaAprobadaCambiaElEstadoACancelada() {
         when(reservaRepository.buscarPorId(RESERVA_ID)).thenReturn(reserva(USUARIO_ID, "APROBADA"));
         servicio.cancelar(RESERVA_ID, USUARIO_ID);
-        verify(reservaRepository).actualizarEstado(RESERVA_ID, "CANCELADA");
+        verify(reservaRepository).actualizar(argThat(r -> r.getEstado() == EstadoReserva.CANCELADA));
     }
 
     @Test
     void cancelarReservaInexistenteLanzaErrorYNoModificaNada() {
         assertThrows(ReservaException.class, () -> servicio.cancelar(99L, USUARIO_ID));
-        verify(reservaRepository, never()).actualizarEstado(any(), any());
+        verify(reservaRepository, never()).actualizar(any());
     }
 
     @Test
     void cancelarReservaDeOtroUsuarioLanzaErrorYNoModificaNada() {
         when(reservaRepository.buscarPorId(RESERVA_ID)).thenReturn(reserva(OTRO_USUARIO_ID, "PENDIENTE"));
         assertThrows(ReservaException.class, () -> servicio.cancelar(RESERVA_ID, USUARIO_ID));
-        verify(reservaRepository, never()).actualizarEstado(any(), any());
+        verify(reservaRepository, never()).actualizar(any());
     }
 
     @Test
     void cancelarReservaRechazadaLanzaErrorYNoModificaNada() {
         when(reservaRepository.buscarPorId(RESERVA_ID)).thenReturn(reserva(USUARIO_ID, "RECHAZADA"));
         assertThrows(ReservaException.class, () -> servicio.cancelar(RESERVA_ID, USUARIO_ID));
-        verify(reservaRepository, never()).actualizarEstado(any(), any());
+        verify(reservaRepository, never()).actualizar(any());
     }
 
     @Test
     void cancelarReservaYaCanceladaLanzaErrorYNoModificaNada() {
         when(reservaRepository.buscarPorId(RESERVA_ID)).thenReturn(reserva(USUARIO_ID, "CANCELADA"));
         assertThrows(ReservaException.class, () -> servicio.cancelar(RESERVA_ID, USUARIO_ID));
-        verify(reservaRepository, never()).actualizarEstado(any(), any());
+        verify(reservaRepository, never()).actualizar(any());
     }
 
 

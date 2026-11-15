@@ -22,6 +22,10 @@ public class Espacio {
     @Column(nullable = false)
     private Boolean disponible = true;
 
+    // Agregada por el Grupo 1 (db/init/10_reservas_schema.sql). Opcional para otros módulos.
+    @Column(length = 150)
+    private String ubicacion;
+
     public Espacio() {
     }
 
@@ -66,5 +70,13 @@ public class Espacio {
 
     public void setDisponible(Boolean disponible) {
         this.disponible = disponible;
+    }
+
+    public String getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 }

@@ -98,7 +98,7 @@ content = @`
                         <td>${reserva.getFechaReserva().toString()}</td>
                         <td>${reserva.getHoraInicio().toString()}</td>
                         <td>${reserva.getHoraFin().toString()}</td>
-                        <td><span class="badge estado-${reserva.getEstado().toLowerCase()}">${reserva.getEstado()}</span></td>
+                        <td><span class="badge estado-${reserva.getEstado().name().toLowerCase()}">${reserva.getEstado()}</span></td>
                         <td>
                             @if(idsCancelables.contains(reserva.getId()))
                                 <form method="post" action="/reservas/${reserva.getId()}/cancelar" onsubmit="return confirm('¿Desea cancelar esta reserva?');">

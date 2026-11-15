@@ -1,6 +1,7 @@
 package cl.ucn.app.repository;
 
 import cl.ucn.app.config.JPAUtil;
+import cl.ucn.app.model.EstadoReserva;
 import cl.ucn.app.model.Reserva;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -34,7 +35,7 @@ public class ReservaRepository {
                 query.setParameter("fecha", fecha);
             }
             if (estado != null) {
-                query.setParameter("estado", estado);
+                query.setParameter("estado", EstadoReserva.valueOf(estado));
             }
             return query.getResultList();
         } finally {
@@ -55,12 +56,15 @@ public class ReservaRepository {
         }
     }
 
-    public void actualizarEstado(Long id, String nuevoEstado) {
+    /**
+     * Persiste los cambios de una reserva cuyo estado ya fue modificado
+     * mediante sus transiciones (aprobar, rechazar, cancelar).
+     */
+    public void actualizar(Reserva reserva) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            Reserva reserva = em.find(Reserva.class, id);
-            reserva.setEstado(nuevoEstado);
+            em.merge(reserva);
             em.getTransaction().commit();
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
