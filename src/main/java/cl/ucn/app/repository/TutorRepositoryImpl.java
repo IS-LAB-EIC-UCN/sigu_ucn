@@ -3,6 +3,7 @@ package cl.ucn.app.repository;
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.Tutor;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -74,5 +75,20 @@ public class TutorRepositoryImpl implements TutorRepository {
         } finally {
             em.close();
         }
+    }
+
+    @Override
+    public Optional<Tutor> findByUsuarioId(EntityManager em, Long usuarioId) {
+        return em.createQuery(
+                        "SELECT t FROM Tutor t WHERE t.estudiante.usuario.id = :usuarioId",
+                        Tutor.class)
+                .setParameter("usuarioId", usuarioId)
+                .getResultStream()
+                .findFirst();
+    }
+
+    @Override
+    public void bloquear(EntityManager em, Tutor tutor) {
+        em.lock(tutor, LockModeType.PESSIMISTIC_WRITE);
     }
 }
