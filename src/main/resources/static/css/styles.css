@@ -171,3 +171,14 @@ body {
     color: #1f3b73;
     font-weight: bold;
 }
+
+.btn-login {
+    width: 100%;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #1f3b73;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
