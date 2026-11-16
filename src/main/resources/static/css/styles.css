@@ -171,3 +171,299 @@ body {
     color: #1f3b73;
     font-weight: bold;
 }
+
+/* ===== BLOQUE 4: ESTILOS MODULO CAFETERIA (Grupo 7) ===== */
+
+.caf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.caf-header h1 {
+    margin: 0;
+    color: #1f3b73;
+}
+
+.caf-subtitle {
+    margin: 4px 0 0;
+    color: #5a677d;
+    font-size: 0.95rem;
+}
+
+.caf-role-badge {
+    background: #e8eef9;
+    color: #1f3b73;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid #c5d4f0;
+}
+
+.alert-success {
+    background: #e6f7ed;
+    color: #146c38;
+    border: 1px solid #a8dfc0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.caf-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.caf-pill {
+    background: #ffffff;
+    color: #1f3b73;
+    border: 1px solid #c9d2df;
+    padding: 8px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background 0.15s, color 0.15s;
+}
+
+.caf-pill:hover {
+    background: #1f3b73;
+    color: #ffffff;
+}
+
+.caf-kpi-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #5a677d;
+    margin-bottom: 6px;
+}
+
+.caf-kpi-value {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: #1f3b73;
+}
+
+.caf-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-top: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.caf-card h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #1f3b73;
+    font-size: 1.2rem;
+    border-bottom: 1px solid #e2e7ef;
+    padding-bottom: 10px;
+}
+
+/* tablas */
+.caf-table-wrap {
+    overflow-x: auto;
+}
+
+.caf-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: #ffffff;
+    font-size: 0.93rem;
+}
+
+.caf-table th {
+    background: #f1f5f9;
+    color: #1f3b73;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+.caf-table td {
+    border-bottom: 1px solid #e2e7ef;
+    padding: 10px 12px;
+    vertical-align: middle;
+}
+
+.caf-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+/* formularios y botones */
+.caf-form-box {
+    background: #f8fafd;
+    border: 1px solid #e2e7ef;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 16px;
+}
+
+.caf-form-box h3 {
+    margin: 0 0 10px;
+    font-size: 1rem;
+    color: #1f3b73;
+}
+
+.caf-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.caf-input,
+.caf-select {
+    padding: 8px 10px;
+    border: 1px solid #c9d2df;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    background: #ffffff;
+}
+
+.caf-input-qty {
+    width: 85px;
+}
+
+.caf-btn {
+    display: inline-block;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    background: #1f3b73;
+    color: #ffffff;
+}
+
+.caf-btn:hover {
+    background: #162b56;
+}
+
+.caf-btn-sm {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+}
+
+.caf-btn-secondary {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.caf-btn-secondary:hover {
+    background: #cbd5e1;
+}
+
+.caf-btn-info {
+    background: #0284c7;
+    color: #ffffff;
+}
+
+.caf-btn-info:hover {
+    background: #0369a1;
+}
+
+.caf-btn-danger {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.caf-btn-danger:hover {
+    background: #b91c1c;
+}
+
+.caf-order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e7ef;
+}
+
+.caf-total-box {
+    font-size: 1.05rem;
+    color: #1f3b73;
+}
+
+/* etiquetas de estado stock */
+.badge-estado,
+.badge-stock {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 14px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.estado-pendiente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.estado-en_preparacion {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.estado-listo {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.estado-entregado {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.estado-anulado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.stock-ok {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.stock-bajo {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.stock-agotado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.caf-actions-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.caf-sales-summary {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e3a8a;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin: 14px 0;
+}
+
+.caf-muted {
+    color: #64748b;
+    font-style: italic;
+}
