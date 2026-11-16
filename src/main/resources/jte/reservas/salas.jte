@@ -1,3 +1,4 @@
+
 @import cl.ucn.app.model.Espacio
 @import java.util.List
 
@@ -20,6 +21,7 @@ content = @`
                 <th>Tipo</th>
                 <th>Capacidad</th>
                 <th>Ubicación</th>
+                <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -29,6 +31,25 @@ content = @`
                     <td>${sala.getTipo()}</td>
                     <td>${sala.getCapacidad()}</td>
                     <td>${sala.getUbicacion() != null ? sala.getUbicacion() : "-"}</td>
+                    <td>
+                        <form action="/reservas/crear" method="post">
+                            <input type="hidden" name="espacioId" value="${sala.getId()}">
+
+                            <label>Fecha:</label>
+                            <input type="date" name="fecha" required>
+
+                            <label>Hora de inicio:</label>
+                            <input type="time" name="horaInicio" required>
+
+                            <label>Hora de término:</label>
+                            <input type="time" name="horaFin" required>
+
+                            <label>Motivo:</label>
+                            <input type="text" name="motivo" maxlength="255" required>
+
+                            <button type="submit">Reservar</button>
+                        </form>
+                    </td>
                 </tr>
             @endfor
             </tbody>

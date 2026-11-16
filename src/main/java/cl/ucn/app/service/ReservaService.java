@@ -22,10 +22,80 @@ public class ReservaService {
     private final UsuarioRepository usuarioRepository;
     private final EspacioRepository espacioRepository;
     
+    ////////////////////////
+    
     public ReservaService(ReservaRepository reservaRepository, Clock reloj) {
+        this(reservaRepository, reloj, new UsuarioRepository(), new EspacioRepository());
+    }
+
+    public ReservaService(ReservaRepository reservaRepository, Clock reloj, UsuarioRepository usuarioRepository,EspacioRepository espacioRepository) {
         this.reservaRepository = Objects.requireNonNull(reservaRepository);
         this.reloj = Objects.requireNonNull(reloj);
+        this.usuarioRepository = Objects.requireNonNull(usuarioRepository);
+        this.espacioRepository = Objects.requireNonNull(espacioRepository);
     }
+
+    ////////creacion de reservas
+    
+    public Reserva crearReserva(Long usuarioId, Long espacioId,LocalDate fecha, LocalTime horaInicio,LocalTime horaFin, String motivo) {
+        /*Validacion basiquita */
+        if (usuarioId == null || espacioId == null ||
+            fecha == null || horaInicio == null || horaFin == null) {
+            throw new ReservaException("Faltan datos obligatorios para crear la reserva.");
+        }
+
+        if (motivo == null || motivo.isBlank()) {
+            throw new ReservaException("Debe indicar el motivo de la reserva.");
+        }
+
+        /*fecha y hora*/
+        LocalDateTime inicio = LocalDateTime.of(fecha, horaInicio);
+
+        if (!inicio.isAfter(LocalDateTime.now(reloj))) {
+            throw new ReservaException("La reserva debe comenzar en una fecha y hora futura.");
+        }
+
+        if (!horaFin.isAfter(horaInicio)) {
+            throw new ReservaException("La hora de término debe ser posterior a la hora de inicio.");
+        }
+
+        /*existe el usuario?*/
+        Usuario usuario = usuarioRepository.findById(usuarioId);
+
+        if (usuario == null) {
+            throw new ReservaException("El usuario no existe.");
+        }
+
+        /*  sala existe y esta hailitada?*/
+        Espacio espacio = espacioRepository.findById(espacioId);
+
+        if (espacio == null) {
+            throw new ReservaException("La sala solicitada no existe.");
+        }
+
+        if (!Boolean.TRUE.equals(espacio.getDisponible())) {
+            throw new ReservaException("La sala no está disponible.");
+        }
+
+        /*  reservas superpuestas*/
+        if (reservaRepository.existeConflicto(espacioId, fecha, horaInicio, horaFin)) {
+            throw new ReservaException(
+             "La sala ya tiene una reserva en el horario solicitado."
+            );
+        }
+
+        /*Crear y guardar la reserva*/
+        Reserva reserva = new Reserva(
+            fecha, horaInicio, horaFin, motivo, usuario, espacio
+        );
+
+        reservaRepository.guardar(reserva);
+
+        return reserva;
+    }
+
+
+    ///////////////////
     public List<Reserva> listarMisReservas(Long usuarioId, Long espacioId, LocalDate fecha, String estado) {
         return reservaRepository.buscarPorUsuario(usuarioId, espacioId, fecha, estado);
     }
@@ -47,6 +117,7 @@ public class ReservaService {
         reserva.cancelar(LocalDateTime.now(reloj));
         reservaRepository.actualizar(reserva);
     }
+
     private Optional<String> motivoNoCancelable(Reserva reserva) {
         if (!reserva.estaActiva()) {
             return Optional.of("Solo se pueden cancelar reservas pendientes o aprobadas; " + "esta reserva está " + reserva.getEstado() + ".");

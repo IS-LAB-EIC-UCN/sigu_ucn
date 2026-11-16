@@ -93,8 +93,8 @@ public class ReservaRepository {
         }
     }
 
-
-    public boolean existeConflicto(Long espacioId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin) {
+    //ESTE MÉTODO ESTÁ SUSTITUIDO ABAJO
+    /*public boolean existeConflicto(Long espacioId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin) {
         EntityManager em = JPAUtil.getEntityManager();
 
         try {
@@ -116,12 +116,43 @@ public class ReservaRepository {
             return cantidad > 0;
         } finally {
             em.close();
+        } */
+
+
+    
+    public boolean existeConflicto(Long espacioId, LocalDate fecha,
+                                LocalTime horaInicio, LocalTime horaFin) {
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try {
+            Long cantidad = em.createQuery(
+                "SELECT COUNT(r) FROM Reserva r " +
+                "WHERE r.espacio.id = :espacioId " +
+                "AND r.fechaReserva = :fecha " +
+                "AND r.estado IN (:pendiente, :aprobada) " +
+                "AND r.horaInicio < :horaFin " +
+                "AND r.horaFin > :horaInicio",
+                Long.class
+            )
+            .setParameter("espacioId", espacioId)
+            .setParameter("fecha", fecha)
+            .setParameter("pendiente", EstadoReserva.PENDIENTE)
+            .setParameter("aprobada", EstadoReserva.APROBADA)
+            .setParameter("horaInicio", horaInicio)
+            .setParameter("horaFin", horaFin)
+            .getSingleResult();
+
+            return cantidad > 0;
+        } finally {
+            em.close();
         }
-    }   
+    }
+
+
+}   
 
 
 
 
 
 
-}
