@@ -20,6 +20,7 @@ content = @`
                 <th>Tipo</th>
                 <th>Capacidad</th>
                 <th>Ubicación</th>
+                <th>Acción</th>
             </tr>
             </thead>
             <tbody>
@@ -29,6 +30,7 @@ content = @`
                     <td>${sala.getTipo()}</td>
                     <td>${sala.getCapacidad()}</td>
                     <td>${sala.getUbicacion() != null ? sala.getUbicacion() : "-"}</td>
+                    <td><a href="/reservas/disponibilidad?sala=${sala.getId()}">Ver disponibilidad</a></td>
                 </tr>
             @endfor
             </tbody>

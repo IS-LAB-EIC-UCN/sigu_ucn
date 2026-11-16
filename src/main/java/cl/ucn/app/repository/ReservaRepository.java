@@ -55,6 +55,24 @@ public class ReservaRepository {
         }
     }
 
+    public List<Reserva> buscarActivasPorEspacioYFecha(Long espacioId, LocalDate fecha) {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT r FROM Reserva r WHERE r.espacio.id = :espacioId "
+                            + "AND r.fechaReserva = :fecha "
+                            + "AND r.estado IN :estados "
+                            + "ORDER BY r.horaInicio ASC",
+                    Reserva.class)
+                    .setParameter("espacioId", espacioId)
+                    .setParameter("fecha", fecha)
+                    .setParameter("estados", List.of(EstadoReserva.PENDIENTE, EstadoReserva.APROBADA))
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     /**
      * Persiste los cambios de una reserva cuyo estado ya fue modificado
      * mediante sus transiciones (aprobar, rechazar, cancelar).
