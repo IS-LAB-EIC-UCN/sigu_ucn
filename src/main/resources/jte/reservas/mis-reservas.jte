@@ -1,4 +1,5 @@
 @import cl.ucn.app.model.Espacio
+@import cl.ucn.app.model.EstadoReserva
 @import cl.ucn.app.model.Reserva
 @import java.util.List
 @import java.util.Set
@@ -34,6 +35,7 @@ content = @`
         .estado-cancelada { background: #e2e3e5; color: #444; }
         .btn-filtrar { padding: 10px 16px; border: none; border-radius: 8px; background: #1f3b73; color: white; cursor: pointer; }
         .btn-cancelar { padding: 6px 12px; border: none; border-radius: 8px; background: #b3261e; color: white; cursor: pointer; }
+        .motivo-rechazo { margin-top: 6px; font-size: 0.85rem; color: #8f1d1d; }
     </style>
 
     <section class="dashboard">
@@ -98,7 +100,12 @@ content = @`
                         <td>${reserva.getFechaReserva().toString()}</td>
                         <td>${reserva.getHoraInicio().toString()}</td>
                         <td>${reserva.getHoraFin().toString()}</td>
-                        <td><span class="badge estado-${reserva.getEstado().name().toLowerCase()}">${reserva.getEstado()}</span></td>
+                        <td>
+                            <span class="badge estado-${reserva.getEstado().name().toLowerCase()}">${reserva.getEstado()}</span>
+                            @if(reserva.getEstado() == EstadoReserva.RECHAZADA && reserva.getMotivoRechazo() != null && !reserva.getMotivoRechazo().isBlank())
+                                <div class="motivo-rechazo">Motivo del rechazo: ${reserva.getMotivoRechazo()}</div>
+                            @endif
+                        </td>
                         <td>
                             @if(idsCancelables.contains(reserva.getId()))
                                 <form method="post" action="/reservas/${reserva.getId()}/cancelar" onsubmit="return confirm('¿Desea cancelar esta reserva?');">

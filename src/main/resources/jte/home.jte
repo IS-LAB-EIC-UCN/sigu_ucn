@@ -1,5 +1,6 @@
 @param String title
 @param String usuarioNombre
+@param boolean esAdmin
 
 @template.layout.main(
 title = title,
@@ -8,6 +9,10 @@ content = @`
     <section class="dashboard">
         <h1>Panel principal</h1>
         <p>Bienvenido al sistema integrado de gestión universitaria.</p>
+
+        @if(esAdmin)
+            <p><a href="/admin/reservas/pendientes">Panel de administración</a></p>
+        @endif
 
         <div class="card-grid">
             <div class="info-card">

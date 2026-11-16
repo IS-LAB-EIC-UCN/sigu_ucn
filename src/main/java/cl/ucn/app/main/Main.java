@@ -1,5 +1,6 @@
 package cl.ucn.app.main;
 
+import cl.ucn.app.routes.AdminRoutes;
 import cl.ucn.app.routes.AuthRoutes;
 import cl.ucn.app.routes.HomeRoutes;
 import cl.ucn.app.routes.RegistroRoutes;
@@ -42,6 +43,7 @@ public class Main {
             RegistroRoutes.register(config);
             HomeRoutes.register(config);
             ReservaRoutes.register(config);
+            AdminRoutes.register(config);
 
         });
 

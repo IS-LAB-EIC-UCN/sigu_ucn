@@ -41,6 +41,20 @@ public class ReservaRepository {
             em.close();
         }
     }
+    public List<Reserva> buscarPendientes() {
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.createQuery(
+                    "SELECT r FROM Reserva r JOIN FETCH r.usuario JOIN FETCH r.espacio " +
+                    "WHERE r.estado = :estado ORDER BY r.fechaCreacion ASC, r.id ASC",
+                    Reserva.class)
+                    .setParameter("estado", EstadoReserva.PENDIENTE)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public Reserva buscarPorId(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

@@ -1,5 +1,6 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.security.AutorizacionAdmin;
 import io.javalin.http.Context;
 
 import java.util.HashMap;
@@ -15,9 +16,12 @@ public class HomeController {
             return;
         }
 
+        String usuarioRol = ctx.sessionAttribute("usuarioRol");
+
         Map<String, Object> model = new HashMap<>();
         model.put("title", "Inicio - SIGU-UCN");
         model.put("usuarioNombre", usuarioNombre);
+        model.put("esAdmin", AutorizacionAdmin.esAdmin(usuarioRol));
 
         ctx.render("home.jte", model);
     }
