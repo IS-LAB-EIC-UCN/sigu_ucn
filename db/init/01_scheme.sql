@@ -118,6 +118,7 @@ CREATE TABLE inv_prestamos (
     id BIGSERIAL PRIMARY KEY,
     equipo_id BIGINT NOT NULL,
     usuario_id BIGINT NOT NULL,
+    devuelto_por_id BIGINT,
     fecha_prestamo TIMESTAMP NOT NULL,
     fecha_devolucion TIMESTAMP,
     estado VARCHAR(20) NOT NULL,
@@ -131,9 +132,14 @@ CREATE TABLE inv_prestamos (
             REFERENCES usuarios(id)
             ON UPDATE CASCADE
             ON DELETE RESTRICT,
+    CONSTRAINT fk_inv_prestamos_devuelto_por
+        FOREIGN KEY (devuelto_por_id)
+            REFERENCES usuarios(id)
+            ON UPDATE CASCADE
+            ON DELETE RESTRICT,
     CONSTRAINT chk_inv_prestamos_estado
         CHECK (estado in ('ACTIVO', 'FINALIZADO')),
-    -- Un prestamo finalizado debe tener fecha de devolución, y uno activo
+    -- Un prestamo finalizado debe tener fecha de devolución, y uno activo no
     CONSTRAINT chk_inv_prestamos_devolucion
         CHECK (
             (estado = 'ACTIVO' AND fecha_devolucion IS NULL)
@@ -142,7 +148,6 @@ CREATE TABLE inv_prestamos (
                 AND fecha_devolucion >= fecha_prestamo)
         )
 );
-
 --Regla de negocio: un equipo prestado no puede prestarse nuevamente
 --Solo puede existir un préstamos activo por equipo
 

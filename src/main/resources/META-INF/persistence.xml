@@ -20,6 +20,7 @@
         <class>cl.ucn.app.model.Producto</class>
         <class>cl.ucn.app.model.Equipo</class>
         <class>cl.ucn.app.model.Insumo</class>
+        <class>cl.ucn.app.model.Prestamo</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
