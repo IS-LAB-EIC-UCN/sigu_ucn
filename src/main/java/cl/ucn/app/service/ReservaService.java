@@ -4,6 +4,7 @@ import cl.ucn.app.model.Espacio;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.repository.EspacioRepository;
 import cl.ucn.app.repository.UsuarioRepository;
+import jakarta.persistence.PersistenceException;
 import java.time.LocalTime;
 
 import cl.ucn.app.model.Reserva;
@@ -17,6 +18,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ReservaService {
+    static final String MENSAJE_CONFLICTO = "La sala ya tiene una reserva en el horario solicitado. Elija otro horario u otra sala.";
+    private static final String RESTRICCION_SIN_SOLAPE = "excl_reservas_sin_solape";
+
     private final ReservaRepository reservaRepository;
     private final Clock reloj;
     private final UsuarioRepository usuarioRepository;
@@ -79,19 +83,40 @@ public class ReservaService {
 
         /*  reservas superpuestas*/
         if (reservaRepository.existeConflicto(espacioId, fecha, horaInicio, horaFin)) {
-            throw new ReservaException(
-             "La sala ya tiene una reserva en el horario solicitado."
-            );
+            throw new ReservaException(MENSAJE_CONFLICTO);
         }
 
         /*Crear y guardar la reserva*/
         Reserva reserva = new Reserva(
-            fecha, horaInicio, horaFin, motivo, usuario, espacio
+            fecha, horaInicio, horaFin, motivo.trim(), usuario, espacio
         );
 
-        reservaRepository.guardar(reserva);
+        try {
+            reservaRepository.guardar(reserva);
+        } catch (PersistenceException e) {
+            // RNF-04: si dos solicitudes simultáneas pasan la verificación anterior,
+            // la restricción excl_reservas_sin_solape de PostgreSQL rechaza la segunda.
+            if (esConflictoDeHorario(e)) {
+                throw new ReservaException(MENSAJE_CONFLICTO);
+            }
+            throw e;
+        }
 
         return reserva;
+    }
+
+    /** Indica si la excepción proviene de la restricción de no solape de la base de datos. */
+    static boolean esConflictoDeHorario(Throwable error) {
+        for (Throwable t = error; t != null; t = t.getCause()) {
+            String mensaje = t.getMessage();
+            if (mensaje != null && mensaje.contains(RESTRICCION_SIN_SOLAPE)) {
+                return true;
+            }
+            if (t.getCause() == t) {
+                break;
+            }
+        }
+        return false;
     }
 
 

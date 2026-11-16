@@ -125,33 +125,7 @@ public class ReservaRepository {
         }
     }
 
-    //ESTE MÉTODO ESTÁ SUSTITUIDO ABAJO
-    /*public boolean existeConflicto(Long espacioId, LocalDate fecha, LocalTime horaInicio, LocalTime horaFin) {
-        EntityManager em = JPAUtil.getEntityManager();
-
-        try {
-            Long cantidad = em.createQuery(
-                "SELECT COUNT(r) FROM Reserva r " +
-                "WHERE r.espacio.id = :espacioId " +
-                "AND r.fechaReserva = :fecha " +
-                "AND r.estado IN ('PENDIENTE', 'APROBADA') " +
-                "AND r.horaInicio < :horaFin " +
-                "AND r.horaFin > :horaInicio",
-                Long.class
-            )
-            .setParameter("espacioId", espacioId)
-            .setParameter("fecha", fecha)
-            .setParameter("horaInicio", horaInicio)
-            .setParameter("horaFin", horaFin)
-            .getSingleResult();
-
-            return cantidad > 0;
-        } finally {
-            em.close();
-        } */
-
-
-    
+    /** RN-01: indica si la sala ya tiene una reserva activa que se solapa con el horario pedido. */
     public boolean existeConflicto(Long espacioId, LocalDate fecha,
                                 LocalTime horaInicio, LocalTime horaFin) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -179,12 +153,4 @@ public class ReservaRepository {
             em.close();
         }
     }
-
-
-}   
-
-
-
-
-
-
+}

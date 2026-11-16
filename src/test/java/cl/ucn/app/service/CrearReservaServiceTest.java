@@ -18,6 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import jakarta.persistence.PersistenceException;
+
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -361,9 +363,35 @@ class CrearReservaServiceTest {
         verify(reservaRepository, never()).guardar(any());
     }
 
+    // RNF-04: dos solicitudes simultáneas pasan existeConflicto(); la BD rechaza la segunda.
+    @Test
+    void conflictoDetectadoPorLaBaseDeDatosSeInformaComoReservaException() {
+        LocalDate fecha = LocalDate.now().plusDays(7);
+        LocalTime inicio = LocalTime.of(10, 0);
+        LocalTime fin = LocalTime.of(11, 0);
 
+        when(usuarioRepository.findById(USUARIO_ID)).thenReturn(new Usuario());
+        when(espacioRepository.findById(ESPACIO_ID)).thenReturn(new Espacio("Sala de estudio", "SALA", 20, true));
+        doThrow(new PersistenceException("commit failed", new RuntimeException(
+                "ERROR: conflicting key value violates exclusion constraint \"excl_reservas_sin_solape\"")))
+            .when(reservaRepository).guardar(any());
 
+        ReservaException e = assertThrows(ReservaException.class, () ->
+            servicio.crearReserva(USUARIO_ID, ESPACIO_ID, fecha, inicio, fin, "Reunión de estudio"));
+        assertTrue(e.getMessage().contains("ya tiene una reserva"));
+    }
 
+    @Test
+    void otrosErroresDePersistenciaNoSeOcultan() {
+        LocalDate fecha = LocalDate.now().plusDays(7);
+        LocalTime inicio = LocalTime.of(10, 0);
+        LocalTime fin = LocalTime.of(11, 0);
 
+        when(usuarioRepository.findById(USUARIO_ID)).thenReturn(new Usuario());
+        when(espacioRepository.findById(ESPACIO_ID)).thenReturn(new Espacio("Sala de estudio", "SALA", 20, true));
+        doThrow(new PersistenceException("conexión perdida")).when(reservaRepository).guardar(any());
 
+        assertThrows(PersistenceException.class, () ->
+            servicio.crearReserva(USUARIO_ID, ESPACIO_ID, fecha, inicio, fin, "Reunión de estudio"));
+    }
 }
