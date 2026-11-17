@@ -111,6 +111,40 @@
 
                     <p id="mensajeResolucion" role="status" aria-live="polite"></p>
                 </div>
+
+                <div class="info-card" style="margin-top:24px;">
+                    <h2>Cerrar ticket (HU05)</h2>
+                    <p>
+                        Registre cómo se resolvió el problema para cerrar un ticket en resolución.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="ticketCierre">Ticket en resolución</label>
+                        <select id="ticketCierre" style="width:100%;padding:10px;">
+                            <option value="">Cargando tickets...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resolucionCierre">Resolución</label>
+                        <textarea id="resolucionCierre" rows="4"
+                                  style="width:100%;
+                                         padding:10px;
+                                         border:1px solid #c9d2df;
+                                         border-radius:8px;"
+                                  placeholder="Describa cómo se resolvió el problema"
+                        ></textarea>
+                    </div>
+
+                    <button id="btnCerrarTicket"
+                            type="button"
+                            class="primary-btn"
+                            style="background:#1f3b73;color:white;">
+                        Cerrar ticket
+                    </button>
+
+                    <p id="mensajeCierre" role="status" aria-live="polite"></p>
+                </div>
             @endif
 
         </section>
