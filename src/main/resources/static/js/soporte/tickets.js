@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnIniciarResolucion =
         document.getElementById("btnIniciarResolucion");
     const mensajeResolucion = document.getElementById("mensajeResolucion");
+    const ticketsCierre = document.getElementById("ticketCierre");
+    const resolucionCierre = document.getElementById("resolucionCierre");
+    const btnCerrarTicket = document.getElementById("btnCerrarTicket");
+    const mensajeCierre = document.getElementById("mensajeCierre");
 
     const csrf = formulario ?.querySelector('[name="csrfToken"]')?.value;
 
@@ -84,6 +88,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function cargarTicketsEnResolucion() {
+        if (!ticketsCierre) return;
+
+        try {
+            const resultado = await peticion("/api/soporte/tickets/en-resolucion");
+            completarSelector(
+                ticketsCierre,
+                resultado.datos,
+                "Sin tickets en resolución",
+                ticket => `#${ticket.id} — ${ticket.titulo}`
+            );
+        } catch (error) {
+            informar(mensajeCierre, error.message, true);
+        }
+    }
+
     formulario?.addEventListener("submit", async (evento) => {
         evento.preventDefault();
 
@@ -151,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             informar(mensajeResolucion, resultado.mensaje);
-            await cargarTicketsAsignados();
+            await Promise.all([cargarTicketsAsignados(), cargarTicketsEnResolucion()]);
         } catch (error) {
             informar(mensajeResolucion, error.message, true);
         } finally {
@@ -159,6 +179,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    btnCerrarTicket?.addEventListener("click", async () => {
+        if (!ticketsCierre.value || !resolucionCierre.value.trim()) {
+            informar(mensajeCierre, "Seleccione un ticket y escriba la resolución.", true);
+            return;
+        }
+
+        btnCerrarTicket.disabled = true;
+
+        try {
+            const resultado = await peticion(
+                `/api/soporte/tickets/${ticketsCierre.value}/cierre`,
+                {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json", "X-CSRF-Token": csrf},
+                    body: JSON.stringify({resolucion: resolucionCierre.value})
+                }
+            );
+
+            informar(mensajeCierre, resultado.mensaje);
+            resolucionCierre.value = "";
+            await cargarTicketsEnResolucion();
+        } catch (error) {
+            informar(mensajeCierre, error.message, true);
+        } finally {
+            btnCerrarTicket.disabled = false;
+        }
+    });
+
     cargarDatosAsignacion();
     cargarTicketsAsignados();
+    cargarTicketsEnResolucion();
 });

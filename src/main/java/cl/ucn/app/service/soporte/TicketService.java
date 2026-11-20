@@ -4,8 +4,10 @@ import cl.ucn.app.model.Usuario;
 import cl.ucn.app.model.soporte.Ticket;
 import cl.ucn.app.model.soporte.TecnicoDisponible;
 import cl.ucn.app.repository.UsuarioRepository;
-import cl.ucn.app.repository.soporte.TicketRepository;
+import cl.ucn.app.repository.soporte.JpaPermisosSoporteRepository;
+import cl.ucn.app.repository.soporte.JpaTicketRepository;
 import cl.ucn.app.repository.soporte.PermisosSoporteRepository;
+import cl.ucn.app.repository.soporte.TicketRepository;
 
 import java.util.Objects;
 import java.util.List;
@@ -16,7 +18,7 @@ public class TicketService {
     private final PermisosSoporteRepository permisosRepository;
 
     public TicketService() {
-        this(new TicketRepository(), new UsuarioRepository(), new PermisosSoporteRepository());
+        this(new JpaTicketRepository(), new UsuarioRepository(), new JpaPermisosSoporteRepository());
     }
 
     public TicketService(TicketRepository ticketRepository, UsuarioRepository usuarioRepository, PermisosSoporteRepository permisos) {
@@ -57,7 +59,7 @@ public class TicketService {
     }
 
     public boolean esAdministrador(Long usuarioId) {
-        return usuarioId != null && permisosRepository.esAdminsitrador(usuarioId);
+        return usuarioId != null && permisosRepository.esAdministrador(usuarioId);
     }
 
     public boolean esTecnico(Long usuarioId) {
@@ -66,7 +68,7 @@ public class TicketService {
 
     public List<TecnicoDisponible> listarTecnicos(Long administradorId) {
         exigirAdministrador(administradorId);
-        return permisosRepository.listarTecnicoActivos();
+        return permisosRepository.listarTecnicosActivos();
     }
 
     public List<Ticket> listarPendientes(Long administradorId) {
@@ -83,7 +85,7 @@ public class TicketService {
             throw new IllegalArgumentException("El usuario seleccionado no es un técnico activo.");
         }
 
-        return ticketRepository.asignarTecnico(ticketId, tecnicoId);
+        return ticketRepository.asignarTecnico(ticketId, tecnicoId, administradorId);
     }
 
     public List<Ticket> listarAsignados(Long tecnicoId) {
@@ -95,6 +97,22 @@ public class TicketService {
         exigirTecnico(tecnicoId);
         validarId(ticketId, "Ticket");
         return ticketRepository.iniciarResolucion(ticketId, tecnicoId);
+    }
+
+    public List<Ticket> listarEnResolucion(Long tecnicoId) {
+        exigirTecnico(tecnicoId);
+        return ticketRepository.listarEnResolucion(tecnicoId);
+    }
+
+    public Ticket cerrarTicket(Long ticketId, Long tecnicoId, String resolucion) {
+        exigirTecnico(tecnicoId);
+        validarId(ticketId, "Ticket");
+
+        if (resolucion == null || resolucion.isBlank()) {
+            throw new IllegalArgumentException("La resolución es obligatoria.");
+        }
+
+        return ticketRepository.cerrarTicket(ticketId, tecnicoId, resolucion.trim());
     }
 
     private void exigirAdministrador(Long usuarioId) {
@@ -111,7 +129,7 @@ public class TicketService {
 
     private void validarId(Long id, String tipo) {
         if (id == null || id <= 0) {
-            throw new IllegalArgumentException(tipo + "no válido");
+            throw new IllegalArgumentException(tipo + " no válido.");
         }
     }
 }

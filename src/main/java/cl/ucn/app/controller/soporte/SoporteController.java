@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class SoporteController {
@@ -70,17 +71,8 @@ public class SoporteController {
     public void listarPendientes(Context ctx) {
         if (!validarSesion(ctx)) return;
 
-        ejecutar(ctx, () -> {
-            List<Map<String, Object>> lista =
-                    ticketService.listarPendientes(ctx.sessionAttribute("usuarioId")).stream()
-                            .map(ticket -> Map.<String, Object>of(
-                                    "id", ticket.getId(),
-                                    "titulo", ticket.getTitulo(),
-                                    "estado", ticket.getEstado().name()
-                            )).toList();
-
-            responderOk(ctx, "Tickets pendientes.", lista);
-        });
+        ejecutar(ctx, () -> responderOk(ctx, "Tickets pendientes.",
+                resumen(ticketService.listarPendientes(ctx.sessionAttribute("usuarioId")))));
     }
 
     public void asignarTecnico(Context ctx) {
@@ -89,8 +81,8 @@ public class SoporteController {
         }
 
         ejecutar(ctx, () -> {
-            Long id = Long.parseLong(ctx.pathParam("id"));
-            AsignacionRequest solicitud = ctx.bodyAsClass(AsignacionRequest.class);
+            Long id = leerId(ctx);
+            AsignacionRequest solicitud = leerCuerpo(ctx, AsignacionRequest.class);
             Long usuarioId = ctx.sessionAttribute("usuarioId");
             Ticket ticket = ticketService.asignarTecnico(id, solicitud.tecnicoId(), usuarioId);
             responderOk(ctx, "Ticket asignado correctamente.",
@@ -102,17 +94,15 @@ public class SoporteController {
     public void listarAsignados(Context ctx) {
         if (!validarSesion(ctx)) return;
 
-        ejecutar(ctx, () -> {
-            List<Map<String, Object>> lista =
-                    ticketService.listarAsignados(ctx.sessionAttribute("usuarioId")).stream()
-                            .map(ticket -> Map.<String, Object>of(
-                                    "id", ticket.getId(),
-                                    "titulo", ticket.getTitulo(),
-                                    "estado", ticket.getEstado().name()
-                            )).toList();
+        ejecutar(ctx, () -> responderOk(ctx, "Tickets asignados.",
+                resumen(ticketService.listarAsignados(ctx.sessionAttribute("usuarioId")))));
+    }
 
-            responderOk(ctx, "Tickets asignados.", lista);
-        });
+    public void listarEnResolucion(Context ctx) {
+        if (!validarSesion(ctx)) return;
+
+        ejecutar(ctx, () -> responderOk(ctx, "Tickets en resolución.",
+                resumen(ticketService.listarEnResolucion(ctx.sessionAttribute("usuarioId")))));
     }
 
     public void iniciarResolucion(Context ctx) {
@@ -121,7 +111,7 @@ public class SoporteController {
         }
 
         ejecutar(ctx, () -> {
-            Long id = Long.parseLong(ctx.pathParam("id"));
+            Long id = leerId(ctx);
             Long usuarioId = ctx.sessionAttribute("usuarioId");
             Ticket ticket = ticketService.iniciarResolucion(id, usuarioId);
             responderOk(ctx, "El ticket ahora está en resolución.",
@@ -129,7 +119,33 @@ public class SoporteController {
         });
     }
 
+    public void cerrarTicket(Context ctx) {
+        if (!validarSesion(ctx) || !validarCsrf(ctx, ctx.header("X-CSRF-Token"))) {
+            return;
+        }
+
+        ejecutar(ctx, () -> {
+            Long id = leerId(ctx);
+            CierreRequest solicitud = leerCuerpo(ctx, CierreRequest.class);
+            Long usuarioId = ctx.sessionAttribute("usuarioId");
+            Ticket ticket = ticketService.cerrarTicket(id, usuarioId, solicitud.resolucion());
+            responderOk(ctx, "Ticket cerrado correctamente.",
+                    Map.of("id", ticket.getId(), "estado", ticket.getEstado().name()));
+        });
+    }
+
     private record AsignacionRequest(Long tecnicoId) {}
+
+    private record CierreRequest(String resolucion) {}
+
+    private List<Map<String, Object>> resumen(List<Ticket> tickets) {
+        return tickets.stream()
+                .map(ticket -> Map.<String, Object>of(
+                        "id", ticket.getId(),
+                        "titulo", ticket.getTitulo(),
+                        "estado", ticket.getEstado().name()
+                )).toList();
+    }
 
     private boolean validarSesion(Context ctx) {
         if (ctx.sessionAttribute("usuarioId") != null) {
@@ -162,9 +178,25 @@ public class SoporteController {
             responderError(ctx, 409, e.getMessage());
         } catch (IllegalArgumentException | io.javalin.http.BadRequestResponse e) {
             responderError(ctx, 400, "Los datos enviados no son válidos: " + e.getMessage());
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             LOG.error("Error en módulo de soporte", e);
             responderError(ctx, 500, "Ocurrió un error interno.");
+        }
+    }
+
+    private Long leerId(Context ctx) {
+        try {
+            return Long.parseLong(ctx.pathParam("id"));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Id de ticket no válido.");
+        }
+    }
+
+    private <T> T leerCuerpo(Context ctx, Class<T> tipo) {
+        try {
+            return Objects.requireNonNull(ctx.bodyAsClass(tipo));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("El cuerpo JSON no es válido.");
         }
     }
 

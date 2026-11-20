@@ -15,5 +15,7 @@ public class SoporteRoutes {
         config.routes.put("/api/soporte/tickets/{id}/asignacion", controller::asignarTecnico);
         config.routes.get("/api/soporte/tickets/asignados", controller::listarAsignados);
         config.routes.put("/api/soporte/tickets/{id}/resolucion", controller::iniciarResolucion);
+        config.routes.get("/api/soporte/tickets/en-resolucion", controller::listarEnResolucion);
+        config.routes.put("/api/soporte/tickets/{id}/cierre", controller::cerrarTicket);
     }
 }
