@@ -1,45 +1,43 @@
 package cl.ucn.app.main;
 
 import cl.ucn.app.routes.AuthRoutes;
+import cl.ucn.app.routes.EventosRoutes;
 import cl.ucn.app.routes.HomeRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
-import gg.jte.resolve.ResourceCodeResolver;
-
-import java.nio.file.Paths;
+import cl.ucn.app.routes.InscripcionesRoutes;
 
 public class Main {
     public static void main(String[] args) {
 
-        System.out.println("JTE Class found: " + gg.jte.html.HtmlTemplateOutput.class.getName());
+
 
         Javalin app = Javalin.create(config -> {
 
-            // 1. Forzamos al motor JTE a buscar en el recurso correcto del Classpath
-            // Esto soluciona problemas donde el IDE no mapea bien la carpeta "jte"
-            // 1. Crear un resolver
-            ResourceCodeResolver resolver = new ResourceCodeResolver("jte");
-
-            // 2. Crear el motor asegurando el uso del ClassLoader actual
-            TemplateEngine engine = TemplateEngine.create(
-                    resolver,
-                    Paths.get("jte-classes"), // Carpeta temporal para clases generadas
-                    ContentType.Html,
-                    Main.class.getClassLoader()  // <--- ESTO ES LA CLAVE
-            );
+            TemplateEngine engine = TemplateEngine.createPrecompiled(ContentType.Html);
 
             config.fileRenderer(new JavalinJte(engine));
 
             // 2. Archivos estáticos
             config.staticFiles.add("/static");
 
+
             // 3. Registro de rutas
             AuthRoutes.register(config);
             HomeRoutes.register(config);
+            EventosRoutes.register(config);
+            InscripcionesRoutes.register(config);
+
         });
 
-        app.start(7000);
+        cl.ucn.app.config.JPAUtil.getEntityManagerFactory();
+        new cl.ucn.app.repository.UsuarioRepository().migrarPasswords();
+        app.start(cl.ucn.app.util.AppProperties.getInt("server.port", 7000));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            app.stop();
+            cl.ucn.app.config.JPAUtil.shutdown();
+        }));
     }
 }

@@ -45,3 +45,10 @@ build/
 
 # Configuracion personal del IDE: no compartir entre cohortes
 /.idea/
+
+# Sesiones locales de prueba
+/cookies.txt
+
+# Cachés de las herramientas de documentación y verificación
+__pycache__/
+*.py[cod]
