@@ -13,6 +13,8 @@
         <class>cl.ucn.app.model.Rol</class>
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
+        <class>cl.ucn.app.model.soporte.Ticket</class>
+        <class>cl.ucn.app.model.soporte.HistorialTicket</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
