@@ -94,4 +94,21 @@ public class VehiculoRepository {
         }
         return false;
     }
+
+    public Vehiculo findById(Long id) {
+        try (EntityManager em = entityManagerSupplier.get()) {
+            try {
+                return em.createQuery(
+                        "SELECT v FROM Vehiculo v "
+                        + "JOIN FETCH v.propietario "
+                        + "WHERE v.id = :id",
+                        Vehiculo.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+
+            } catch (NoResultException e) {
+                return null;
+            }
+        }
+    }
 }
