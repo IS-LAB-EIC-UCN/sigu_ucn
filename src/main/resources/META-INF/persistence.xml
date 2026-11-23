@@ -14,6 +14,8 @@
         <class>cl.ucn.app.model.Espacio</class>
         <class>cl.ucn.app.model.Reserva</class>
         <class>cl.ucn.app.model.Vehiculo</class>
+        <class>cl.ucn.app.model.Estacionamiento</class>
+        <class>cl.ucn.app.model.ReservaEstacionamiento</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>

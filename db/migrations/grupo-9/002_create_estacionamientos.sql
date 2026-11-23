@@ -1,0 +1,5 @@
+CREATE TABLE estacionamientos (
+    id BIGSERIAL PRIMARY KEY,
+    codigo VARCHAR(20) NOT NULL UNIQUE,
+    habilitado BOOLEAN NOT NULL DEFAULT TRUE
+);
