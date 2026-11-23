@@ -11,6 +11,7 @@
 @param String horaInicio
 @param String horaFin
 @param String motivo
+@param boolean esAdmin
 
 @template.layout.main(
 title = title,
@@ -30,7 +31,7 @@ content = @`
 
     <section class="dashboard">
         <h1>Salas disponibles</h1>
-        <p><a href="/reservas/mis-reservas">Mis reservas</a></p>
+        @template.reservas.nav(esAdmin = esAdmin, activo = "salas")
 
         @if(!error.isEmpty())
             <div class="alert-error">${error}</div>

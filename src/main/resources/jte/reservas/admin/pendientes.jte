@@ -7,6 +7,7 @@
 @param List<Reserva> reservas
 @param String mensaje
 @param String error
+@param boolean esAdmin
 
 !{var formatoFechaHora = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");}
 
@@ -28,7 +29,7 @@ content = @`
 
     <section class="dashboard">
         <h1>Solicitudes de reserva pendientes</h1>
-        <p><a href="/home">Volver al inicio</a></p>
+        @template.reservas.nav(esAdmin = esAdmin, activo = "admin")
 
         @if(!mensaje.isEmpty())
             <div class="alert-success">${mensaje}</div>
@@ -66,10 +67,10 @@ content = @`
                         <td>${reserva.getFechaCreacion() != null ? reserva.getFechaCreacion().format(formatoFechaHora) : ""}</td>
                         <td>
                             <div class="acciones-admin">
-                                <form method="post" action="/admin/reservas/${reserva.getId()}/aprobar">
+                                <form method="post" action="/reservas/admin/${reserva.getId()}/aprobar">
                                     <button type="submit" class="btn-aprobar">Aprobar</button>
                                 </form>
-                                <form class="form-rechazar" method="post" action="/admin/reservas/${reserva.getId()}/rechazar">
+                                <form class="form-rechazar" method="post" action="/reservas/admin/${reserva.getId()}/rechazar">
                                     <input type="text" name="motivo" maxlength="255" required placeholder="Motivo del rechazo">
                                     <button type="submit" class="btn-rechazar">Rechazar</button>
                                 </form>
