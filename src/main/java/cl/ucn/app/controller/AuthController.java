@@ -15,10 +15,7 @@ public class AuthController {
     }
 
     public void showLogin(Context ctx) {
-        String mensaje = ctx.queryParam("registrado") != null
-                ? "Cuenta creada correctamente. Ya puede iniciar sesión."
-                : "";
-        ctx.render("login.jte", Map.of("error", "", "mensaje", mensaje));
+        ctx.render("login.jte", Map.of("error", ""));
     }
 
     public void doLogin(Context ctx) {

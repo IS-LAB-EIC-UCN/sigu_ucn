@@ -3,7 +3,7 @@ package cl.ucn.app.security;
 /**
  * Abstracción para cifrar y verificar contraseñas (RNF-01).
  * Los servicios dependen de esta interfaz y no de un algoritmo concreto (DIP),
- * por lo que el algoritmo puede cambiarse sin modificar AuthService ni RegistroService.
+ * por lo que el algoritmo puede cambiarse sin modificar AuthService.
  */
 public interface PasswordHasher {
 
