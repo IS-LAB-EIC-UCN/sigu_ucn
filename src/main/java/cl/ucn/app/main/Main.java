@@ -1,5 +1,6 @@
 package cl.ucn.app.main;
 
+import cl.ucn.app.routes.CafeteriaRoutes;
 import cl.ucn.app.routes.AuthRoutes;
 import cl.ucn.app.routes.HomeRoutes;
 import io.javalin.Javalin;
@@ -7,6 +8,7 @@ import io.javalin.rendering.template.JavalinJte;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+
 
 import java.nio.file.Paths;
 
@@ -38,6 +40,7 @@ public class Main {
             // 3. Registro de rutas
             AuthRoutes.register(config);
             HomeRoutes.register(config);
+            CafeteriaRoutes.register(config);
         });
 
         app.start(7000);
