@@ -5,6 +5,7 @@ import cl.ucn.app.repository.UsuarioRepository;
 import cl.ucn.app.security.PasswordHasher;
 import cl.ucn.app.security.Pbkdf2PasswordHasher;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public class AuthService {
@@ -27,7 +28,7 @@ public class AuthService {
             return null;
         }
 
-        Usuario usuario = usuarioRepository.findByCorreo(RegistroService.normalizarCorreo(correo));
+        Usuario usuario = usuarioRepository.findByCorreo(normalizarCorreo(correo));
 
         if (usuario == null) {
             return null;
@@ -42,6 +43,11 @@ public class AuthService {
         }
 
         return usuario;
+    }
+
+    /** Correo en minúsculas y sin espacios, para que el login no dependa de mayúsculas. */
+    static String normalizarCorreo(String correo) {
+        return correo.trim().toLowerCase(Locale.ROOT);
     }
 
     /**

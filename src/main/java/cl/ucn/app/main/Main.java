@@ -2,7 +2,6 @@ package cl.ucn.app.main;
 
 import cl.ucn.app.routes.AuthRoutes;
 import cl.ucn.app.routes.HomeRoutes;
-import cl.ucn.app.routes.RegistroRoutes;
 import cl.ucn.app.routes.ReservaRoutes;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -39,7 +38,6 @@ public class Main {
 
             // 3. Registro de rutas
             AuthRoutes.register(config);
-            RegistroRoutes.register(config);
             HomeRoutes.register(config);
             ReservaRoutes.register(config);
 
