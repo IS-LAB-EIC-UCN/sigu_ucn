@@ -33,5 +33,6 @@ public final class ReservaRoutes {
         config.routes.get("/reservas/disponibilidad", disponibilidadController::consultar);
         config.routes.post("/reservas/crear", reservaController::crearReserva);
         MisReservasRoutes.register(config);
+        AdminRoutes.register(config);
     }
 }

@@ -11,6 +11,7 @@
 @param LocalDate fecha
 @param Disponibilidad disponibilidad
 @param String error
+@param boolean esAdmin
 
 @template.layout.main(
 title = title,
@@ -32,10 +33,7 @@ content = @`
 
     <section class="dashboard">
         <h1>Disponibilidad de sala</h1>
-        <p>
-            <a href="/reservas">Ver salas disponibles</a> |
-            <a href="/reservas/mis-reservas">Mis reservas</a>
-        </p>
+        @template.reservas.nav(esAdmin = esAdmin, activo = "disponibilidad")
 
         @if(error != null && !error.isEmpty())
             <div class="alert-error">${error}</div>

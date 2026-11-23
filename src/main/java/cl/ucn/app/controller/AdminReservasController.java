@@ -18,7 +18,7 @@ import java.util.Map;
 public class AdminReservasController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminReservasController.class);
-    private static final String RUTA_PENDIENTES = "/admin/reservas/pendientes";
+    private static final String RUTA_PENDIENTES = "/reservas/admin/pendientes";
 
     private final AdminReservaService adminReservaService;
 
@@ -38,7 +38,8 @@ public class AdminReservasController {
         model.put("mensaje", consumirFlash(ctx, "flashMensaje"));
         model.put("error", consumirFlash(ctx, "flashError"));
 
-        ctx.render("admin/pendientes.jte", model);
+        model.put("esAdmin", true);
+        ctx.render("reservas/admin/pendientes.jte", model);
     }
 
     public void aprobar(Context ctx) {
@@ -91,7 +92,8 @@ public class AdminReservasController {
             Map<String, Object> model = new HashMap<>();
             model.put("title", "Acceso denegado - SIGU-UCN");
             model.put("usuarioNombre", ctx.sessionAttribute("usuarioNombre"));
-            ctx.status(403).render("admin/acceso-denegado.jte", model);
+            model.put("esAdmin", false);
+            ctx.status(403).render("reservas/admin/acceso-denegado.jte", model);
             return false;
         }
         return true;

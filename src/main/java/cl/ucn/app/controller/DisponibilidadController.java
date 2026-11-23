@@ -1,5 +1,7 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.security.AutorizacionAdmin;
+
 import cl.ucn.app.repository.EspacioRepository;
 import cl.ucn.app.service.Disponibilidad;
 import cl.ucn.app.service.DisponibilidadService;
@@ -82,6 +84,7 @@ public class DisponibilidadController {
         model.put("disponibilidad", disponibilidad);
         model.put("error", error);
 
+        model.put("esAdmin", AutorizacionAdmin.esAdmin(ctx.sessionAttribute("usuarioRol")));
         ctx.render("reservas/disponibilidad.jte", model);
     }
 }

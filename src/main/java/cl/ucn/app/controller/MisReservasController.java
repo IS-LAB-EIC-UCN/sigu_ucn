@@ -1,5 +1,7 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.security.AutorizacionAdmin;
+
 import cl.ucn.app.model.Reserva;
 import cl.ucn.app.service.EspacioService;
 import cl.ucn.app.service.ReservaException;
@@ -53,6 +55,7 @@ public class MisReservasController {
         model.put("mensaje", consumirFlash(ctx, "flashMensaje"));
         model.put("error", consumirFlash(ctx, "flashError"));
 
+        model.put("esAdmin", AutorizacionAdmin.esAdmin(ctx.sessionAttribute("usuarioRol")));
         ctx.render("reservas/mis-reservas.jte", model);
     }
 

@@ -15,6 +15,7 @@
 @param String estadoSeleccionado
 @param String mensaje
 @param String error
+@param boolean esAdmin
 
 @template.layout.main(
 title = title,
@@ -40,7 +41,7 @@ content = @`
 
     <section class="dashboard">
         <h1>Mis reservas</h1>
-        <p><a href="/reservas">Ver salas disponibles</a></p>
+        @template.reservas.nav(esAdmin = esAdmin, activo = "mis-reservas")
 
         @if(!mensaje.isEmpty())
             <div class="alert-success">${mensaje}</div>

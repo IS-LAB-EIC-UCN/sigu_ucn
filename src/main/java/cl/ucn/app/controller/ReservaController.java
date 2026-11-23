@@ -1,5 +1,7 @@
 package cl.ucn.app.controller;
 
+import cl.ucn.app.security.AutorizacionAdmin;
+
 import cl.ucn.app.service.EspacioService;
 import cl.ucn.app.service.ReservaException;
 import cl.ucn.app.service.ReservaService;
@@ -59,6 +61,7 @@ public class ReservaController {
         model.put("horaFin", form.getOrDefault("horaFin", ""));
         model.put("motivo", form.getOrDefault("motivo", ""));
 
+        model.put("esAdmin", AutorizacionAdmin.esAdmin(ctx.sessionAttribute("usuarioRol")));
         ctx.render("reservas/salas.jte", model);
     }
 
