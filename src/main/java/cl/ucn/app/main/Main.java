@@ -7,6 +7,7 @@ import io.javalin.rendering.template.JavalinJte;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
+import cl.ucn.app.routes.VehiculoRoutes;
 
 import java.nio.file.Paths;
 
@@ -38,6 +39,7 @@ public class Main {
             // 3. Registro de rutas
             AuthRoutes.register(config);
             HomeRoutes.register(config);
+            VehiculoRoutes.register(config);
         });
 
         app.start(7000);

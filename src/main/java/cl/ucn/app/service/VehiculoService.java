@@ -33,9 +33,13 @@ public class VehiculoService {
         }
 
         String patenteNormalizada = patente.strip().toUpperCase(Locale.ROOT);
-        if (patenteNormalizada.codePointCount(0, patenteNormalizada.length()) > 10) {
-            throw new IllegalArgumentException("La patente no puede superar los 10 caracteres.");
+
+        if (!patenteNormalizada.matches("([A-Z]{4}[0-9]{2}|[A-Z]{2}[0-9]{4})")) {
+            throw new IllegalArgumentException(
+                    "La patente debe tener 4 letras y 2 números, o 2 letras y 4 números."
+            );
         }
+
         if (usuarioId == null) {
             throw new IllegalArgumentException("El usuario propietario es obligatorio.");
         }
