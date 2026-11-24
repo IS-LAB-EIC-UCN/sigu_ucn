@@ -3,6 +3,8 @@ package cl.ucn.app.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.ReservaEstacionamiento;
@@ -12,8 +14,19 @@ import jakarta.persistence.NoResultException;
 
 public class ReservaEstacionamientoRepository {
 
+    private final Supplier<EntityManager> entityManagerSupplier;
+
+    public ReservaEstacionamientoRepository() {
+        this(JPAUtil::getEntityManager);
+    }
+
+    public ReservaEstacionamientoRepository(
+            Supplier<EntityManager> entityManagerSupplier) {
+        this.entityManagerSupplier = Objects.requireNonNull(entityManagerSupplier);
+    }
+
     public void save(ReservaEstacionamiento reserva) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             EntityTransaction transaction = em.getTransaction();
@@ -34,7 +47,7 @@ public class ReservaEstacionamientoRepository {
     }
 
     public ReservaEstacionamiento findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             return em.createQuery(
@@ -56,7 +69,7 @@ public class ReservaEstacionamientoRepository {
     }
 
     public List<ReservaEstacionamiento> findByUsuarioId(Long usuarioId) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             return em.createQuery(
@@ -80,7 +93,7 @@ public class ReservaEstacionamientoRepository {
         LocalDateTime inicio,
         LocalDateTime fin
     ) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             Long cantidad = em.createQuery(

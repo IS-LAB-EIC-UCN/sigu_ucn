@@ -2,6 +2,8 @@
 package cl.ucn.app.repository;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.Estacionamiento;
@@ -11,8 +13,18 @@ import jakarta.persistence.NoResultException;
 
 public class EstacionamientoRepository {
 
+    private final Supplier<EntityManager> entityManagerSupplier;
+
+    public EstacionamientoRepository() {
+        this(JPAUtil::getEntityManager);
+    }
+
+    public EstacionamientoRepository(Supplier<EntityManager> entityManagerSupplier) {
+        this.entityManagerSupplier = Objects.requireNonNull(entityManagerSupplier);
+    }
+
     public void save(Estacionamiento estacionamiento) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             EntityTransaction transaction = em.getTransaction();
@@ -32,7 +44,7 @@ public class EstacionamientoRepository {
     }
 
     public Estacionamiento findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             return em.find(Estacionamiento.class, id);
@@ -42,7 +54,7 @@ public class EstacionamientoRepository {
     }
 
     public Estacionamiento findByCodigo(String codigo) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             return em.createQuery(
@@ -59,7 +71,7 @@ public class EstacionamientoRepository {
     }
 
     public List<Estacionamiento> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             return em.createQuery(
@@ -72,7 +84,7 @@ public class EstacionamientoRepository {
     }
 
     public boolean existsByCodigo(String codigo) {
-        EntityManager em = JPAUtil.getEntityManager();
+        EntityManager em = entityManagerSupplier.get();
 
         try {
             return em.createQuery(
