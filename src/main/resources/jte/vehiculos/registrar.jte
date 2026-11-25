@@ -35,7 +35,7 @@
 
                 <div class="info-card">
 
-                    <h2>Registrar vehículo</h2>
+                    <h2>Registrar vehículo (HU-01)</h2>
 
                     <p>Ingresa la patente del vehículo que deseas asociar a tu cuenta.</p>
 
@@ -158,7 +158,7 @@
 
             <section class="info-card" style="margin-top:24px;">
 
-                <h2>Reservar estacionamiento</h2>
+                <h2>Reservar estacionamiento (HU-02)</h2>
 
                 <p>Selecciona tu vehículo, un estacionamiento disponible y el horario de tu reserva.</p>
 
