@@ -19,6 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import cl.ucn.app.model.Estacionamiento;
+import cl.ucn.app.model.TipoEstacionamiento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
@@ -194,4 +195,59 @@ class EstacionamientoRepositoryTest {
         assertFalse(resultado);
         verify(em).close();
     }
+
+    @Test
+        void listaEstacionamientosComunesParaNoDocentes() {
+        List<Estacionamiento> esperados = List.of(
+                new Estacionamiento(
+                        "E-01", true, TipoEstacionamiento.COMUN
+                )
+        );
+
+        when(em.createQuery(
+                "SELECT e FROM Estacionamiento e "
+                        + "WHERE e.habilitado = true "
+                        + "AND e.tipo = :tipo "
+                        + "ORDER BY e.codigo",
+                Estacionamiento.class
+        )).thenReturn(query);
+
+        when(query.setParameter("tipo", TipoEstacionamiento.COMUN))
+                .thenReturn(query);
+
+        when(query.getResultList()).thenReturn(esperados);
+
+        List<Estacionamiento> resultado =
+                repository.findDisponiblesParaUsuario(false);
+
+        assertEquals(esperados, resultado);
+        verify(em).close();
+        }
+
+        @Test
+        void listaTodosLosTiposHabilitadosParaDocentes() {
+        List<Estacionamiento> esperados = List.of(
+                new Estacionamiento(
+                        "E-01", true, TipoEstacionamiento.COMUN
+                ),
+                new Estacionamiento(
+                        "D-01", true, TipoEstacionamiento.DOCENTES
+                )
+        );
+
+        when(em.createQuery(
+                "SELECT e FROM Estacionamiento e "
+                        + "WHERE e.habilitado = true "
+                        + "ORDER BY e.codigo",
+                Estacionamiento.class
+        )).thenReturn(query);
+
+        when(query.getResultList()).thenReturn(esperados);
+
+        List<Estacionamiento> resultado =
+                repository.findDisponiblesParaUsuario(true);
+
+        assertEquals(esperados, resultado);
+        verify(em).close();
+        }
 }

@@ -1,5 +1,6 @@
 package cl.ucn.app.service;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -55,5 +56,12 @@ public class VehiculoService {
         Vehiculo vehiculo = new Vehiculo(patenteNormalizada, propietario);
         vehiculoRepository.save(vehiculo);
         return vehiculo;
+    }
+    public List<Vehiculo> listarVehiculos(Long usuarioId) {
+        if (usuarioId == null) {
+            throw new IllegalArgumentException("El usuario es obligatorio.");
+        }
+
+        return vehiculoRepository.findByUsuarioId(usuarioId);
     }
 }

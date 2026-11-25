@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.ReservaEstacionamiento;
+import cl.ucn.app.model.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
@@ -111,6 +112,26 @@ public class ReservaEstacionamientoRepository {
 
             return cantidad > 0;
 
+        } finally {
+            em.close();
+        }
+    }
+
+    public Usuario findUsuarioConRol(Long usuarioId) {
+        EntityManager em = entityManagerSupplier.get();
+
+        try {
+            return em.createQuery(
+                    "SELECT u FROM Usuario u "
+                    + "JOIN FETCH u.rol "
+                    + "WHERE u.id = :usuarioId",
+                    Usuario.class
+            )
+            .setParameter("usuarioId", usuarioId)
+            .getSingleResult();
+
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }

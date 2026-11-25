@@ -1,7 +1,22 @@
+
 package cl.ucn.app.routes;
 
-public class EstacionamientoRoutes {
-    
-}
+import cl.ucn.app.controller.EstacionamientoController;
+import io.javalin.config.JavalinConfig;
 
-//prueba 6
+public final class EstacionamientoRoutes {
+
+    private EstacionamientoRoutes() {
+    }
+
+    public static void register(JavalinConfig config) {
+
+        EstacionamientoController controller =
+                new EstacionamientoController();
+
+        config.routes.post(
+                "/estacionamientos/reservar",
+                controller::registrarReserva
+        );
+    }
+}

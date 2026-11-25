@@ -18,6 +18,8 @@ import static org.mockito.Mockito.when;
 
 import cl.ucn.app.model.Estacionamiento;
 import cl.ucn.app.model.ReservaEstacionamiento;
+import cl.ucn.app.model.Rol;
+import cl.ucn.app.model.TipoEstacionamiento;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.model.Vehiculo;
 import cl.ucn.app.repository.EstacionamientoRepository;
@@ -83,6 +85,12 @@ class ReservaEstacionamientoServiceTest {
                 estacionamientoId, inicio, fin
         )).thenReturn(false);
     }
+
+    private void configurarRol(String nombreRol) {
+        Rol rol = mock(Rol.class);
+        when(rol.getNombre()).thenReturn(nombreRol);
+        when(usuario.getRol()).thenReturn(rol);
+        }
 
     @Test
     void registraReservaCorrectamente() {
@@ -247,4 +255,78 @@ class ReservaEstacionamientoServiceTest {
 
         verify(reservaRepository, never()).save(any());
     }
+
+    @Test
+        void estudiantePuedeReservarEstacionamientoComun() {
+        configurarRol("ESTUDIANTE");
+        when(estacionamiento.getTipo())
+                .thenReturn(TipoEstacionamiento.COMUN);
+
+        ReservaEstacionamiento resultado = service.registrarReserva(
+                usuarioId, vehiculoId, estacionamientoId, inicio, fin
+        );
+
+        assertNotNull(resultado);
+        verify(reservaRepository).save(any());
+        }
+
+        @Test
+        void estudianteNoPuedeReservarEstacionamientoDocentes() {
+        configurarRol("ESTUDIANTE");
+        when(estacionamiento.getTipo())
+                .thenReturn(TipoEstacionamiento.DOCENTES);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.registrarReserva(
+                        usuarioId, vehiculoId, estacionamientoId, inicio, fin
+                )
+        );
+
+        verify(reservaRepository, never()).save(any());
+        }
+
+        @Test
+        void docentePuedeReservarEstacionamientoComun() {
+        configurarRol("DOCENTE");
+        when(estacionamiento.getTipo())
+                .thenReturn(TipoEstacionamiento.COMUN);
+
+        ReservaEstacionamiento resultado = service.registrarReserva(
+                usuarioId, vehiculoId, estacionamientoId, inicio, fin
+        );
+
+        assertNotNull(resultado);
+        verify(reservaRepository).save(any());
+        }
+
+        @Test
+        void docentePuedeReservarEstacionamientoExclusivo() {
+        configurarRol("DOCENTE");
+        when(estacionamiento.getTipo())
+                .thenReturn(TipoEstacionamiento.DOCENTES);
+
+        ReservaEstacionamiento resultado = service.registrarReserva(
+                usuarioId, vehiculoId, estacionamientoId, inicio, fin
+        );
+
+        assertNotNull(resultado);
+        verify(reservaRepository).save(any());
+        }
+
+        @Test
+        void administradorNoPuedeReservarEstacionamientoDocentes() {
+        configurarRol("ADMIN");
+        when(estacionamiento.getTipo())
+                .thenReturn(TipoEstacionamiento.DOCENTES);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.registrarReserva(
+                        usuarioId, vehiculoId, estacionamientoId, inicio, fin
+                )
+        );
+
+        verify(reservaRepository, never()).save(any());
+        }
 }

@@ -1,14 +1,21 @@
 package cl.ucn.app.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import cl.ucn.app.model.Estacionamiento;
+import cl.ucn.app.model.Vehiculo;
+import cl.ucn.app.service.ReservaEstacionamientoService;
 import cl.ucn.app.service.VehiculoService;
 import io.javalin.http.Context;
-import java.util.Map;
 
 public class VehiculoController {
     private final VehiculoService vehiculoService;
+    private final ReservaEstacionamientoService reservaService;
 
     public VehiculoController() {
         this.vehiculoService = new VehiculoService();
+        this.reservaService = new ReservaEstacionamientoService();
     }
 
     // formulario del registro
@@ -22,13 +29,26 @@ public class VehiculoController {
             return;
         }
 
+        List<Vehiculo> vehiculos =
+            vehiculoService.listarVehiculos(usuarioId);
+        List<Estacionamiento> estacionamientos =
+            reservaService.listarDisponiblesParaUsuario(usuarioId);
+
         ctx.render("vehiculos/registrar.jte", Map.of(
-                "title", "Registrar vehículo",
+                "title", "Mis vehículos",
                 "usuarioNombre", usuarioNombre,
                 "patente", "",
                 "error", "",
                 "mensaje", "1".equals(ctx.queryParam("creado"))
                         ? "Vehículo registrado correctamente."
+                        : "",
+                "vehiculos", vehiculos,
+                "estacionamientos", estacionamientos,
+                "reservaMensaje", "1".equals(ctx.queryParam("reserva"))
+                        ? "Reserva solicitada correctamente."
+                        : "",
+                "reservaError", "1".equals(ctx.queryParam("errorReserva"))
+                        ? "No se pudo registrar la reserva. Revisa los datos y la disponibilidad."
                         : ""
         ));
     }
@@ -54,12 +74,21 @@ public class VehiculoController {
 
             ctx.status(400);
 
+            List<Vehiculo> vehiculos =
+            vehiculoService.listarVehiculos(usuarioId);
+            List<Estacionamiento> estacionamientos =
+            reservaService.listarDisponiblesParaUsuario(usuarioId);
+
             ctx.render("vehiculos/registrar.jte", Map.of(
                     "title", "Registrar vehículo",
                     "usuarioNombre", usuarioNombre,
                     "patente", patente == null ? "" : patente,
                     "error", e.getMessage(),
-                    "mensaje", ""
+                    "mensaje", "",
+                    "vehiculos", vehiculos,
+                    "estacionamientos", estacionamientos,
+                    "reservaMensaje", "",
+                    "reservaError", ""
             ));
         }
     }

@@ -2,10 +2,12 @@
 package cl.ucn.app.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import cl.ucn.app.model.Estacionamiento;
 import cl.ucn.app.model.ReservaEstacionamiento;
+import cl.ucn.app.model.TipoEstacionamiento;
 import cl.ucn.app.model.Usuario;
 import cl.ucn.app.model.Vehiculo;
 import cl.ucn.app.repository.EstacionamientoRepository;
@@ -41,6 +43,25 @@ public class ReservaEstacionamientoService {
         this.estacionamientoRepository = Objects.requireNonNull(estacionamientoRepository);
     }
 
+    public List<Estacionamiento> listarDisponiblesParaUsuario(Long usuarioId) {
+
+        if (usuarioId == null) {
+            throw new IllegalArgumentException(
+                    "El identificador del usuario es obligatorio.");
+        }
+
+        Usuario usuario = reservaRepository.findUsuarioConRol(usuarioId);
+
+        if (usuario == null) {
+            throw new IllegalArgumentException("El usuario no existe.");
+        }
+
+        boolean esDocente = usuario.getRol() != null
+                && "DOCENTE".equals(usuario.getRol().getNombre());
+
+        return estacionamientoRepository.findDisponiblesParaUsuario(esDocente);
+    }
+
     public ReservaEstacionamiento registrarReserva(
             Long usuarioId,
             Long vehiculoId,
@@ -56,7 +77,7 @@ public class ReservaEstacionamientoService {
             throw new IllegalArgumentException("El intervalo de reserva no es válido.");
         }
 
-        Usuario usuario = usuarioRepository.findById(usuarioId);
+        Usuario usuario = reservaRepository.findUsuarioConRol(usuarioId);
 
         if (usuario == null) {
             throw new IllegalArgumentException("El usuario no existe.");
@@ -81,6 +102,14 @@ public class ReservaEstacionamientoService {
 
         if (!Boolean.TRUE.equals(estacionamiento.getHabilitado())) {
             throw new IllegalArgumentException("El estacionamiento no está habilitado.");
+        }
+
+        if (estacionamiento.getTipo() == TipoEstacionamiento.DOCENTES
+                && (usuario.getRol() == null
+                || !"DOCENTE".equals(usuario.getRol().getNombre()))) {
+
+            throw new IllegalArgumentException(
+                    "Este estacionamiento es exclusivo para docentes.");
         }
 
         if (reservaRepository.existsOverlappingReservation(

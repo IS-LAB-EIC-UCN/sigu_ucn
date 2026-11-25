@@ -1,15 +1,16 @@
 package cl.ucn.app.main;
 
+import java.nio.file.Paths;
+
 import cl.ucn.app.routes.AuthRoutes;
+import cl.ucn.app.routes.EstacionamientoRoutes;
 import cl.ucn.app.routes.HomeRoutes;
-import io.javalin.Javalin;
-import io.javalin.rendering.template.JavalinJte;
+import cl.ucn.app.routes.VehiculoRoutes;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
-import cl.ucn.app.routes.VehiculoRoutes;
-
-import java.nio.file.Paths;
+import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
 
 public class Main {
     public static void main(String[] args) {
@@ -40,6 +41,7 @@ public class Main {
             AuthRoutes.register(config);
             HomeRoutes.register(config);
             VehiculoRoutes.register(config);
+            EstacionamientoRoutes.register(config);
         });
 
         app.start(7000);
