@@ -1,7 +1,9 @@
 
 package cl.ucn.app.service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +23,7 @@ public class ReservaEstacionamientoService {
     private final UsuarioRepository usuarioRepository;
     private final VehiculoRepository vehiculoRepository;
     private final EstacionamientoRepository estacionamientoRepository;
+    private final Clock clock;
 
     public ReservaEstacionamientoService() {
         this(
@@ -37,10 +40,22 @@ public class ReservaEstacionamientoService {
             VehiculoRepository vehiculoRepository,
             EstacionamientoRepository estacionamientoRepository) {
 
+        this(reservaRepository, usuarioRepository, vehiculoRepository,
+                estacionamientoRepository, Clock.system(ZoneId.of("America/Santiago")));
+    }
+
+    public ReservaEstacionamientoService(
+            ReservaEstacionamientoRepository reservaRepository,
+            UsuarioRepository usuarioRepository,
+            VehiculoRepository vehiculoRepository,
+            EstacionamientoRepository estacionamientoRepository,
+            Clock clock) {
+
         this.reservaRepository = Objects.requireNonNull(reservaRepository);
         this.usuarioRepository = Objects.requireNonNull(usuarioRepository);
         this.vehiculoRepository = Objects.requireNonNull(vehiculoRepository);
         this.estacionamientoRepository = Objects.requireNonNull(estacionamientoRepository);
+        this.clock = Objects.requireNonNull(clock);
     }
 
     public List<Estacionamiento> listarDisponiblesParaUsuario(Long usuarioId) {
@@ -75,6 +90,10 @@ public class ReservaEstacionamientoService {
 
         if (inicio == null || fin == null || !fin.isAfter(inicio)) {
             throw new IllegalArgumentException("El intervalo de reserva no es válido.");
+        }
+
+        if (inicio.isBefore(LocalDateTime.now(clock))) {
+            throw new IllegalArgumentException("La fecha y hora de inicio no pueden estar en el pasado.");
         }
 
         Usuario usuario = reservaRepository.findUsuarioConRol(usuarioId);
@@ -116,6 +135,10 @@ public class ReservaEstacionamientoService {
                 estacionamientoId, inicio, fin)) {
             throw new IllegalArgumentException(
                     "El estacionamiento ya está reservado en ese horario.");
+        }
+
+        if (reservaRepository.existsOverlappingReservationForVehicle(vehiculoId, inicio, fin)) {
+            throw new IllegalArgumentException("El vehículo ya tiene una reserva en ese horario.");
         }
 
         ReservaEstacionamiento reserva = new ReservaEstacionamiento(

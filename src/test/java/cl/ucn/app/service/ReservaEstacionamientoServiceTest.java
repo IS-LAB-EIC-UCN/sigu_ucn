@@ -2,6 +2,8 @@
 package cl.ucn.app.service;
 
 import java.time.LocalDateTime;
+import java.time.Clock;
+import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -61,7 +63,9 @@ class ReservaEstacionamientoServiceTest {
                 reservaRepository,
                 usuarioRepository,
                 vehiculoRepository,
-                estacionamientoRepository
+                estacionamientoRepository,
+                Clock.fixed(inicio.atZone(ZoneId.of("America/Santiago")).toInstant(),
+                        ZoneId.of("America/Santiago"))
         );
 
         usuario = mock(Usuario.class);
@@ -162,17 +166,17 @@ class ReservaEstacionamientoServiceTest {
     void rechazaUsuarioInexistente() {
         when(reservaRepository.findUsuarioConRol(usuarioId)).thenReturn(null);
 
-        assertThrows(
+        IllegalArgumentException error = assertThrows(
                 IllegalArgumentException.class,
                 () -> service.registrarReserva(
                         usuarioId, vehiculoId, estacionamientoId, inicio, fin
                 )
         );
 
+        assertEquals("El usuario no existe.", error.getMessage());
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(
-                any(), any(), any()
-        );
+        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
         verify(reservaRepository, never()).save(any());
     }
 
@@ -180,17 +184,17 @@ class ReservaEstacionamientoServiceTest {
     void rechazaVehiculoInexistente() {
         when(vehiculoRepository.findById(vehiculoId)).thenReturn(null);
 
-        assertThrows(
+        IllegalArgumentException error = assertThrows(
                 IllegalArgumentException.class,
                 () -> service.registrarReserva(
                         usuarioId, vehiculoId, estacionamientoId, inicio, fin
                 )
         );
 
+        assertEquals("El vehículo no existe.", error.getMessage());
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(
-                any(), any(), any()
-        );
+        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
         verify(reservaRepository, never()).save(any());
     }
 
@@ -201,18 +205,18 @@ class ReservaEstacionamientoServiceTest {
 
         when(vehiculo.getPropietario()).thenReturn(otroUsuario);
 
-        assertThrows(
+        IllegalArgumentException error = assertThrows(
                 IllegalArgumentException.class,
                 () -> service.registrarReserva(
                         usuarioId, vehiculoId, estacionamientoId, inicio, fin
                 )
         );
 
+        assertEquals("El vehículo no pertenece al usuario.", error.getMessage());
         verifyNoInteractions(estacionamientoRepository);
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(
-                any(), any(), any()
-        );
+        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
         verify(reservaRepository, never()).save(any());
     }
 
@@ -221,17 +225,17 @@ class ReservaEstacionamientoServiceTest {
         when(estacionamientoRepository.findById(estacionamientoId))
                 .thenReturn(null);
 
-        assertThrows(
+        IllegalArgumentException error = assertThrows(
                 IllegalArgumentException.class,
                 () -> service.registrarReserva(
                         usuarioId, vehiculoId, estacionamientoId, inicio, fin
                 )
         );
 
+        assertEquals("El estacionamiento no existe.", error.getMessage());
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(
-                any(), any(), any()
-        );
+        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
         verify(reservaRepository, never()).save(any());
     }
 
@@ -345,4 +349,50 @@ class ReservaEstacionamientoServiceTest {
 
         verify(reservaRepository, never()).save(any());
         }
+
+    @Test
+    void rechazaInicioAnteriorAlMomentoActual() {
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> service.registrarReserva(usuarioId, vehiculoId, estacionamientoId,
+                        inicio.minusNanos(1), fin));
+        assertEquals("La fecha y hora de inicio no pueden estar en el pasado.", error.getMessage());
+        verifyNoInteractions(reservaRepository);
+    }
+
+    @Test
+    void permiteInicioExactamenteActual() {
+        assertNotNull(service.registrarReserva(usuarioId, vehiculoId, estacionamientoId, inicio, fin));
+    }
+
+    @Test
+    void permiteInicioFuturo() {
+        assertNotNull(service.registrarReserva(usuarioId, vehiculoId, estacionamientoId,
+                inicio.plusMinutes(1), fin));
+    }
+
+    @Test
+    void rechazaFinAnteriorAlInicio() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.registrarReserva(usuarioId, vehiculoId, estacionamientoId,
+                        inicio, inicio.minusMinutes(1)));
+        verifyNoInteractions(reservaRepository);
+    }
+
+    @Test
+    void rechazaVehiculoConReservaSuperpuestaEnOtroEspacio() {
+        when(reservaRepository.existsOverlappingReservationForVehicle(vehiculoId, inicio, fin))
+                .thenReturn(true);
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> service.registrarReserva(usuarioId, vehiculoId, estacionamientoId, inicio, fin));
+        assertEquals("El vehículo ya tiene una reserva en ese horario.", error.getMessage());
+        verify(reservaRepository, never()).save(any());
+    }
+
+    @Test
+    void permiteReservasConsecutivasSinCruceDelVehiculo() {
+        assertNotNull(service.registrarReserva(usuarioId, vehiculoId, estacionamientoId, inicio, fin));
+        assertNotNull(service.registrarReserva(usuarioId, vehiculoId, estacionamientoId,
+                fin, fin.plusHours(1)));
+        verify(reservaRepository).existsOverlappingReservationForVehicle(vehiculoId, fin, fin.plusHours(1));
+    }
 }

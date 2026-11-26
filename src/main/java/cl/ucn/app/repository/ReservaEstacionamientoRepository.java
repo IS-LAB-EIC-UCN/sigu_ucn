@@ -2,9 +2,13 @@
 package cl.ucn.app.repository;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import org.hibernate.exception.ConstraintViolationException;
+import org.postgresql.util.PSQLException;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.ReservaEstacionamiento;
@@ -27,24 +31,50 @@ public class ReservaEstacionamientoRepository {
     }
 
     public void save(ReservaEstacionamiento reserva) {
-        EntityManager em = entityManagerSupplier.get();
-
-        try {
+        try (EntityManager em = entityManagerSupplier.get()) {
             EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
-
-            em.persist(reserva);
-
-            transaction.commit();
-
-        } catch (RuntimeException e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            try {
+                transaction.begin();
+                em.persist(reserva);
+                transaction.commit();
+            } catch (RuntimeException e) {
+                try {
+                    if (transaction.isActive()) {
+                        transaction.rollback();
+                    }
+                } catch (RuntimeException rollbackError) {
+                    e.addSuppressed(rollbackError);
+                }
+                throw traducirConflicto(e);
             }
-            throw e;
-        } finally {
-            em.close();
         }
+    }
+
+    private RuntimeException traducirConflicto(RuntimeException error) {
+        for (Throwable cause = error; cause != null; cause = cause.getCause()) {
+            String constraint = null;
+            if (cause instanceof ConstraintViolationException violation
+                    && "23P01".equals(violation.getSQLState())) {
+                constraint = violation.getConstraintName();
+            }
+            // Hibernate 6 puede omitir el nombre para exclusiones. El driver conserva el dato estructurado.
+            if (cause instanceof PSQLException postgres && "23P01".equals(postgres.getSQLState())
+                    && postgres.getServerErrorMessage() != null) {
+                constraint = postgres.getServerErrorMessage().getConstraint();
+            }
+            if ("excl_reservas_est_espacio_horario".equals(constraint)) {
+                return new IllegalArgumentException("El estacionamiento ya está reservado en ese horario.", error);
+            }
+            if ("excl_reservas_est_vehiculo_horario".equals(constraint)) {
+                return new IllegalArgumentException("El vehículo ya tiene una reserva en ese horario.", error);
+            }
+            if (cause instanceof SQLException sql
+                    && ("40P01".equals(sql.getSQLState()) || "40001".equals(sql.getSQLState()))) {
+                return new IllegalArgumentException(
+                        "Otra solicitud coincidió con esta reserva. Revisa la disponibilidad e inténtalo nuevamente.", error);
+            }
+        }
+        return error;
     }
 
     public ReservaEstacionamiento findById(Long id) {
@@ -114,6 +144,22 @@ public class ReservaEstacionamientoRepository {
 
         } finally {
             em.close();
+        }
+    }
+
+    public boolean existsOverlappingReservationForVehicle(
+            Long vehiculoId, LocalDateTime inicio, LocalDateTime fin) {
+        try (EntityManager em = entityManagerSupplier.get()) {
+            return em.createQuery(
+                    "SELECT COUNT(r) FROM ReservaEstacionamiento r "
+                            + "WHERE r.vehiculo.id = :vehiculoId "
+                            + "AND r.estado IN ('PENDIENTE', 'APROBADA') "
+                            + "AND r.fechaHoraInicio < :fin "
+                            + "AND r.fechaHoraFin > :inicio", Long.class)
+                    .setParameter("vehiculoId", vehiculoId)
+                    .setParameter("inicio", inicio)
+                    .setParameter("fin", fin)
+                    .getSingleResult() > 0;
         }
     }
 

@@ -34,6 +34,9 @@ public class VehiculoController {
         List<Estacionamiento> estacionamientos =
             reservaService.listarDisponiblesParaUsuario(usuarioId);
 
+        String reservaError = ctx.sessionAttribute("reservaError");
+        ctx.sessionAttribute("reservaError", null);
+
         ctx.render("vehiculos/registrar.jte", Map.of(
                 "title", "Mis vehículos",
                 "usuarioNombre", usuarioNombre,
@@ -48,7 +51,9 @@ public class VehiculoController {
                         ? "Reserva solicitada correctamente."
                         : "",
                 "reservaError", "1".equals(ctx.queryParam("errorReserva"))
-                        ? "No se pudo registrar la reserva. Revisa los datos y la disponibilidad."
+                        ? (reservaError == null
+                            ? "No se pudo registrar la reserva. Revisa los datos y la disponibilidad."
+                            : reservaError)
                         : ""
         ));
     }

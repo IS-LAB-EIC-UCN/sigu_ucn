@@ -82,10 +82,12 @@ class VehiculoServiceTest {
     }
 
     @Test
-    void rechazaEspaciosInterioresQueNoCumplenElFormatoDePatente() {
-        assertThrows(IllegalArgumentException.class,
-                () -> service.registrarVehiculo(" ab 12 ", 7L));
+    void rechazaEspaciosInterioresSinAccederALosRepositorios() {
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+                () -> service.registrarVehiculo(" ab 1234 ", 7L));
 
+        assertEquals("La patente debe tener 4 letras y 2 números, o 2 letras y 4 números.",
+                error.getMessage());
         verifyNoInteractions(vehiculoRepository, usuarioRepository);
     }
 
