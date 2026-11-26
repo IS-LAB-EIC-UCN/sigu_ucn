@@ -44,11 +44,11 @@ class VehiculoServiceTest {
     void normalizaYGuardaElVehiculoConSuPropietario() {
         when(usuarioRepository.findById(7L)).thenReturn(propietario);
 
-        Vehiculo vehiculo = service.registrarVehiculo(" \tab12345678\n ", 7L);
+        Vehiculo vehiculo = service.registrarVehiculo(" \tabcd12\n ", 7L);
 
-        assertEquals("AB12345678", vehiculo.getPatente());
+        assertEquals("ABCD12", vehiculo.getPatente());
         assertSame(propietario, vehiculo.getPropietario());
-        verify(vehiculoRepository).existsByPatente("AB12345678");
+        verify(vehiculoRepository).existsByPatente("ABCD12");
         verify(vehiculoRepository).save(vehiculo);
     }
 
@@ -58,7 +58,7 @@ class VehiculoServiceTest {
         Locale original = Locale.getDefault();
         try {
             Locale.setDefault(Locale.forLanguageTag("tr-TR"));
-            assertEquals("IZ12", service.registrarVehiculo(" iz12 ", 7L).getPatente());
+            assertEquals("IZ1234", service.registrarVehiculo(" iz1234 ", 7L).getPatente());
         } finally {
             Locale.setDefault(original);
         }
@@ -82,10 +82,11 @@ class VehiculoServiceTest {
     }
 
     @Test
-    void conservaEspaciosInterioresSinImponerUnFormatoDePatente() {
-        when(usuarioRepository.findById(7L)).thenReturn(propietario);
+    void rechazaEspaciosInterioresQueNoCumplenElFormatoDePatente() {
+        assertThrows(IllegalArgumentException.class,
+                () -> service.registrarVehiculo(" ab 12 ", 7L));
 
-        assertEquals("AB 12", service.registrarVehiculo(" ab 12 ", 7L).getPatente());
+        verifyNoInteractions(vehiculoRepository, usuarioRepository);
     }
 
     @Test

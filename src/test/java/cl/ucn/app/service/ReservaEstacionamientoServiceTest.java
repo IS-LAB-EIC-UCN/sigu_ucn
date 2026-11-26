@@ -76,7 +76,7 @@ class ReservaEstacionamientoServiceTest {
         when(estacionamiento.getId()).thenReturn(estacionamientoId);
         when(estacionamiento.getHabilitado()).thenReturn(true);
 
-        when(usuarioRepository.findById(usuarioId)).thenReturn(usuario);
+        when(reservaRepository.findUsuarioConRol(usuarioId)).thenReturn(usuario);
         when(vehiculoRepository.findById(vehiculoId)).thenReturn(vehiculo);
         when(estacionamientoRepository.findById(estacionamientoId))
                 .thenReturn(estacionamiento);
@@ -160,7 +160,7 @@ class ReservaEstacionamientoServiceTest {
 
     @Test
     void rechazaUsuarioInexistente() {
-        when(usuarioRepository.findById(usuarioId)).thenReturn(null);
+        when(reservaRepository.findUsuarioConRol(usuarioId)).thenReturn(null);
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -169,7 +169,11 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verifyNoInteractions(reservaRepository);
+        verify(reservaRepository).findUsuarioConRol(usuarioId);
+        verify(reservaRepository, never()).existsOverlappingReservation(
+                any(), any(), any()
+        );
+        verify(reservaRepository, never()).save(any());
     }
 
     @Test
@@ -183,7 +187,11 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verifyNoInteractions(reservaRepository);
+        verify(reservaRepository).findUsuarioConRol(usuarioId);
+        verify(reservaRepository, never()).existsOverlappingReservation(
+                any(), any(), any()
+        );
+        verify(reservaRepository, never()).save(any());
     }
 
     @Test
@@ -201,7 +209,11 @@ class ReservaEstacionamientoServiceTest {
         );
 
         verifyNoInteractions(estacionamientoRepository);
-        verifyNoInteractions(reservaRepository);
+        verify(reservaRepository).findUsuarioConRol(usuarioId);
+        verify(reservaRepository, never()).existsOverlappingReservation(
+                any(), any(), any()
+        );
+        verify(reservaRepository, never()).save(any());
     }
 
     @Test
@@ -216,7 +228,11 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verifyNoInteractions(reservaRepository);
+        verify(reservaRepository).findUsuarioConRol(usuarioId);
+        verify(reservaRepository, never()).existsOverlappingReservation(
+                any(), any(), any()
+        );
+        verify(reservaRepository, never()).save(any());
     }
 
     @Test
