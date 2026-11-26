@@ -4,6 +4,7 @@ package cl.ucn.app.service;
 import java.time.LocalDateTime;
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -28,6 +30,7 @@ import cl.ucn.app.repository.EstacionamientoRepository;
 import cl.ucn.app.repository.ReservaEstacionamientoRepository;
 import cl.ucn.app.repository.UsuarioRepository;
 import cl.ucn.app.repository.VehiculoRepository;
+import jakarta.persistence.EntityManager;
 
 class ReservaEstacionamientoServiceTest {
 
@@ -35,6 +38,7 @@ class ReservaEstacionamientoServiceTest {
     private UsuarioRepository usuarioRepository;
     private VehiculoRepository vehiculoRepository;
     private EstacionamientoRepository estacionamientoRepository;
+    private EntityManager em;
 
     private ReservaEstacionamientoService service;
 
@@ -58,6 +62,7 @@ class ReservaEstacionamientoServiceTest {
         usuarioRepository = mock(UsuarioRepository.class);
         vehiculoRepository = mock(VehiculoRepository.class);
         estacionamientoRepository = mock(EstacionamientoRepository.class);
+        em = mock(EntityManager.class);
 
         service = new ReservaEstacionamientoService(
                 reservaRepository,
@@ -82,12 +87,12 @@ class ReservaEstacionamientoServiceTest {
 
         when(reservaRepository.findUsuarioConRol(usuarioId)).thenReturn(usuario);
         when(vehiculoRepository.findById(vehiculoId)).thenReturn(vehiculo);
-        when(estacionamientoRepository.findById(estacionamientoId))
-                .thenReturn(estacionamiento);
-
-        when(reservaRepository.existsOverlappingReservation(
-                estacionamientoId, inicio, fin
-        )).thenReturn(false);
+        when(estacionamientoRepository.conEstacionamientoBloqueado(eq(estacionamientoId), any()))
+                .thenAnswer(invocacion -> {
+                    BiFunction<EntityManager, Estacionamiento, ReservaEstacionamiento> operacion =
+                            invocacion.getArgument(1);
+                    return operacion.apply(em, estacionamiento);
+                });
     }
 
     private void configurarRol(String nombreRol) {
@@ -107,7 +112,7 @@ class ReservaEstacionamientoServiceTest {
         ArgumentCaptor<ReservaEstacionamiento> captor =
                 ArgumentCaptor.forClass(ReservaEstacionamiento.class);
 
-        verify(reservaRepository).save(captor.capture());
+        verify(reservaRepository).save(eq(em), captor.capture());
 
         ReservaEstacionamiento guardada = captor.getValue();
 
@@ -115,9 +120,7 @@ class ReservaEstacionamientoServiceTest {
         assertEquals(inicio, guardada.getFechaHoraInicio());
         assertEquals(fin, guardada.getFechaHoraFin());
 
-        verify(reservaRepository).existsOverlappingReservation(
-                estacionamientoId, inicio, fin
-        );
+        verify(reservaRepository).existsOverlappingReservation(em, estacionamientoId, inicio, fin);
     }
 
     @Test
@@ -175,9 +178,9 @@ class ReservaEstacionamientoServiceTest {
 
         assertEquals("El usuario no existe.", error.getMessage());
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
-        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).existsOverlappingReservation(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).save(eq(em), any());
     }
 
     @Test
@@ -193,9 +196,9 @@ class ReservaEstacionamientoServiceTest {
 
         assertEquals("El vehículo no existe.", error.getMessage());
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
-        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).existsOverlappingReservation(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).save(eq(em), any());
     }
 
     @Test
@@ -215,15 +218,14 @@ class ReservaEstacionamientoServiceTest {
         assertEquals("El vehículo no pertenece al usuario.", error.getMessage());
         verifyNoInteractions(estacionamientoRepository);
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
-        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).existsOverlappingReservation(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).save(eq(em), any());
     }
 
     @Test
     void rechazaEstacionamientoInexistente() {
-        when(estacionamientoRepository.findById(estacionamientoId))
-                .thenReturn(null);
+        estacionamiento = null;
 
         IllegalArgumentException error = assertThrows(
                 IllegalArgumentException.class,
@@ -234,9 +236,9 @@ class ReservaEstacionamientoServiceTest {
 
         assertEquals("El estacionamiento no existe.", error.getMessage());
         verify(reservaRepository).findUsuarioConRol(usuarioId);
-        verify(reservaRepository, never()).existsOverlappingReservation(any(), any(), any());
-        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(any(), any(), any());
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).existsOverlappingReservation(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).existsOverlappingReservationForVehicle(eq(em), any(), any(), any());
+        verify(reservaRepository, never()).save(eq(em), any());
     }
 
     @Test
@@ -250,17 +252,13 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verify(reservaRepository, never()).save(any());
-        verify(reservaRepository, never()).existsOverlappingReservation(
-                any(), any(), any()
-        );
+        verify(reservaRepository, never()).save(eq(em), any());
+        verify(reservaRepository, never()).existsOverlappingReservation(eq(em), any(), any(), any());
     }
 
     @Test
     void rechazaReservaCuandoExisteSolapamiento() {
-        when(reservaRepository.existsOverlappingReservation(
-                estacionamientoId, inicio, fin
-        )).thenReturn(true);
+        when(reservaRepository.existsOverlappingReservation(em, estacionamientoId, inicio, fin)).thenReturn(true);
 
         assertThrows(
                 IllegalArgumentException.class,
@@ -269,11 +267,9 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verify(reservaRepository).existsOverlappingReservation(
-                estacionamientoId, inicio, fin
-        );
+        verify(reservaRepository).existsOverlappingReservation(em, estacionamientoId, inicio, fin);
 
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).save(eq(em), any());
     }
 
     @Test
@@ -287,7 +283,7 @@ class ReservaEstacionamientoServiceTest {
         );
 
         assertNotNull(resultado);
-        verify(reservaRepository).save(any());
+        verify(reservaRepository).save(eq(em), any());
         }
 
         @Test
@@ -303,7 +299,7 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).save(eq(em), any());
         }
 
         @Test
@@ -317,7 +313,7 @@ class ReservaEstacionamientoServiceTest {
         );
 
         assertNotNull(resultado);
-        verify(reservaRepository).save(any());
+        verify(reservaRepository).save(eq(em), any());
         }
 
         @Test
@@ -331,7 +327,7 @@ class ReservaEstacionamientoServiceTest {
         );
 
         assertNotNull(resultado);
-        verify(reservaRepository).save(any());
+        verify(reservaRepository).save(eq(em), any());
         }
 
         @Test
@@ -347,7 +343,7 @@ class ReservaEstacionamientoServiceTest {
                 )
         );
 
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).save(eq(em), any());
         }
 
     @Test
@@ -380,12 +376,12 @@ class ReservaEstacionamientoServiceTest {
 
     @Test
     void rechazaVehiculoConReservaSuperpuestaEnOtroEspacio() {
-        when(reservaRepository.existsOverlappingReservationForVehicle(vehiculoId, inicio, fin))
+        when(reservaRepository.existsOverlappingReservationForVehicle(em, vehiculoId, inicio, fin))
                 .thenReturn(true);
         IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
                 () -> service.registrarReserva(usuarioId, vehiculoId, estacionamientoId, inicio, fin));
         assertEquals("El vehículo ya tiene una reserva en ese horario.", error.getMessage());
-        verify(reservaRepository, never()).save(any());
+        verify(reservaRepository, never()).save(eq(em), any());
     }
 
     @Test
@@ -393,6 +389,6 @@ class ReservaEstacionamientoServiceTest {
         assertNotNull(service.registrarReserva(usuarioId, vehiculoId, estacionamientoId, inicio, fin));
         assertNotNull(service.registrarReserva(usuarioId, vehiculoId, estacionamientoId,
                 fin, fin.plusHours(1)));
-        verify(reservaRepository).existsOverlappingReservationForVehicle(vehiculoId, fin, fin.plusHours(1));
+        verify(reservaRepository).existsOverlappingReservationForVehicle(em, vehiculoId, fin, fin.plusHours(1));
     }
 }

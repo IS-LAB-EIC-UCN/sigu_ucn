@@ -112,46 +112,32 @@ public class ReservaEstacionamientoService {
             throw new IllegalArgumentException("El vehículo no pertenece al usuario.");
         }
 
-        Estacionamiento estacionamiento =
-                estacionamientoRepository.findById(estacionamientoId);
+        return estacionamientoRepository.conEstacionamientoBloqueado(estacionamientoId, (em, estacionamiento) -> {
+            if (estacionamiento == null) {
+                throw new IllegalArgumentException("El estacionamiento no existe.");
+            }
 
-        if (estacionamiento == null) {
-            throw new IllegalArgumentException("El estacionamiento no existe.");
-        }
+            if (!Boolean.TRUE.equals(estacionamiento.getHabilitado())) {
+                throw new IllegalArgumentException("El estacionamiento no está habilitado.");
+            }
 
-        if (!Boolean.TRUE.equals(estacionamiento.getHabilitado())) {
-            throw new IllegalArgumentException("El estacionamiento no está habilitado.");
-        }
+            if (estacionamiento.getTipo() == TipoEstacionamiento.DOCENTES
+                    && (usuario.getRol() == null || !"DOCENTE".equals(usuario.getRol().getNombre()))) {
+                throw new IllegalArgumentException("Este estacionamiento es exclusivo para docentes.");
+            }
 
-        if (estacionamiento.getTipo() == TipoEstacionamiento.DOCENTES
-                && (usuario.getRol() == null
-                || !"DOCENTE".equals(usuario.getRol().getNombre()))) {
+            if (reservaRepository.existsOverlappingReservation(em, estacionamientoId, inicio, fin)) {
+                throw new IllegalArgumentException("El estacionamiento ya está reservado en ese horario.");
+            }
 
-            throw new IllegalArgumentException(
-                    "Este estacionamiento es exclusivo para docentes.");
-        }
+            if (reservaRepository.existsOverlappingReservationForVehicle(em, vehiculoId, inicio, fin)) {
+                throw new IllegalArgumentException("El vehículo ya tiene una reserva en ese horario.");
+            }
 
-        if (reservaRepository.existsOverlappingReservation(
-                estacionamientoId, inicio, fin)) {
-            throw new IllegalArgumentException(
-                    "El estacionamiento ya está reservado en ese horario.");
-        }
-
-        if (reservaRepository.existsOverlappingReservationForVehicle(vehiculoId, inicio, fin)) {
-            throw new IllegalArgumentException("El vehículo ya tiene una reserva en ese horario.");
-        }
-
-        ReservaEstacionamiento reserva = new ReservaEstacionamiento(
-                inicio,
-                fin,
-                "PENDIENTE",
-                usuario,
-                vehiculo,
-                estacionamiento
-        );
-
-        reservaRepository.save(reserva);
-
-        return reserva;
+            ReservaEstacionamiento reserva = new ReservaEstacionamiento(
+                    inicio, fin, "PENDIENTE", usuario, vehiculo, estacionamiento);
+            reservaRepository.save(em, reserva);
+            return reserva;
+        });
     }
 }

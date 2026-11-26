@@ -1,8 +1,8 @@
 
 package cl.ucn.app.repository;
 
-import java.time.LocalDateTime;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -30,7 +30,7 @@ public class ReservaEstacionamientoRepository {
         this.entityManagerSupplier = Objects.requireNonNull(entityManagerSupplier);
     }
 
-    public void save(ReservaEstacionamiento reserva) {
+    void save(ReservaEstacionamiento reserva) {
         try (EntityManager em = entityManagerSupplier.get()) {
             EntityTransaction transaction = em.getTransaction();
             try {
@@ -47,6 +47,15 @@ public class ReservaEstacionamientoRepository {
                 }
                 throw traducirConflicto(e);
             }
+        }
+    }
+
+    public void save(EntityManager em, ReservaEstacionamiento reserva) {
+        try {
+            em.persist(reserva);
+            em.flush();
+        } catch (RuntimeException error) {
+            throw traducirConflicto(error);
         }
     }
 
@@ -120,47 +129,57 @@ public class ReservaEstacionamientoRepository {
     }
 
     public boolean existsOverlappingReservation(
-        Long estacionamientoId,
-        LocalDateTime inicio,
-        LocalDateTime fin
-    ) {
-        EntityManager em = entityManagerSupplier.get();
-
-        try {
-            Long cantidad = em.createQuery(
-                "SELECT COUNT(r) FROM ReservaEstacionamiento r " +
-                "WHERE r.estacionamiento.id = :estacionamientoId " +
-                "AND r.estado IN ('PENDIENTE', 'APROBADA') " +
-                "AND r.fechaHoraInicio < :fin " +
-                "AND r.fechaHoraFin > :inicio",
-                Long.class
-            )
-            .setParameter("estacionamientoId", estacionamientoId)
-            .setParameter("inicio", inicio)
-            .setParameter("fin", fin)
-            .getSingleResult();
-
-            return cantidad > 0;
-
-        } finally {
-            em.close();
+            Long estacionamientoId, LocalDateTime inicio, LocalDateTime fin) {
+        try (EntityManager em = entityManagerSupplier.get()) {
+            return existsOverlappingReservation(em, estacionamientoId, inicio, fin);
         }
+    }
+
+    public boolean existsOverlappingReservation(
+            EntityManager em, Long estacionamientoId, LocalDateTime inicio, LocalDateTime fin) {
+        return em.createQuery(
+                "SELECT COUNT(r) FROM ReservaEstacionamiento r "
+                        + "WHERE r.estacionamiento.id = :estacionamientoId "
+                        + "AND r.estado IN ('PENDIENTE', 'APROBADA') "
+                        + "AND r.fechaHoraInicio < :fin "
+                        + "AND r.fechaHoraFin > :inicio", Long.class)
+                .setParameter("estacionamientoId", estacionamientoId)
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult() > 0;
     }
 
     public boolean existsOverlappingReservationForVehicle(
             Long vehiculoId, LocalDateTime inicio, LocalDateTime fin) {
         try (EntityManager em = entityManagerSupplier.get()) {
-            return em.createQuery(
-                    "SELECT COUNT(r) FROM ReservaEstacionamiento r "
-                            + "WHERE r.vehiculo.id = :vehiculoId "
-                            + "AND r.estado IN ('PENDIENTE', 'APROBADA') "
-                            + "AND r.fechaHoraInicio < :fin "
-                            + "AND r.fechaHoraFin > :inicio", Long.class)
-                    .setParameter("vehiculoId", vehiculoId)
-                    .setParameter("inicio", inicio)
-                    .setParameter("fin", fin)
-                    .getSingleResult() > 0;
+            return existsOverlappingReservationForVehicle(em, vehiculoId, inicio, fin);
         }
+    }
+
+    public boolean existsOverlappingReservationForVehicle(
+            EntityManager em, Long vehiculoId, LocalDateTime inicio, LocalDateTime fin) {
+        return em.createQuery(
+                "SELECT COUNT(r) FROM ReservaEstacionamiento r "
+                        + "WHERE r.vehiculo.id = :vehiculoId "
+                        + "AND r.estado IN ('PENDIENTE', 'APROBADA') "
+                        + "AND r.fechaHoraInicio < :fin "
+                        + "AND r.fechaHoraFin > :inicio", Long.class)
+                .setParameter("vehiculoId", vehiculoId)
+                .setParameter("inicio", inicio)
+                .setParameter("fin", fin)
+                .getSingleResult() > 0;
+    }
+
+    public boolean existenReservasVigentes(EntityManager em, Long estacionamientoId, LocalDateTime ahora) {
+        return !em.createQuery(
+                "SELECT r.id FROM ReservaEstacionamiento r "
+                        + "WHERE r.estacionamiento.id = :estacionamientoId "
+                        + "AND r.estado IN ('PENDIENTE', 'APROBADA') "
+                        + "AND r.fechaHoraFin > :ahora", Long.class)
+                .setParameter("estacionamientoId", estacionamientoId)
+                .setParameter("ahora", ahora)
+                .setMaxResults(1)
+                .getResultList().isEmpty();
     }
 
     public Usuario findUsuarioConRol(Long usuarioId) {

@@ -4,6 +4,7 @@
 
 @param String title
 @param String usuarioNombre
+@param boolean mostrarAccesoAdmin
 @param String patente
 @param String error
 @param String mensaje
@@ -25,6 +26,10 @@
                 Registra vehículos y consulta los que están
                 asociados a tu cuenta universitaria.
             </p>
+
+            @if(mostrarAccesoAdmin)
+                <p><a href="/estacionamientos/admin">Administrar espacios de estacionamiento</a></p>
+            @endif
 
             <div style="
                 display: grid;

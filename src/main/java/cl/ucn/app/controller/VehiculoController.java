@@ -40,6 +40,7 @@ public class VehiculoController {
         ctx.render("vehiculos/registrar.jte", Map.of(
                 "title", "Mis vehículos",
                 "usuarioNombre", usuarioNombre,
+                "mostrarAccesoAdmin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")),
                 "patente", "",
                 "error", "",
                 "mensaje", "1".equals(ctx.queryParam("creado"))
@@ -87,6 +88,7 @@ public class VehiculoController {
             ctx.render("vehiculos/registrar.jte", Map.of(
                     "title", "Registrar vehículo",
                     "usuarioNombre", usuarioNombre,
+                    "mostrarAccesoAdmin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")),
                     "patente", patente == null ? "" : patente,
                     "error", e.getMessage(),
                     "mensaje", "",

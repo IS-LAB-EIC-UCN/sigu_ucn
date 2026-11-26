@@ -3,13 +3,18 @@ package cl.ucn.app.repository;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.postgresql.util.PSQLException;
 
 import cl.ucn.app.config.JPAUtil;
 import cl.ucn.app.model.Estacionamiento;
 import cl.ucn.app.model.TipoEstacionamiento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 
 public class EstacionamientoRepository {
@@ -25,22 +30,52 @@ public class EstacionamientoRepository {
     }
 
     public void save(Estacionamiento estacionamiento) {
-        EntityManager em = entityManagerSupplier.get();
-
         try {
-            EntityTransaction transaction = em.getTransaction();
-            transaction.begin();
-
-            em.persist(estacionamiento);
-
-            transaction.commit();
-        } catch (RuntimeException e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
+            enTransaccion(em -> {
+                em.persist(estacionamiento);
+                return null;
+            });
+        } catch (RuntimeException error) {
+            for (Throwable causa = error; causa != null; causa = causa.getCause()) {
+                if (causa instanceof PSQLException postgres
+                        && "23505".equals(postgres.getSQLState())
+                        && postgres.getServerErrorMessage() != null
+                        && "estacionamientos_codigo_key".equals(postgres.getServerErrorMessage().getConstraint())) {
+                    throw new IllegalArgumentException("Ya existe un estacionamiento con ese código.", error);
+                }
             }
-            throw e;
-        } finally {
-            em.close();
+            throw error;
+        }
+    }
+
+    public <T> T conEstacionamientoBloqueado(
+            Long id, BiFunction<EntityManager, Estacionamiento, T> operacion) {
+        return enTransaccion(em -> {
+            // Después de esperar el bloqueo, las consultas deben ver las reservas recién confirmadas.
+            em.createNativeQuery("SET TRANSACTION ISOLATION LEVEL READ COMMITTED").executeUpdate();
+            Estacionamiento estacionamiento = em.find(Estacionamiento.class, id, LockModeType.PESSIMISTIC_WRITE);
+            return operacion.apply(em, estacionamiento);
+        });
+    }
+
+    private <T> T enTransaccion(Function<EntityManager, T> operacion) {
+        try (EntityManager em = entityManagerSupplier.get()) {
+            EntityTransaction transaction = em.getTransaction();
+            try {
+                transaction.begin();
+                T resultado = operacion.apply(em);
+                transaction.commit();
+                return resultado;
+            } catch (RuntimeException error) {
+                try {
+                    if (transaction.isActive()) {
+                        transaction.rollback();
+                    }
+                } catch (RuntimeException rollbackError) {
+                    error.addSuppressed(rollbackError);
+                }
+                throw error;
+            }
         }
     }
 
