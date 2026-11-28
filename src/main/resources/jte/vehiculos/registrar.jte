@@ -1,6 +1,7 @@
 @import java.util.List
 @import cl.ucn.app.model.Vehiculo
 @import cl.ucn.app.model.Estacionamiento
+@import cl.ucn.app.service.ReservaEstacionamientoService.ResumenReserva
 
 @param String title
 @param String usuarioNombre
@@ -12,6 +13,9 @@
 @param List<Estacionamiento> estacionamientos
 @param String reservaMensaje
 @param String reservaError
+@param List<ResumenReserva> reservas
+@param String mensajeCancelacion
+@param String errorCancelacion
 
 
 @template.layout.main(
@@ -237,7 +241,16 @@
 
             </section>
 
-
+            <section id="mis-reservas" class="info-card" style="margin-top:24px; overflow-x:auto;">
+                <h2>Mis reservas</h2>
+                @template.estacionamientos.reservas-listado(
+                    reservas = reservas,
+                    mostrarPropietario = false,
+                    rutaCancelacion = "/estacionamientos/reservas",
+                    mensajeCancelacion = mensajeCancelacion,
+                    errorCancelacion = errorCancelacion
+                )
+            </section>
         </section>
     `
 )

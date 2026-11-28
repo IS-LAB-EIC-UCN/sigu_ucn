@@ -15,6 +15,7 @@ import cl.ucn.app.model.ReservaEstacionamiento;
 import cl.ucn.app.model.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 
 public class ReservaEstacionamientoRepository {
@@ -126,6 +127,22 @@ public class ReservaEstacionamientoRepository {
         } finally {
             em.close();
         }
+    }
+
+    public List<ReservaEstacionamiento> findAllConDetalle() {
+        try (EntityManager em = entityManagerSupplier.get()) {
+            return em.createQuery(
+                    "SELECT r FROM ReservaEstacionamiento r "
+                            + "JOIN FETCH r.usuario "
+                            + "JOIN FETCH r.vehiculo "
+                            + "JOIN FETCH r.estacionamiento "
+                            + "ORDER BY r.fechaHoraInicio, r.id", ReservaEstacionamiento.class)
+                    .getResultList();
+        }
+    }
+
+    public ReservaEstacionamiento findByIdBloqueada(EntityManager em, Long id) {
+        return em.find(ReservaEstacionamiento.class, id, LockModeType.PESSIMISTIC_WRITE);
     }
 
     public boolean existsOverlappingReservation(

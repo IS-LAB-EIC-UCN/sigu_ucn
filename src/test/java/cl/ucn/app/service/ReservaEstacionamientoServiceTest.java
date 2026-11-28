@@ -4,16 +4,23 @@ package cl.ucn.app.service;
 import java.time.LocalDateTime;
 import java.time.Clock;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -30,6 +37,7 @@ import cl.ucn.app.repository.EstacionamientoRepository;
 import cl.ucn.app.repository.ReservaEstacionamientoRepository;
 import cl.ucn.app.repository.UsuarioRepository;
 import cl.ucn.app.repository.VehiculoRepository;
+import cl.ucn.app.service.ReservaEstacionamientoService.AccesoDenegadoException;
 import jakarta.persistence.EntityManager;
 
 class ReservaEstacionamientoServiceTest {
@@ -121,6 +129,127 @@ class ReservaEstacionamientoServiceTest {
         assertEquals(fin, guardada.getFechaHoraFin());
 
         verify(reservaRepository).existsOverlappingReservation(em, estacionamientoId, inicio, fin);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"PENDIENTE", "APROBADA"})
+    void cancelaLaReservaPropiaYConservaLosDemasDatos(String estado) {
+        when(usuario.getActivo()).thenReturn(true);
+        var reserva = reservaConBloqueo(estado, inicio.plusMinutes(1), fin, usuario);
+
+        service.cancelarPropia(usuarioId, 10L);
+
+        assertEquals("CANCELADA", reserva.getEstado());
+        assertEquals(inicio.plusMinutes(1), reserva.getFechaHoraInicio());
+        assertEquals(fin, reserva.getFechaHoraFin());
+        assertEquals(usuario, reserva.getUsuario());
+        assertEquals(vehiculo, reserva.getVehiculo());
+        assertEquals(estacionamiento, reserva.getEstacionamiento());
+        var orden = inOrder(reservaRepository, estacionamientoRepository);
+        orden.verify(reservaRepository).findById(10L);
+        orden.verify(estacionamientoRepository).conEstacionamientoBloqueado(eq(estacionamientoId), any());
+        orden.verify(reservaRepository).findByIdBloqueada(em, 10L);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void administradorActivoCancelaReservasPropiasYAjenas(boolean propia) {
+        configurarRol("ADMIN");
+        when(usuario.getActivo()).thenReturn(true);
+        Usuario propietario = propia ? usuario : mock(Usuario.class);
+        var reserva = reservaConBloqueo("APROBADA", inicio.plusMinutes(1), fin, propietario);
+
+        service.cancelarComoAdministrador(usuarioId, 10L);
+
+        assertEquals("CANCELADA", reserva.getEstado());
+    }
+
+    @Test
+    void laRutaPersonalRechazaReservasAjenasConElMismoAvisoQueUnIdInexistente() {
+        when(usuario.getActivo()).thenReturn(true);
+        Usuario otroUsuario = mock(Usuario.class);
+        when(otroUsuario.getId()).thenReturn(20L);
+        var reserva = reservaConBloqueo("APROBADA", inicio.plusMinutes(1), fin, otroUsuario);
+
+        var ajena = assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, 10L));
+        var inexistente = assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, 99L));
+
+        assertEquals(inexistente.getMessage(), ajena.getMessage());
+        assertEquals("APROBADA", reserva.getEstado());
+        verifyNoInteractions(estacionamientoRepository);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"PENDIENTE,-1,120", "APROBADA,0,120", "PENDIENTE,-5,-1", "CANCELADA,1,120", "OTRO,1,120"})
+    void rechazaEstadoYHoraSobreLaFilaBloqueada(String estado, int inicioMinutos, int finMinutos) {
+        when(usuario.getActivo()).thenReturn(true);
+        configurarRol("ADMIN");
+        var reserva = reservaConBloqueo(estado, inicio.plusMinutes(inicioMinutos), inicio.plusMinutes(finMinutos),
+                usuario);
+        when(reservaRepository.findById(10L)).thenReturn(new ReservaEstacionamiento(
+                inicio.plusMinutes(1), fin, "APROBADA", usuario, vehiculo, estacionamiento));
+
+        assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, 10L));
+        assertThrows(IllegalArgumentException.class, () -> service.cancelarComoAdministrador(usuarioId, 10L));
+        assertEquals(estado, reserva.getEstado());
+    }
+
+    @Test
+    void compruebaPermisosAntesDeConsultarReservas() {
+        when(usuario.getActivo()).thenReturn(false);
+        configurarRol("ADMIN");
+
+        assertThrows(AccesoDenegadoException.class, () -> service.listarPropias(usuarioId));
+        assertThrows(AccesoDenegadoException.class, () -> service.cancelarPropia(usuarioId, 10L));
+        assertThrows(AccesoDenegadoException.class, () -> service.listarParaAdministracion(usuarioId));
+        assertThrows(AccesoDenegadoException.class, () -> service.cancelarComoAdministrador(usuarioId, 10L));
+        assertThrows(AccesoDenegadoException.class, () -> service.cancelarPropia(null, 10L));
+        when(usuario.getActivo()).thenReturn(true);
+        configurarRol("DOCENTE");
+        assertThrows(AccesoDenegadoException.class, () -> service.listarParaAdministracion(usuarioId));
+        assertThrows(AccesoDenegadoException.class, () -> service.cancelarComoAdministrador(usuarioId, 10L));
+        verify(reservaRepository, never()).findById(any());
+        verify(reservaRepository, never()).findByUsuarioId(any());
+        verify(reservaRepository, never()).findAllConDetalle();
+    }
+
+    @Test
+    void rechazaIdNuloCeroNegativoOInexistente() {
+        when(usuario.getActivo()).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, null));
+        assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, 0L));
+        assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, -1L));
+        assertThrows(IllegalArgumentException.class, () -> service.cancelarPropia(usuarioId, 99L));
+
+        verify(reservaRepository).findById(99L);
+        verifyNoInteractions(estacionamientoRepository);
+    }
+
+    @Test
+    void muestraVencidaDesdeElFinYConservaCancelada() {
+        when(usuario.getActivo()).thenReturn(true);
+        var vigente = new ReservaEstacionamiento(inicio.plusMinutes(1), fin, "PENDIENTE", usuario, vehiculo, estacionamiento);
+        var empezada = new ReservaEstacionamiento(inicio, fin, "APROBADA", usuario, vehiculo, estacionamiento);
+        var vencida = new ReservaEstacionamiento(inicio.minusHours(1), inicio, "APROBADA", usuario, vehiculo, estacionamiento);
+        var cancelada = new ReservaEstacionamiento(inicio.minusHours(2), inicio.minusHours(1), "CANCELADA", usuario, vehiculo, estacionamiento);
+        when(reservaRepository.findByUsuarioId(usuarioId)).thenReturn(List.of(vigente, empezada, vencida, cancelada));
+
+        var propias = service.listarPropias(usuarioId);
+
+        assertEquals(List.of("PENDIENTE", "APROBADA", "VENCIDA", "CANCELADA"),
+                propias.stream().map(ReservaEstacionamientoService.ResumenReserva::estado).toList());
+        assertTrue(propias.getFirst().puedeCancelar());
+        assertFalse(propias.stream().skip(1).anyMatch(ReservaEstacionamientoService.ResumenReserva::puedeCancelar));
+        assertEquals("APROBADA", vencida.getEstado());
+    }
+
+    private ReservaEstacionamiento reservaConBloqueo(String estado, LocalDateTime desde, LocalDateTime hasta,
+            Usuario propietario) {
+        var reserva = new ReservaEstacionamiento(desde, hasta, estado, propietario, vehiculo, estacionamiento);
+        when(reservaRepository.findById(10L)).thenReturn(reserva);
+        when(reservaRepository.findByIdBloqueada(em, 10L)).thenReturn(reserva);
+        return reserva;
     }
 
     @Test

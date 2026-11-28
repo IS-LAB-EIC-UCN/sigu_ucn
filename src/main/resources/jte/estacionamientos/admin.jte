@@ -13,6 +13,7 @@
         <section class="dashboard">
             <h1>Administrar espacios de estacionamiento</h1>
             <p><a href="/estacionamientos/vehiculos/nuevo">Volver a mis vehículos y reservas</a></p>
+            <p><a href="/estacionamientos/admin/reservas">Administrar reservas</a></p>
 
             @if(!mensaje.isBlank())
                 <div role="status" style="background:#e6f5ec; color:#22683e; padding:12px; border-radius:8px; margin-bottom:16px;">

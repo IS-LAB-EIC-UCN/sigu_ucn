@@ -1,21 +1,27 @@
 package cl.ucn.app.controller;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import cl.ucn.app.model.Estacionamiento;
-import cl.ucn.app.model.Vehiculo;
 import cl.ucn.app.service.ReservaEstacionamientoService;
+import cl.ucn.app.service.ReservaEstacionamientoService.AccesoDenegadoException;
 import cl.ucn.app.service.VehiculoService;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
+
+import static java.util.Map.entry;
 
 public class VehiculoController {
     private final VehiculoService vehiculoService;
     private final ReservaEstacionamientoService reservaService;
 
     public VehiculoController() {
-        this.vehiculoService = new VehiculoService();
-        this.reservaService = new ReservaEstacionamientoService();
+        this(new VehiculoService(), new ReservaEstacionamientoService());
+    }
+
+    public VehiculoController(VehiculoService vehiculoService, ReservaEstacionamientoService reservaService) {
+        this.vehiculoService = Objects.requireNonNull(vehiculoService);
+        this.reservaService = Objects.requireNonNull(reservaService);
     }
 
     // formulario del registro
@@ -29,34 +35,17 @@ public class VehiculoController {
             return;
         }
 
-        List<Vehiculo> vehiculos =
-            vehiculoService.listarVehiculos(usuarioId);
-        List<Estacionamiento> estacionamientos =
-            reservaService.listarDisponiblesParaUsuario(usuarioId);
-
         String reservaError = ctx.sessionAttribute("reservaError");
         ctx.sessionAttribute("reservaError", null);
 
-        ctx.render("vehiculos/registrar.jte", Map.of(
-                "title", "Mis vehículos",
-                "usuarioNombre", usuarioNombre,
-                "mostrarAccesoAdmin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")),
-                "patente", "",
-                "error", "",
-                "mensaje", "1".equals(ctx.queryParam("creado"))
-                        ? "Vehículo registrado correctamente."
-                        : "",
-                "vehiculos", vehiculos,
-                "estacionamientos", estacionamientos,
-                "reservaMensaje", "1".equals(ctx.queryParam("reserva"))
-                        ? "Reserva solicitada correctamente."
-                        : "",
-                "reservaError", "1".equals(ctx.queryParam("errorReserva"))
+        mostrarVista(ctx, usuarioId, usuarioNombre, "Mis vehículos", "", "",
+                "1".equals(ctx.queryParam("creado")) ? "Vehículo registrado correctamente." : "",
+                "1".equals(ctx.queryParam("reserva")) ? "Reserva solicitada correctamente." : "",
+                "1".equals(ctx.queryParam("errorReserva"))
                         ? (reservaError == null
                             ? "No se pudo registrar la reserva. Revisa los datos y la disponibilidad."
                             : reservaError)
-                        : ""
-        ));
+                        : "");
     }
 
     public void registrarVehiculo(Context ctx) {
@@ -77,26 +66,35 @@ public class VehiculoController {
             ctx.redirect("/estacionamientos/vehiculos/nuevo?creado=1");
 
         } catch (IllegalArgumentException e) {
-
             ctx.status(400);
+            mostrarVista(ctx, usuarioId, usuarioNombre, "Registrar vehículo", patente == null ? "" : patente,
+                    e.getMessage(), "", "", "");
+        }
+    }
 
-            List<Vehiculo> vehiculos =
-            vehiculoService.listarVehiculos(usuarioId);
-            List<Estacionamiento> estacionamientos =
-            reservaService.listarDisponiblesParaUsuario(usuarioId);
-
-            ctx.render("vehiculos/registrar.jte", Map.of(
-                    "title", "Registrar vehículo",
-                    "usuarioNombre", usuarioNombre,
-                    "mostrarAccesoAdmin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol")),
-                    "patente", patente == null ? "" : patente,
-                    "error", e.getMessage(),
-                    "mensaje", "",
-                    "vehiculos", vehiculos,
-                    "estacionamientos", estacionamientos,
-                    "reservaMensaje", "",
-                    "reservaError", ""
+    private void mostrarVista(Context ctx, Long usuarioId, String usuarioNombre, String titulo, String patente,
+            String error, String mensaje, String reservaMensaje, String reservaError) {
+        try {
+            var reservas = reservaService.listarPropias(usuarioId);
+            var aviso = ReservaEstacionamientoController.consumirAviso(ctx,
+                    ReservaEstacionamientoController.AVISO_PERSONAL);
+            ctx.render("vehiculos/registrar.jte", Map.ofEntries(
+                    entry("title", titulo),
+                    entry("usuarioNombre", usuarioNombre),
+                    entry("mostrarAccesoAdmin", "ADMIN".equals(ctx.sessionAttribute("usuarioRol"))),
+                    entry("patente", patente),
+                    entry("error", error),
+                    entry("mensaje", mensaje),
+                    entry("vehiculos", vehiculoService.listarVehiculos(usuarioId)),
+                    entry("estacionamientos", reservaService.listarDisponiblesParaUsuario(usuarioId)),
+                    entry("reservaMensaje", reservaMensaje),
+                    entry("reservaError", reservaError),
+                    entry("reservas", reservas),
+                    entry("mensajeCancelacion", aviso.mensaje()),
+                    entry("errorCancelacion", aviso.error())
             ));
+        } catch (AccesoDenegadoException accesoDenegado) {
+            ctx.status(HttpStatus.FORBIDDEN).result(accesoDenegado.getMessage());
         }
     }
 }

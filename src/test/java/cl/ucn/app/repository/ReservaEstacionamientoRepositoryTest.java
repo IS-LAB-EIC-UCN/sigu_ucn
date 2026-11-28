@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 import cl.ucn.app.model.ReservaEstacionamiento;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -49,6 +50,30 @@ class ReservaEstacionamientoRepositoryTest {
 
         Supplier<EntityManager> supplier = () -> em;
         repository = new ReservaEstacionamientoRepository(supplier);
+    }
+
+    @Test
+    void cargaLasTresRelacionesParaElListadoAdministrativo() {
+        @SuppressWarnings("unchecked")
+        TypedQuery<ReservaEstacionamiento> query = mock(TypedQuery.class);
+        List<ReservaEstacionamiento> reservas = List.of(mock(ReservaEstacionamiento.class));
+        String jpql = "SELECT r FROM ReservaEstacionamiento r JOIN FETCH r.usuario JOIN FETCH r.vehiculo "
+                + "JOIN FETCH r.estacionamiento ORDER BY r.fechaHoraInicio, r.id";
+        when(em.createQuery(jpql, ReservaEstacionamiento.class)).thenReturn(query);
+        when(query.getResultList()).thenReturn(reservas);
+
+        assertEquals(reservas, repository.findAllConDetalle());
+        verify(em).close();
+    }
+
+    @Test
+    void leeLaReservaConBloqueoDeEscrituraEnLaTransaccionRecibida() {
+        EntityManager emBloqueado = mock(EntityManager.class);
+        ReservaEstacionamiento reserva = mock(ReservaEstacionamiento.class);
+        when(emBloqueado.find(ReservaEstacionamiento.class, 4L, LockModeType.PESSIMISTIC_WRITE)).thenReturn(reserva);
+
+        assertSame(reserva, repository.findByIdBloqueada(emBloqueado, 4L));
+        verify(emBloqueado, never()).close();
     }
 
     @Test

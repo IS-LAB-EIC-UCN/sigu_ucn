@@ -19,6 +19,8 @@ import cl.ucn.app.repository.VehiculoRepository;
 
 public class ReservaEstacionamientoService {
 
+    private static final String RESERVA_NO_DISPONIBLE = "No se encontró la reserva solicitada.";
+
     private final ReservaEstacionamientoRepository reservaRepository;
     private final UsuarioRepository usuarioRepository;
     private final VehiculoRepository vehiculoRepository;
@@ -75,6 +77,96 @@ public class ReservaEstacionamientoService {
                 && "DOCENTE".equals(usuario.getRol().getNombre());
 
         return estacionamientoRepository.findDisponiblesParaUsuario(esDocente);
+    }
+
+    public List<ResumenReserva> listarPropias(Long usuarioId) {
+        exigirCuentaActiva(usuarioId);
+        return resumirReservas(reservaRepository.findByUsuarioId(usuarioId), false);
+    }
+
+    public List<ResumenReserva> listarParaAdministracion(Long usuarioId) {
+        exigirAdministrador(usuarioId);
+        return resumirReservas(reservaRepository.findAllConDetalle(), true);
+    }
+
+    public void cancelarPropia(Long usuarioId, Long reservaId) {
+        exigirCuentaActiva(usuarioId);
+        cancelar(reservaId, usuarioId);
+    }
+
+    public void cancelarComoAdministrador(Long usuarioId, Long reservaId) {
+        exigirAdministrador(usuarioId);
+        cancelar(reservaId, null);
+    }
+
+    private Usuario exigirCuentaActiva(Long usuarioId) {
+        Usuario usuario = usuarioId == null ? null : reservaRepository.findUsuarioConRol(usuarioId);
+        if (usuario == null || !Boolean.TRUE.equals(usuario.getActivo())) {
+            throw new AccesoDenegadoException("Esta operación requiere una cuenta activa.");
+        }
+        return usuario;
+    }
+
+    private void exigirAdministrador(Long usuarioId) {
+        Usuario usuario = exigirCuentaActiva(usuarioId);
+        if (usuario.getRol() == null || !"ADMIN".equals(usuario.getRol().getNombre())) {
+            throw new AccesoDenegadoException("Esta operación requiere una cuenta administradora activa.");
+        }
+    }
+
+    private List<ResumenReserva> resumirReservas(List<ReservaEstacionamiento> reservas, boolean mostrarPropietario) {
+        LocalDateTime ahora = LocalDateTime.now(clock);
+        return reservas.stream().map(reserva -> {
+            boolean estadoCancelable = esEstadoCancelable(reserva);
+            String estadoVisible = estadoCancelable && !reserva.getFechaHoraFin().isAfter(ahora)
+                    ? "VENCIDA" : reserva.getEstado();
+            Usuario propietario = mostrarPropietario ? reserva.getUsuario() : null;
+            return new ResumenReserva(reserva.getId(), reserva.getEstacionamiento().getCodigo(),
+                    reserva.getVehiculo().getPatente(), reserva.getFechaHoraInicio(), reserva.getFechaHoraFin(),
+                    estadoVisible, estadoCancelable && ahora.isBefore(reserva.getFechaHoraInicio()),
+                    propietario == null ? null : propietario.getNombre(),
+                    propietario == null ? null : propietario.getCorreo());
+        }).toList();
+    }
+
+    private void cancelar(Long reservaId, Long propietarioRequerido) {
+        if (reservaId == null || reservaId <= 0) {
+            throw new IllegalArgumentException("El identificador de la reserva no es válido.");
+        }
+
+        ReservaEstacionamiento referencia = reservaRepository.findById(reservaId);
+        comprobarAccesoAReserva(referencia, propietarioRequerido);
+        Long estacionamientoId = referencia.getEstacionamiento().getId();
+
+        estacionamientoRepository.conEstacionamientoBloqueado(estacionamientoId, (em, estacionamiento) -> {
+            if (estacionamiento == null) {
+                throw new IllegalArgumentException(RESERVA_NO_DISPONIBLE);
+            }
+            ReservaEstacionamiento reserva = reservaRepository.findByIdBloqueada(em, reservaId);
+            comprobarAccesoAReserva(reserva, propietarioRequerido);
+            if (!estacionamientoId.equals(reserva.getEstacionamiento().getId())) {
+                throw new IllegalArgumentException("La reserva cambió. Vuelve a consultar tus reservas.");
+            }
+            if (!esEstadoCancelable(reserva)) {
+                throw new IllegalArgumentException("La reserva no se puede cancelar en su estado actual.");
+            }
+            if (!LocalDateTime.now(clock).isBefore(reserva.getFechaHoraInicio())) {
+                throw new IllegalArgumentException("Solo puedes cancelar una reserva antes de que comience.");
+            }
+            reserva.setEstado("CANCELADA");
+            return null;
+        });
+    }
+
+    private void comprobarAccesoAReserva(ReservaEstacionamiento reserva, Long propietarioRequerido) {
+        if (reserva == null || (propietarioRequerido != null
+                && !propietarioRequerido.equals(reserva.getUsuario().getId()))) {
+            throw new IllegalArgumentException(RESERVA_NO_DISPONIBLE);
+        }
+    }
+
+    private boolean esEstadoCancelable(ReservaEstacionamiento reserva) {
+        return "PENDIENTE".equals(reserva.getEstado()) || "APROBADA".equals(reserva.getEstado());
     }
 
     public ReservaEstacionamiento registrarReserva(
@@ -139,5 +231,16 @@ public class ReservaEstacionamientoService {
             reservaRepository.save(em, reserva);
             return reserva;
         });
+    }
+
+    public record ResumenReserva(Long id, String codigoEstacionamiento, String patente,
+            LocalDateTime inicio, LocalDateTime fin, String estado, boolean puedeCancelar,
+            String nombrePropietario, String correoPropietario) {
+    }
+
+    public static class AccesoDenegadoException extends RuntimeException {
+        public AccesoDenegadoException(String mensaje) {
+            super(mensaje);
+        }
     }
 }

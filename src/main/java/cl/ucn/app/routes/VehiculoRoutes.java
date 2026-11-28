@@ -7,9 +7,10 @@ public final class VehiculoRoutes {
     }
 
     public static void register(JavalinConfig config) {
+        register(config, new VehiculoController());
+    }
 
-        VehiculoController controller = new VehiculoController();
-
+    static void register(JavalinConfig config, VehiculoController controller) {
         config.routes.get(
                 "/estacionamientos/vehiculos/nuevo",
                 controller::mostrarFormulario

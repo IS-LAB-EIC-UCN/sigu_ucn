@@ -24,6 +24,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -35,13 +36,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * Requiere una base Docker aislada llamada sigu_hu02_test y las variables
@@ -387,6 +391,254 @@ class ReservaEstacionamientoPostgresTest {
             assertEquals("CANCELADA", repository.findById(cancelada.getId()).getEstado());
         }
 
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void conservaLaFilaCanceladaYLiberaCadaExclusion(boolean mismoEspacio) {
+            long nuevoVehiculo = mismoEspacio ? 2L : 1L;
+            long nuevoEspacio = mismoEspacio ? 1L : 2L;
+            var original = reserva(1, 1, inicio, inicio.plusHours(1), mismoEspacio ? "PENDIENTE" : "APROBADA");
+            repository.save(original);
+            var conflicto = assertThrows(IllegalArgumentException.class, () -> repository.save(
+                    reserva(nuevoVehiculo, nuevoEspacio, inicio, inicio.plusHours(1), "PENDIENTE")));
+            assertTrue(conflicto.getMessage().contains(mismoEspacio ? "estacionamiento" : "vehículo"));
+
+            var servicio = servicioReservas(espacios);
+            if (mismoEspacio) {
+                servicio.cancelarPropia(1L, original.getId());
+            } else {
+                servicio.cancelarComoAdministrador(ADMIN, original.getId());
+            }
+
+            var persistida = repository.findById(original.getId());
+            assertEquals(original.getId(), persistida.getId());
+            assertEquals(original.getFechaHoraInicio(), persistida.getFechaHoraInicio());
+            assertEquals(original.getFechaHoraFin(), persistida.getFechaHoraFin());
+            assertEquals(1L, persistida.getUsuario().getId());
+            assertEquals(1L, persistida.getEstacionamiento().getId());
+            assertEquals(1L, persistida.getVehiculo().getId());
+            assertEquals("CANCELADA", persistida.getEstado());
+            var nueva = servicio.registrarReserva(1L, nuevoVehiculo, nuevoEspacio, inicio, inicio.plusHours(1));
+            assertEquals("PENDIENTE", repository.findById(nueva.getId()).getEstado());
+            assertEquals(2, repository.findByUsuarioId(1L).size());
+        }
+
+        @Test
+        void listaElHistorialConLasRelacionesCargadasYSinActualizarVencidas() {
+            var vencida = reserva(1, 1, ahora.minusHours(1), ahora, "APROBADA");
+            var cancelada = reserva(1, 1, ahora.minusHours(1), ahora, "CANCELADA");
+            repository.save(vencida);
+            repository.save(cancelada);
+            var servicio = servicioReservas(espacios);
+            servicio.registrarReserva(ADMIN, 3L, 1L, inicio, inicio.plusHours(1));
+
+            var propias = servicio.listarPropias(1L);
+            assertEquals(2, propias.size());
+            assertTrue(propias.stream().allMatch(r -> "TEST-1".equals(r.codigoEstacionamiento())
+                    && "ABCD12".equals(r.patente()) && !r.puedeCancelar()));
+            assertEquals(List.of("APROBADA", "CANCELADA"), repository.findByUsuarioId(1L).stream()
+                    .map(ReservaEstacionamiento::getEstado).sorted().toList());
+            var administradas = servicio.listarParaAdministracion(ADMIN);
+            assertEquals(List.of("VENCIDA", "CANCELADA", "PENDIENTE"), administradas.stream()
+                    .map(ReservaEstacionamientoService.ResumenReserva::estado).toList());
+            assertEquals(List.of("Prueba", "Prueba", "Admin"), administradas.stream()
+                    .map(ReservaEstacionamientoService.ResumenReserva::nombrePropietario).toList());
+            assertEquals("admin-espacios@test.local", administradas.getLast().correoPropietario());
+        }
+
+        @Test
+        void revierteLaCancelacionSiFallaAntesDelCommit() {
+            var original = reserva(1, 1, inicio, inicio.plusHours(1), "APROBADA");
+            repository.save(original);
+            EstacionamientoRepository espaciosConFallo = spy(espacios);
+            var fallo = new IllegalStateException("Fallo de prueba antes del commit");
+            doAnswer(invocacion -> {
+                BiFunction<EntityManager, Estacionamiento, Object> operacion = invocacion.getArgument(1);
+                return espacios.conEstacionamientoBloqueado(1L, (em, espacio) -> {
+                    operacion.apply(em, espacio);
+                    em.flush();
+                    assertEquals("CANCELADA", em.createQuery("SELECT r.estado FROM ReservaEstacionamiento r WHERE r.id = :id",
+                            String.class).setParameter("id", original.getId()).getSingleResult());
+                    throw fallo;
+                });
+            }).when(espaciosConFallo).conEstacionamientoBloqueado(eq(1L), any());
+
+            assertSame(fallo, assertThrows(IllegalStateException.class,
+                    () -> servicioReservas(espaciosConFallo).cancelarPropia(1L, original.getId())));
+            assertEquals("APROBADA", repository.findById(original.getId()).getEstado());
+            assertThrows(IllegalArgumentException.class, () -> servicioReservas(espacios)
+                    .registrarReserva(1L, 2L, 1L, inicio, inicio.plusHours(1)));
+        }
+
+        @Test
+        void dosCancelacionesSimultaneasSoloConfirmanUna() throws Exception {
+            var original = reserva(1, 1, inicio, inicio.plusHours(1), "PENDIENTE");
+            repository.save(original);
+            CountDownLatch cambioSinConfirmar = new CountDownLatch(1);
+            CountDownLatch permitirConfirmacion = new CountDownLatch(1);
+            var primera = servicioReservas(pausarAntesDelCommit(cambioSinConfirmar, permitirConfirmacion));
+
+            try (var executor = Executors.newFixedThreadPool(2)) {
+                try {
+                    Future<?> cancelaPropia = executor.submit(() -> primera.cancelarPropia(1L, original.getId()));
+                    esperar(cambioSinConfirmar);
+                    Future<IllegalArgumentException> cancelaAdmin = executor.submit(() ->
+                            assertThrows(IllegalArgumentException.class, () -> servicioReservas(espacios)
+                                    .cancelarComoAdministrador(ADMIN, original.getId())));
+                    comprobarEsperaPorBloqueoEnPostgres();
+                    permitirConfirmacion.countDown();
+                    cancelaPropia.get(20, TimeUnit.SECONDS);
+                    assertTrue(cancelaAdmin.get(20, TimeUnit.SECONDS).getMessage().contains("estado actual"));
+                    assertEquals("CANCELADA", repository.findById(original.getId()).getEstado());
+                } finally {
+                    permitirConfirmacion.countDown();
+                }
+            }
+        }
+
+        @Test
+        void cancelacionCreacionYDeshabilitacionConcurrentesConservanUnEstadoConsistente() throws Exception {
+            var original = reserva(1, 1, inicio, inicio.plusHours(1), "APROBADA");
+            repository.save(original);
+            CountDownLatch cambioSinConfirmar = new CountDownLatch(1);
+            CountDownLatch permitirConfirmacion = new CountDownLatch(1);
+            var primera = servicioReservas(pausarAntesDelCommit(cambioSinConfirmar, permitirConfirmacion));
+
+            try (var executor = Executors.newFixedThreadPool(3)) {
+                try {
+                    Future<?> cancelacion = executor.submit(() -> primera.cancelarPropia(1L, original.getId()));
+                    esperar(cambioSinConfirmar);
+                    Future<String> creacion = executor.submit(() -> {
+                        try {
+                            servicioReservas(espacios).registrarReserva(1L, 2L, 1L, inicio, inicio.plusHours(1));
+                            return "creada";
+                        } catch (IllegalArgumentException error) {
+                            return error.getMessage();
+                        }
+                    });
+                    Future<String> deshabilitacion = executor.submit(() -> {
+                        try {
+                            admin.cambiarHabilitacion(ADMIN, 1L, "false");
+                            return "deshabilitado";
+                        } catch (IllegalArgumentException error) {
+                            return error.getMessage();
+                        }
+                    });
+                    comprobarEsperaPorBloqueoEnPostgres(2);
+                    permitirConfirmacion.countDown();
+                    cancelacion.get(20, TimeUnit.SECONDS);
+                    assertEquals("CANCELADA", repository.findById(original.getId()).getEstado());
+                    String resultadoCreacion = creacion.get(20, TimeUnit.SECONDS);
+                    String resultadoDeshabilitacion = deshabilitacion.get(20, TimeUnit.SECONDS);
+                    boolean creada = "creada".equals(resultadoCreacion);
+                    if (creada) {
+                        assertTrue(resultadoDeshabilitacion.contains("reservas pendientes o aprobadas"));
+                    } else {
+                        assertTrue(resultadoCreacion.contains("no está habilitado"));
+                        assertEquals("deshabilitado", resultadoDeshabilitacion);
+                    }
+                    assertEquals(creada, espacios.findById(1L).getHabilitado());
+                    assertEquals(creada ? 2 : 1, repository.findByUsuarioId(1L).size());
+                } finally {
+                    permitirConfirmacion.countDown();
+                }
+            }
+        }
+
+        @ParameterizedTest
+        @ValueSource(booleans = {true, false})
+        void siOtraOperacionTomaPrimeroElEspacioAunVeLaReservaActiva(boolean intentaCrear) throws Exception {
+            var original = reserva(1, 1, inicio, inicio.plusHours(1), "APROBADA");
+            repository.save(original);
+            CountDownLatch espacioBloqueado = new CountDownLatch(1);
+            CountDownLatch verificarReservaActiva = new CountDownLatch(1);
+            EstacionamientoRepository primerRepositorio = spy(espacios);
+            doAnswer(invocacion -> {
+                BiFunction<EntityManager, Estacionamiento, Object> operacion = invocacion.getArgument(1);
+                return espacios.conEstacionamientoBloqueado(1L, (em, espacio) -> {
+                    espacioBloqueado.countDown();
+                    esperar(verificarReservaActiva);
+                    return operacion.apply(em, espacio);
+                });
+            }).when(primerRepositorio).conEstacionamientoBloqueado(eq(1L), any());
+
+            try (var executor = Executors.newFixedThreadPool(2)) {
+                try {
+                    Future<IllegalArgumentException> primera = executor.submit(() -> assertThrows(
+                            IllegalArgumentException.class, () -> {
+                                if (intentaCrear) {
+                                    servicioReservas(primerRepositorio).registrarReserva(1L, 2L, 1L, inicio,
+                                            inicio.plusHours(1));
+                                } else {
+                                    new EstacionamientoService(primerRepositorio, repository, clock)
+                                            .cambiarHabilitacion(ADMIN, 1L, "false");
+                                }
+                            }));
+                    esperar(espacioBloqueado);
+                    Future<?> segunda = executor.submit(() -> servicioReservas(espacios).cancelarPropia(1L, original.getId()));
+                    comprobarEsperaPorBloqueoEnPostgres();
+                    verificarReservaActiva.countDown();
+                    assertTrue(primera.get(20, TimeUnit.SECONDS).getMessage().contains(intentaCrear
+                            ? "ya está reservado" : "reservas pendientes o aprobadas"));
+                    segunda.get(20, TimeUnit.SECONDS);
+                    assertEquals("CANCELADA", repository.findById(original.getId()).getEstado());
+                    assertTrue(espacios.findById(1L).getHabilitado());
+                    assertEquals(1, repository.findByUsuarioId(1L).size());
+                } finally {
+                    verificarReservaActiva.countDown();
+                }
+            }
+        }
+
+        @Test
+        void reevaluarLaHoraTrasLaEsperaRechazaCancelarExactamenteAlInicio() throws Exception {
+            var original = reserva(1, 1, inicio, inicio.plusHours(1), "PENDIENTE");
+            repository.save(original);
+            AtomicReference<Instant> instante = new AtomicReference<>(clock.instant());
+            Clock relojControlado = mock(Clock.class);
+            when(relojControlado.getZone()).thenReturn(clock.getZone());
+            when(relojControlado.instant()).thenAnswer(invocacion -> instante.get());
+            var cancelaciones = new ReservaEstacionamientoService(repository, new UsuarioRepository(),
+                    new VehiculoRepository(factory::createEntityManager), espacios, relojControlado);
+            CountDownLatch espacioBloqueado = new CountDownLatch(1);
+            CountDownLatch liberarEspacio = new CountDownLatch(1);
+
+            try (var executor = Executors.newFixedThreadPool(2)) {
+                try {
+                    Future<?> bloqueo = executor.submit(() -> espacios.conEstacionamientoBloqueado(1L, (em, espacio) -> {
+                        espacioBloqueado.countDown();
+                        esperar(liberarEspacio);
+                        return null;
+                    }));
+                    esperar(espacioBloqueado);
+                    Future<IllegalArgumentException> cancelacion = executor.submit(() -> assertThrows(
+                            IllegalArgumentException.class, () -> cancelaciones.cancelarPropia(1L, original.getId())));
+                    comprobarEsperaPorBloqueoEnPostgres();
+                    instante.set(inicio.atZone(clock.getZone()).toInstant());
+                    liberarEspacio.countDown();
+                    bloqueo.get(20, TimeUnit.SECONDS);
+                    assertTrue(cancelacion.get(20, TimeUnit.SECONDS).getMessage().contains("antes de que comience"));
+                    assertEquals("PENDIENTE", repository.findById(original.getId()).getEstado());
+                } finally {
+                    liberarEspacio.countDown();
+                }
+            }
+        }
+
+        private EstacionamientoRepository pausarAntesDelCommit(CountDownLatch cambio, CountDownLatch confirmar) {
+            EstacionamientoRepository repositorio = spy(espacios);
+            doAnswer(invocacion -> {
+                BiFunction<EntityManager, Estacionamiento, Object> operacion = invocacion.getArgument(1);
+                return espacios.conEstacionamientoBloqueado(1L, (em, espacio) -> {
+                    Object resultado = operacion.apply(em, espacio);
+                    em.flush();
+                    cambio.countDown();
+                    esperar(confirmar);
+                    return resultado;
+                });
+            }).when(repositorio).conEstacionamientoBloqueado(eq(1L), any());
+            return repositorio;
+        }
+
         private ReservaEstacionamientoService servicioReservas(EstacionamientoRepository repo) {
             return new ReservaEstacionamientoService(repository, new UsuarioRepository(),
                     new VehiculoRepository(factory::createEntityManager), repo, clock);
@@ -411,14 +663,18 @@ class ReservaEstacionamientoPostgresTest {
         }
 
         private void comprobarEsperaPorBloqueoEnPostgres() throws Exception {
-            String consulta = "SELECT 1 FROM pg_stat_activity WHERE application_name = ? "
+            comprobarEsperaPorBloqueoEnPostgres(1);
+        }
+
+        private void comprobarEsperaPorBloqueoEnPostgres(int solicitudes) throws Exception {
+            String consulta = "SELECT count(*) FROM pg_stat_activity WHERE application_name = ? "
                     + "AND wait_event_type = 'Lock' AND query ~* 'for (no key )?update'";
             long limite = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
             try (var statement = connection.prepareStatement(consulta)) {
                 statement.setString(1, schema);
                 do {
                     try (var resultados = statement.executeQuery()) {
-                        if (resultados.next()) {
+                        if (resultados.next() && resultados.getInt(1) >= solicitudes) {
                             return;
                         }
                     }
